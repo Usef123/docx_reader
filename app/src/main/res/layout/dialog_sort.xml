@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="16dp"
+    android:paddingTop="16dp"
+    android:paddingBottom="16dp">
+
+    <LinearLayout
+        android:id="@+id/sort_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="8dp"
+        android:paddingStart="8dp"
+        android:paddingBottom="8dp">
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_sort_name"
+            android:scaleType="fitCenter"
+            android:layout_gravity="center"
+            android:paddingEnd="8dp"/>
+        <TextView
+            android:id="@+id/txt_sort_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:text="Sort by File Name"
+            android:layout_weight="1"
+            android:layout_gravity="center|left"/>
+
+        <CheckBox
+            android:id="@+id/chk_sort_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:enabled="false" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/sort_time_create"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="8dp"
+        android:paddingStart="8dp"
+        android:paddingBottom="8dp">
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_sort_time_create"
+            android:scaleType="fitCenter"
+            android:layout_gravity="center"
+            android:paddingEnd="8dp"/>
+        <TextView
+            android:id="@+id/txt_sort_time_create"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:text="Sort by Created Time"
+            android:layout_weight="1"
+            android:layout_gravity="center|left"/>
+        <CheckBox
+            android:id="@+id/chk_sort_time_create"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:enabled="false"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/sort_time_access"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="8dp"
+        android:paddingStart="8dp"
+        android:paddingBottom="8dp">
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_sort_time_access"
+            android:scaleType="fitCenter"
+            android:layout_gravity="center"
+            android:paddingEnd="8dp"/>
+        <TextView
+            android:id="@+id/txt_sort_time_access"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:text="Sort by Access Time"
+            android:layout_weight="1"
+            android:layout_gravity="center|left"/>
+        <CheckBox
+            android:id="@+id/chk_sort_time_access"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:enabled="false"/>
+    </LinearLayout>
+
+</LinearLayout>
+

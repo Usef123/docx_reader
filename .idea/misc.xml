@@ -3,12 +3,27 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/favorite_selector.xml" value="0.123" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/home_selector.xml" value="0.123" />
+        <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/ic_docx.xml" value="0.123" />
+        <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/ic_home.xml" value="0.123" />
+        <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/ic_star.xml" value="0.123" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/ic_star_fill.xml" value="0.123" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/ic_user.xml" value="0.123" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/ic_user_fill.xml" value="0.123" />
+        <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/setting_selector.xml" value="0.123" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/layout/activity_main.xml" value="0.2210144927536232" />
+        <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/layout/dialog_delete.xml" value="0.25" />
+        <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/layout/dialog_more.xml" value="0.2210144927536232" />
+        <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/layout/dialog_rename.xml" value="0.2210144927536232" />
+        <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/layout/dialog_sort.xml" value="0.2210144927536232" />
+        <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/layout/fragment_home.xml" value="0.2210144927536232" />
+        <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/layout/item_content.xml" value="0.2210144927536232" />
+        <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/layout/item_docx.xml" value="0.2210144927536232" />
+        <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/layout/more_option_home.xml" value="0.2210144927536232" />
+        <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/layout/title_home.xml" value="0.2210144927536232" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/menu/bottom_menu.xml" value="0.25" />
+        <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.123" />
       </map>
     </option>
   </component>

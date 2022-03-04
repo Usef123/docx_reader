@@ -5,4 +5,30 @@
     <string name="botton_nav_home">Home</string>
     <string name="botton_nav_favorite">Favorite</string>
     <string name="botton_nav_setting">Setting</string>
+
+    <string name="title_home">Explore</string>
+    <string name="hint_search">Find the document</string>
+    <string name="txt_ok">OK</string>
+    <string name="txt_cancel">Cancel</string>
+
+    <string name="notification_rename_empty">Name cannot be empty</string>
+    <string name="notification_rename_success">Rename successful</string>
+    <string name="notification_rename_error">Rename error</string>
+    <string name="notification_not_rename">Name unchanged</string>
+
+    <string name="notification_file_error">File error</string>
+    <string name="notification_file_duplicate">Name already exists</string>
+
+    <string name="notification_add_favorite">Favorite</string>
+    <string name="notification_remove_favorite">Remove favorite</string>
+
+    <string name="notification_share_error">Share error</string>
+
+    <string name="title_rename">Change file name</string>
+    <string name="title_delete">Are you sure delete this document ?</string>
+    <string name="txt_yes">Yes</string>
+    <string name="txt_no">No</string>
+
+    <string name="notification_delete_success">Delete successful</string>
+    <string name="notification_delete_error">Delete error</string>
 </resources>
