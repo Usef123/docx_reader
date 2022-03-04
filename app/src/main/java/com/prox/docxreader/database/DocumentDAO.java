@@ -39,4 +39,20 @@ public interface DocumentDAO {
 
     @Query("SELECT * FROM document WHERE title LIKE '%' || :title || '%' ORDER BY timeAccess ASC")
     List<Document> sortDocumentByTimeAccess(String title);
+
+
+    @Query("SELECT * FROM document WHERE isFavorite = 1")
+    List<Document> getDocumentsFavorite();
+
+    @Query("SELECT * FROM document WHERE title LIKE '%' || :title || '%' AND isFavorite = 1")
+    List<Document> searchDocumentFavorite(String title);
+
+    @Query("SELECT * FROM document WHERE title LIKE '%' || :title || '%' AND isFavorite = 1 ORDER BY title ASC")
+    List<Document> sortDocumentFavoriteByName(String title);
+
+    @Query("SELECT * FROM document WHERE title LIKE '%' || :title || '%' AND isFavorite = 1 ORDER BY timeCreate ASC")
+    List<Document> sortDocumentFavoriteByTimeCreate(String title);
+
+    @Query("SELECT * FROM document WHERE title LIKE '%' || :title || '%' AND isFavorite = 1 ORDER BY timeAccess ASC")
+    List<Document> sortDocumentFavoriteByTimeAccess(String title);
 }
