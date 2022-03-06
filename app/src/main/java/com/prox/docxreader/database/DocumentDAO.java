@@ -28,31 +28,22 @@ public interface DocumentDAO {
     @Delete
     void deleteDocument(Document document);
 
-    @Query("SELECT * FROM document WHERE title LIKE '%' || :title || '%'")
-    List<Document> searchDocument(String title);
-
     @Query("SELECT * FROM document WHERE title LIKE '%' || :title || '%' ORDER BY title ASC")
     List<Document> sortDocumentByName(String title);
 
-    @Query("SELECT * FROM document WHERE title LIKE '%' || :title || '%' ORDER BY timeCreate ASC")
+    @Query("SELECT * FROM document WHERE title LIKE '%' || :title || '%' ORDER BY timeCreate DESC")
     List<Document> sortDocumentByTimeCreate(String title);
 
-    @Query("SELECT * FROM document WHERE title LIKE '%' || :title || '%' ORDER BY timeAccess ASC")
+    @Query("SELECT * FROM document WHERE title LIKE '%' || :title || '%' ORDER BY timeAccess DESC")
     List<Document> sortDocumentByTimeAccess(String title);
 
-
-    @Query("SELECT * FROM document WHERE isFavorite = 1")
-    List<Document> getDocumentsFavorite();
-
-    @Query("SELECT * FROM document WHERE title LIKE '%' || :title || '%' AND isFavorite = 1")
-    List<Document> searchDocumentFavorite(String title);
 
     @Query("SELECT * FROM document WHERE title LIKE '%' || :title || '%' AND isFavorite = 1 ORDER BY title ASC")
     List<Document> sortDocumentFavoriteByName(String title);
 
-    @Query("SELECT * FROM document WHERE title LIKE '%' || :title || '%' AND isFavorite = 1 ORDER BY timeCreate ASC")
+    @Query("SELECT * FROM document WHERE title LIKE '%' || :title || '%' AND isFavorite = 1 ORDER BY timeCreate DESC")
     List<Document> sortDocumentFavoriteByTimeCreate(String title);
 
-    @Query("SELECT * FROM document WHERE title LIKE '%' || :title || '%' AND isFavorite = 1 ORDER BY timeAccess ASC")
+    @Query("SELECT * FROM document WHERE title LIKE '%' || :title || '%' AND isFavorite = 1 ORDER BY timeAccess DESC")
     List<Document> sortDocumentFavoriteByTimeAccess(String title);
 }

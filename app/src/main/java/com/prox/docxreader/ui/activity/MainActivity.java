@@ -15,10 +15,8 @@ import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
-import android.util.Log;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.prox.docxreader.R;
@@ -29,8 +27,6 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements ServiceConnection {
     private static final int MY_REQUEST_PERMISSION = 1;
-
-    private BottomNavigationView bottomNavigationView;
 
     private DocumentManagerService documentManagerService;
     private boolean isConnecting;
@@ -109,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                 R.id.favoriteFragment,
                 R.id.settingFragment).build();
 
-        bottomNavigationView = findViewById(R.id.bottom_nav);
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav);
         bottomNavigationView.setItemIconTintList(null);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
     }
@@ -119,8 +115,6 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         DocumentManagerService.MyBinder myBinder = (DocumentManagerService.MyBinder) iBinder;
         documentManagerService = myBinder.getDocumentManagerService();
         isConnecting = true;
-        documentManagerService.insertDatabase();
-        documentManagerService.updateDatabase();
     }
 
     @Override

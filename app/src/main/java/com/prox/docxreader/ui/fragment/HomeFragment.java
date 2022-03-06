@@ -1,22 +1,19 @@
 package com.prox.docxreader.ui.fragment;
 
 import android.app.Dialog;
-import android.content.ContentResolver;
 import android.content.Intent;
-import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,11 +22,11 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.ImageButton;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.prox.docxreader.OnClickItemDocumentListener;
@@ -40,17 +37,14 @@ import com.prox.docxreader.database.DocumentDatabase;
 import com.prox.docxreader.modul.Document;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class HomeFragment extends Fragment {
     private View view;
-    private RecyclerView recyclerView;
     private DocumentAdapter documentAdapter;
     private List<Document> documents;
-    private ImageView btnSort;
     private EditText edtSearch;
 
     private static final int SORT_NAME = 1;
@@ -62,6 +56,8 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_home, container, false);
+        edtSearch = view.findViewById(R.id.edt_search);
+        typeSort = SORT_NAME;
 
         setupRecyclerView();
 
@@ -73,7 +69,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void setupRecyclerView() {
-        recyclerView = view.findViewById(R.id.recycler_view_home);
+        RecyclerView recyclerView = view.findViewById(R.id.recycler_view_home);
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(manager);
 
@@ -82,11 +78,25 @@ public class HomeFragment extends Fragment {
         documentAdapter = new DocumentAdapter(documents, new OnClickItemDocumentListener() {
             @Override
             public void onClickItemDocument(Document document) {
-                Log.d("path file", document.getPath());
+                if (!(new File(document.getPath())).exists()){
+                    Toast.makeText(getContext(), getResources().getString(R.string.notification_file_error), Toast.LENGTH_SHORT).show();
+                    showDocuments();
+                    return;
+                }
+                //Update Time Access
+                document.setTimeAccess(new Date().getTime());
+                DocumentDatabase.getInstance(getContext()).documentDAO().updateDocument(document);
+
+                Toast.makeText(getContext(), document.getPath(), Toast.LENGTH_SHORT).show();
             }
         }, new OnClickMoreListener() {
             @Override
             public void onClickMore(Document document) {
+                if (!(new File(document.getPath())).exists()){
+                    Toast.makeText(getContext(), getResources().getString(R.string.notification_file_error), Toast.LENGTH_SHORT).show();
+                    showDocuments();
+                    return;
+                }
                 openDialogMore(document);
             }
         });
@@ -101,54 +111,91 @@ public class HomeFragment extends Fragment {
     }
 
     private void showDocuments() {
-        documents = DocumentDatabase.getInstance(getContext()).documentDAO().getDocuments();
+        String search = edtSearch.getText().toString().trim();
+        switch (typeSort){
+            case SORT_NAME:
+                documents = DocumentDatabase.getInstance(getContext()).documentDAO().sortDocumentByName(search);
+                break;
+            case SORT_TIME_CREATE:
+                documents = DocumentDatabase.getInstance(getContext()).documentDAO().sortDocumentByTimeCreate(search);
+                break;
+            case SORT_TIME_ACCESS:
+                documents = DocumentDatabase.getInstance(getContext()).documentDAO().sortDocumentByTimeAccess(search);
+                break;
+        }
         documentAdapter.setDocuments(documents);
     }
 
     private void openDialogMore(Document document) {
-        Dialog dialogMore = createCustomDialog(R.layout.dialog_more);
+        Dialog dialogMore = createCustomDialog(R.layout.dialog_more_home);
         dialogMore.show();
 
-        LinearLayout itemDelete, itemRename, itemShare, itemFavorite;
-        itemDelete = dialogMore.findViewById(R.id.item_delete);
-        itemRename = dialogMore.findViewById(R.id.item_rename);
-        itemShare = dialogMore.findViewById(R.id.item_share);
-        itemFavorite = dialogMore.findViewById(R.id.item_favorite);
-        ImageView imgFavorite = dialogMore.findViewById(R.id.ic_favorite);
+        Button btnDelete, btnRename, btnShare, btnFavorite;
+        btnDelete = dialogMore.findViewById(R.id.btn_delete);
+        btnRename = dialogMore.findViewById(R.id.btn_rename);
+        btnShare = dialogMore.findViewById(R.id.btn_share);
+        btnFavorite = dialogMore.findViewById(R.id.btn_favorite);
+
+        TextView txtTitle = dialogMore.findViewById(R.id.txt_title);
+        txtTitle.setText(document.getTitle());
 
         if (document.isFavorite()){
-            imgFavorite.setImageDrawable(getResources().getDrawable(R.drawable.ic_favorite));
+            btnFavorite.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite,0,0,0);
         }else{
-            imgFavorite.setImageDrawable(getResources().getDrawable(R.drawable.ic_favorite_fill));
+            btnFavorite.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite_fill,0,0,0);
         }
 
-        itemDelete.setOnClickListener(new View.OnClickListener() {
+        btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (!(new File(document.getPath())).exists()){
+                    Toast.makeText(getContext(), getResources().getString(R.string.notification_file_error), Toast.LENGTH_SHORT).show();
+                    dialogMore.hide();
+                    showDocuments();
+                    return;
+                }
                 openDialogDelete(document);
                 dialogMore.hide();
             }
         });
 
-        itemRename.setOnClickListener(new View.OnClickListener() {
+        btnRename.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (!(new File(document.getPath())).exists()){
+                    Toast.makeText(getContext(), getResources().getString(R.string.notification_file_error), Toast.LENGTH_SHORT).show();
+                    dialogMore.hide();
+                    showDocuments();
+                    return;
+                }
                 openDialogRename(document);
                 dialogMore.hide();
             }
         });
 
-        itemShare.setOnClickListener(new View.OnClickListener() {
+        btnShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (!(new File(document.getPath())).exists()){
+                    Toast.makeText(getContext(), getResources().getString(R.string.notification_file_error), Toast.LENGTH_SHORT).show();
+                    dialogMore.hide();
+                    showDocuments();
+                    return;
+                }
                 shareDocument(document);
                 dialogMore.hide();
             }
         });
 
-        itemFavorite.setOnClickListener(new View.OnClickListener() {
+        btnFavorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (!(new File(document.getPath())).exists()){
+                    Toast.makeText(getContext(), getResources().getString(R.string.notification_file_error), Toast.LENGTH_SHORT).show();
+                    dialogMore.hide();
+                    showDocuments();
+                    return;
+                }
                 setFavorite(document);
                 dialogMore.hide();
             }
@@ -160,8 +207,8 @@ public class HomeFragment extends Fragment {
         dialogDelete.show();
 
         Button btnYes, btnNo;
-        btnYes = dialogDelete.findViewById(R.id.btn_yes);
-        btnNo = dialogDelete.findViewById(R.id.btn_no);
+        btnYes = dialogDelete.findViewById(R.id.btn_ok);
+        btnNo = dialogDelete.findViewById(R.id.btn_cancel);
 
         btnYes.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -198,13 +245,16 @@ public class HomeFragment extends Fragment {
         dialogRename.show();
 
         Button btnOK, btnCancel;
-        btnOK = dialogRename.findViewById(R.id.btn_yes);
-        btnCancel = dialogRename.findViewById(R.id.btn_no);
+        btnOK = dialogRename.findViewById(R.id.btn_ok);
+        btnCancel = dialogRename.findViewById(R.id.btn_cancel);
 
         EditText editText = dialogRename.findViewById(R.id.edt_rename);
-        String title = document.getTitle(); //Name có .docx
-        String name = title.substring(0, title.length()-5); //Name bỏ .docx
-        editText.setText(name);
+
+        String titleFull = document.getTitle();         //Tên file có đuôi (.docx hoặc .doc)
+        int dot = titleFull.lastIndexOf('.');       //Vị trí dấu . cuối cùng
+        String title = titleFull.substring(0, dot);     //Tên file không có đuôi
+        String type = titleFull.substring(dot);         //Đuôi file (.docx hoặc .doc)
+        editText.setText(title);
 
         btnOK.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -217,7 +267,7 @@ public class HomeFragment extends Fragment {
                 }
 
                 //Tên có thay đổi
-                if (!rename.equals(name)){
+                if (!rename.equals(title)){
                     //File không tồn tại --> Báo lỗi, load lại file
                     File fileOld = new File(document.getPath());
                     if (!fileOld.exists()){
@@ -228,8 +278,8 @@ public class HomeFragment extends Fragment {
                     }
 
                     //Update tên và path document
-                    document.setTitle(rename.concat(".docx"));
-                    String newPath = document.getPath().substring(0, document.getPath().length()-title.length()).concat(document.getTitle());
+                    document.setTitle(rename.concat(type));
+                    String newPath = document.getPath().substring(0, document.getPath().length()-titleFull.length()).concat(document.getTitle());
                     document.setPath(newPath);
 
                     //Tên đã tồn tại
@@ -269,11 +319,15 @@ public class HomeFragment extends Fragment {
         Intent intentShareFile = new Intent(Intent.ACTION_SEND);
         File fileWithinMyDir = new File(document.getPath());
 
+        String titleFull = document.getTitle();         //Tên file có đuôi (.docx hoặc .doc)
+        int dot = titleFull.lastIndexOf('.');       //Vị trí dấu . cuối cùng
+        String type = titleFull.substring(dot+1);         //Đuôi file (docx hoặc doc)
+
         if(fileWithinMyDir.exists()) {
-            intentShareFile.setType(MimeTypeMap.getSingleton().getMimeTypeFromExtension("docx"));
+            intentShareFile.setType(MimeTypeMap.getSingleton().getMimeTypeFromExtension(type));
             intentShareFile.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://"+document.getPath()));
 
-            startActivity(Intent.createChooser(intentShareFile, "Share File"));
+            startActivity(Intent.createChooser(intentShareFile, titleFull));
         }else{
             Toast.makeText(getContext(), getResources().getString(R.string.notification_share_error), Toast.LENGTH_SHORT).show();
         }
@@ -290,7 +344,6 @@ public class HomeFragment extends Fragment {
     }
 
     private void addSearchDocument() {
-        edtSearch = view.findViewById(R.id.edt_search);
         edtSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -299,20 +352,7 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                String search = edtSearch.getText().toString().trim();
-                List<Document> documentsSearch = null;
-                if (typeSort == SORT_NAME){
-                    documentsSearch = DocumentDatabase.getInstance(getContext()).documentDAO().sortDocumentByName(search);
-                }else if (typeSort == SORT_TIME_CREATE){
-                    documentsSearch = DocumentDatabase.getInstance(getContext()).documentDAO().sortDocumentByTimeCreate(search);
-                }else if (typeSort == SORT_TIME_ACCESS){
-                    documentsSearch = DocumentDatabase.getInstance(getContext()).documentDAO().sortDocumentByTimeAccess(search);
-                }else{
-                    documentsSearch = DocumentDatabase.getInstance(getContext()).documentDAO().searchDocument(search);
-                }
-                if (documentsSearch!=null){
-                    documentAdapter.setDocuments(documentsSearch);
-                }
+                showDocuments();
             }
 
             @Override
@@ -324,7 +364,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void addBtnSort() {
-        btnSort = view.findViewById(R.id.btn_filter);
+        ImageButton btnSort = view.findViewById(R.id.btn_sort);
         btnSort.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -337,57 +377,43 @@ public class HomeFragment extends Fragment {
         Dialog dialogSort = createCustomDialog(R.layout.dialog_sort);
         dialogSort.show();
 
-        LinearLayout sortName, sortTimeCreate, sortTimeAccess;
-        CheckBox chkSortName, chkSortTimeCreate, chkSortTimeAccess;
+        RadioButton sortName, sortTimeCreate, sortTimeAccess;
         sortName = dialogSort.findViewById(R.id.sort_name);
         sortTimeCreate = dialogSort.findViewById(R.id.sort_time_create);
         sortTimeAccess = dialogSort.findViewById(R.id.sort_time_access);
-        chkSortName = dialogSort.findViewById(R.id.chk_sort_name);
-        chkSortTimeCreate = dialogSort.findViewById(R.id.chk_sort_time_create);
-        chkSortTimeAccess = dialogSort.findViewById(R.id.chk_sort_time_access);
-
-        if (typeSort == SORT_NAME){
-            chkSortName.setChecked(true);
-            chkSortTimeCreate.setChecked(false);
-            chkSortTimeAccess.setChecked(false);
-        }else if (typeSort == SORT_TIME_CREATE){
-            chkSortName.setChecked(false);
-            chkSortTimeCreate.setChecked(true);
-            chkSortTimeAccess.setChecked(false);
-        }else if (typeSort == SORT_TIME_ACCESS){
-            chkSortName.setChecked(false);
-            chkSortTimeCreate.setChecked(false);
-            chkSortTimeAccess.setChecked(true);
+        switch (typeSort){
+            case SORT_NAME:
+                sortName.setChecked(true);
+                break;
+            case SORT_TIME_CREATE:
+                sortTimeCreate.setChecked(true);
+                break;
+            case SORT_TIME_ACCESS:
+                sortTimeAccess.setChecked(true);
+                break;
         }
 
-        String search = edtSearch.getText().toString().trim();
-        sortName.setOnClickListener(new View.OnClickListener() {
+        RadioGroup radioGroup = dialogSort.findViewById(R.id.rad_group);
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
-            public void onClick(View view) {
-                documents = DocumentDatabase.getInstance(getContext()).documentDAO().sortDocumentByName(search);
-                typeSort = SORT_NAME;
-                dialogSort.hide();
-                documentAdapter.setDocuments(documents);
-            }
-        });
-
-        sortTimeCreate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                documents = DocumentDatabase.getInstance(getContext()).documentDAO().sortDocumentByTimeCreate(search);
-                typeSort = SORT_TIME_CREATE;
-                dialogSort.hide();
-                documentAdapter.setDocuments(documents);
-            }
-        });
-
-        sortTimeAccess.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                documents = DocumentDatabase.getInstance(getContext()).documentDAO().sortDocumentByTimeAccess(search);
-                typeSort = SORT_TIME_ACCESS;
-                dialogSort.hide();
-                documentAdapter.setDocuments(documents);
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId){
+                    case R.id.sort_name:
+                        typeSort = SORT_NAME;
+                        showDocuments();
+                        dialogSort.hide();
+                        break;
+                    case R.id.sort_time_create:
+                        typeSort = SORT_TIME_CREATE;
+                        showDocuments();
+                        dialogSort.hide();
+                        break;
+                    case R.id.sort_time_access:
+                        typeSort = SORT_TIME_ACCESS;
+                        showDocuments();
+                        dialogSort.hide();
+                        break;
+                }
             }
         });
     }
@@ -400,6 +426,7 @@ public class HomeFragment extends Fragment {
 
         Window window = dialog.getWindow();
         window.setLayout(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         WindowManager.LayoutParams layoutParams = window.getAttributes();
         layoutParams.gravity = Gravity.CENTER;
         window.setAttributes(layoutParams);

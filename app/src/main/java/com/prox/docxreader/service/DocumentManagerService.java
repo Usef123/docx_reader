@@ -1,24 +1,18 @@
 package com.prox.docxreader.service;
 
 import android.app.Service;
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Binder;
-import android.os.Environment;
 import android.os.IBinder;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.webkit.MimeTypeMap;
 
 import com.prox.docxreader.database.DocumentDatabase;
 import com.prox.docxreader.modul.Document;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class DocumentManagerService extends Service {
@@ -38,26 +32,8 @@ public class DocumentManagerService extends Service {
         return myBinder;
     }
 
-    public ArrayList<File> findDocument(File file){
-        ArrayList<File> list = new ArrayList<>();
-        File[] files = file.listFiles();
-        for (File singleFile : files){
-            if (singleFile.isDirectory() && !singleFile.isHidden()){
-                list.addAll(findDocument(singleFile));
-            }else if (singleFile.getName().endsWith("docx")){
-                list.add(singleFile);
-            }
-        }
-        return list;
-    }
-
     public void insertDatabase() {
-        ContentResolver contentResolver = this.getContentResolver();
         Uri uri = MediaStore.Files.getContentUri("external");
-
-        String[] mimes = new String[]{
-                MimeTypeMap.getSingleton().getMimeTypeFromExtension("docx")
-        };
 
         final String[] columns = {
                 MediaStore.Files.FileColumns.DISPLAY_NAME,   //tên file
@@ -65,9 +41,9 @@ public class DocumentManagerService extends Service {
                 MediaStore.Files.FileColumns.MIME_TYPE,      //kiểu: docx
                 MediaStore.Files.FileColumns.DATA};          //path file
 
-        String selectionMimeType = MediaStore.Files.FileColumns.MIME_TYPE + "=?";
+        String selection = "_data LIKE '%.doc' OR _data LIKE '%.docx'";
 
-        Cursor cursor = contentResolver.query(uri, columns, selectionMimeType, mimes, null);
+        Cursor cursor = this.getContentResolver().query(uri, columns, selection, null, null);
         Log.d("myservice", "number: "+cursor.getCount());
 
 

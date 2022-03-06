@@ -4,7 +4,6 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
-import java.util.Date;
 
 @Entity(tableName = "document")
 public class Document implements Serializable {
@@ -12,14 +11,14 @@ public class Document implements Serializable {
     private int id;
     private String path;
     private String title;
-    private int timeCreate;
-    private int timeAccess;
+    private long timeCreate;
+    private long timeAccess;
     private boolean isFavorite;
 
     public Document() {
     }
 
-    public Document(String path, String title, int timeCreate, int timeAccess, boolean isFavorite) {
+    public Document(String path, String title, long timeCreate, long timeAccess, boolean isFavorite) {
         this.path = path;
         this.title = title;
         this.timeCreate = timeCreate;
@@ -51,19 +50,19 @@ public class Document implements Serializable {
         this.title = title;
     }
 
-    public int getTimeCreate() {
+    public long getTimeCreate() {
         return timeCreate;
     }
 
-    public void setTimeCreate(int timeCreate) {
+    public void setTimeCreate(long timeCreate) {
         this.timeCreate = timeCreate;
     }
 
-    public int getTimeAccess() {
+    public long getTimeAccess() {
         return timeAccess;
     }
 
-    public void setTimeAccess(int timeAccess) {
+    public void setTimeAccess(long timeAccess) {
         this.timeAccess = timeAccess;
     }
 

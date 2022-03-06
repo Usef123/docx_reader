@@ -2,7 +2,6 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/itemDocx"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -26,7 +25,6 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:text="TextView"
         android:textColor="@color/black"
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/txt_time"
@@ -42,21 +40,21 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:text="TextView"
         android:textColor="#80000000"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/btn_more"
         app:layout_constraintStart_toEndOf="@+id/img_docx" />
 
-    <ImageView
+    <ImageButton
         android:id="@+id/btn_more"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
         android:layout_marginEnd="16dp"
+        android:background="@drawable/img_button_while_selector"
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="@+id/txt_time"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/txt_title"
-        app:srcCompat="@drawable/ic_dot" />
+        app:srcCompat="@drawable/ic_button_more" />
 </androidx.constraintlayout.widget.ConstraintLayout>

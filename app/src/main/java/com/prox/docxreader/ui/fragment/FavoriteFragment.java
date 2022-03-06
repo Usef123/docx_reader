@@ -2,6 +2,8 @@ package com.prox.docxreader.ui.fragment;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -12,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,10 +21,11 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.MimeTypeMap;
-import android.widget.CheckBox;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.ImageButton;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,16 +38,14 @@ import com.prox.docxreader.modul.Document;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class FavoriteFragment extends Fragment {
     private View view;
-    private RecyclerView recyclerView;
     private DocumentAdapter documentAdapter;
     private List<Document> documents;
-    private ImageView btnSort;
     private EditText edtSearch;
-    private TextView txtTitle;
 
     private static final int SORT_NAME = 1;
     private static final int SORT_TIME_CREATE = 2;
@@ -56,7 +56,10 @@ public class FavoriteFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_favorite, container, false);
-        txtTitle = view.findViewById(R.id.txt_title_fragment);
+        edtSearch = view.findViewById(R.id.edt_search);
+        typeSort = SORT_NAME;
+
+        TextView txtTitle = view.findViewById(R.id.txt_title_fragment);
         txtTitle.setText(getResources().getString(R.string.title_favorite));
 
         setupRecyclerView();
@@ -69,7 +72,7 @@ public class FavoriteFragment extends Fragment {
     }
 
     private void setupRecyclerView() {
-        recyclerView = view.findViewById(R.id.recycler_view_favorite);
+        RecyclerView recyclerView = view.findViewById(R.id.recycler_view_favorite);
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(manager);
 
@@ -78,11 +81,25 @@ public class FavoriteFragment extends Fragment {
         documentAdapter = new DocumentAdapter(documents, new OnClickItemDocumentListener() {
             @Override
             public void onClickItemDocument(Document document) {
-                Log.d("path file", document.getPath());
+                if (!(new File(document.getPath())).exists()){
+                    Toast.makeText(getContext(), getResources().getString(R.string.notification_file_error), Toast.LENGTH_SHORT).show();
+                    showDocumentsFavorite();
+                    return;
+                }
+                //Update Time Access
+                document.setTimeAccess(new Date().getTime());
+                DocumentDatabase.getInstance(getContext()).documentDAO().updateDocument(document);
+
+                Toast.makeText(getContext(), document.getPath(), Toast.LENGTH_SHORT).show();
             }
         }, new OnClickMoreListener() {
             @Override
             public void onClickMore(Document document) {
+                if (!(new File(document.getPath())).exists()){
+                    Toast.makeText(getContext(), getResources().getString(R.string.notification_file_error), Toast.LENGTH_SHORT).show();
+                    showDocumentsFavorite();
+                    return;
+                }
                 openDialogMore(document);
             }
         });
@@ -97,7 +114,18 @@ public class FavoriteFragment extends Fragment {
     }
 
     private void showDocumentsFavorite() {
-        documents = DocumentDatabase.getInstance(getContext()).documentDAO().getDocumentsFavorite();
+        String search = edtSearch.getText().toString().trim();
+        switch (typeSort){
+            case SORT_NAME:
+                documents = DocumentDatabase.getInstance(getContext()).documentDAO().sortDocumentFavoriteByName(search);
+                break;
+            case SORT_TIME_CREATE:
+                documents = DocumentDatabase.getInstance(getContext()).documentDAO().sortDocumentFavoriteByTimeCreate(search);
+                break;
+            case SORT_TIME_ACCESS:
+                documents = DocumentDatabase.getInstance(getContext()).documentDAO().sortDocumentFavoriteByTimeAccess(search);
+                break;
+        }
         documentAdapter.setDocuments(documents);
     }
 
@@ -105,21 +133,36 @@ public class FavoriteFragment extends Fragment {
         Dialog dialogMore = createCustomDialog(R.layout.dialog_more_favorite);
         dialogMore.show();
 
-        LinearLayout itemShare, itemRemoveFavorite;
-        itemShare = dialogMore.findViewById(R.id.item_share);
-        itemRemoveFavorite = dialogMore.findViewById(R.id.item_favorite);
+        Button btnShare, btnFavorite;
+        btnShare = dialogMore.findViewById(R.id.btn_share);
+        btnFavorite = dialogMore.findViewById(R.id.btn_favorite);
 
-        itemShare.setOnClickListener(new View.OnClickListener() {
+        TextView txtTitle = dialogMore.findViewById(R.id.txt_title);
+        txtTitle.setText(document.getTitle());
+
+        btnShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (!(new File(document.getPath())).exists()){
+                    Toast.makeText(getContext(), getResources().getString(R.string.notification_file_error), Toast.LENGTH_SHORT).show();
+                    dialogMore.hide();
+                    showDocumentsFavorite();
+                    return;
+                }
                 shareDocument(document);
                 dialogMore.hide();
             }
         });
 
-        itemRemoveFavorite.setOnClickListener(new View.OnClickListener() {
+        btnFavorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (!(new File(document.getPath())).exists()){
+                    Toast.makeText(getContext(), getResources().getString(R.string.notification_file_error), Toast.LENGTH_SHORT).show();
+                    dialogMore.hide();
+                    showDocumentsFavorite();
+                    return;
+                }
                 removeFavorite(document);
                 dialogMore.hide();
             }
@@ -130,11 +173,15 @@ public class FavoriteFragment extends Fragment {
         Intent intentShareFile = new Intent(Intent.ACTION_SEND);
         File fileWithinMyDir = new File(document.getPath());
 
+        String titleFull = document.getTitle();         //Tên file có đuôi (.docx hoặc .doc)
+        int dot = titleFull.lastIndexOf('.');       //Vị trí dấu . cuối cùng
+        String type = titleFull.substring(dot+1);         //Đuôi file (docx hoặc doc)
+
         if(fileWithinMyDir.exists()) {
-            intentShareFile.setType(MimeTypeMap.getSingleton().getMimeTypeFromExtension("docx"));
+            intentShareFile.setType(MimeTypeMap.getSingleton().getMimeTypeFromExtension(type));
             intentShareFile.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://"+document.getPath()));
 
-            startActivity(Intent.createChooser(intentShareFile, "Share File"));
+            startActivity(Intent.createChooser(intentShareFile, titleFull));
         }else{
             Toast.makeText(getContext(), getResources().getString(R.string.notification_share_error), Toast.LENGTH_SHORT).show();
         }
@@ -148,7 +195,6 @@ public class FavoriteFragment extends Fragment {
     }
 
     private void addSearchDocument() {
-        edtSearch = view.findViewById(R.id.edt_search);
         edtSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -157,20 +203,7 @@ public class FavoriteFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                String search = edtSearch.getText().toString().trim();
-                List<Document> documentsSearch = null;
-                if (typeSort == SORT_NAME){
-                    documentsSearch = DocumentDatabase.getInstance(getContext()).documentDAO().sortDocumentFavoriteByName(search);
-                }else if (typeSort == SORT_TIME_CREATE){
-                    documentsSearch = DocumentDatabase.getInstance(getContext()).documentDAO().sortDocumentFavoriteByTimeCreate(search);
-                }else if (typeSort == SORT_TIME_ACCESS){
-                    documentsSearch = DocumentDatabase.getInstance(getContext()).documentDAO().sortDocumentFavoriteByTimeAccess(search);
-                }else{
-                    documentsSearch = DocumentDatabase.getInstance(getContext()).documentDAO().searchDocumentFavorite(search);
-                }
-                if (documentsSearch!=null){
-                    documentAdapter.setDocuments(documentsSearch);
-                }
+                showDocumentsFavorite();
             }
 
             @Override
@@ -178,11 +211,10 @@ public class FavoriteFragment extends Fragment {
 
             }
         });
-
     }
 
     private void addBtnSort() {
-        btnSort = view.findViewById(R.id.btn_filter);
+        ImageButton btnSort = view.findViewById(R.id.btn_sort);
         btnSort.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -195,57 +227,43 @@ public class FavoriteFragment extends Fragment {
         Dialog dialogSort = createCustomDialog(R.layout.dialog_sort);
         dialogSort.show();
 
-        LinearLayout sortName, sortTimeCreate, sortTimeAccess;
-        CheckBox chkSortName, chkSortTimeCreate, chkSortTimeAccess;
+        RadioButton sortName, sortTimeCreate, sortTimeAccess;
         sortName = dialogSort.findViewById(R.id.sort_name);
         sortTimeCreate = dialogSort.findViewById(R.id.sort_time_create);
         sortTimeAccess = dialogSort.findViewById(R.id.sort_time_access);
-        chkSortName = dialogSort.findViewById(R.id.chk_sort_name);
-        chkSortTimeCreate = dialogSort.findViewById(R.id.chk_sort_time_create);
-        chkSortTimeAccess = dialogSort.findViewById(R.id.chk_sort_time_access);
-
-        if (typeSort == SORT_NAME){
-            chkSortName.setChecked(true);
-            chkSortTimeCreate.setChecked(false);
-            chkSortTimeAccess.setChecked(false);
-        }else if (typeSort == SORT_TIME_CREATE){
-            chkSortName.setChecked(false);
-            chkSortTimeCreate.setChecked(true);
-            chkSortTimeAccess.setChecked(false);
-        }else if (typeSort == SORT_TIME_ACCESS){
-            chkSortName.setChecked(false);
-            chkSortTimeCreate.setChecked(false);
-            chkSortTimeAccess.setChecked(true);
+        switch (typeSort){
+            case SORT_NAME:
+                sortName.setChecked(true);
+                break;
+            case SORT_TIME_CREATE:
+                sortTimeCreate.setChecked(true);
+                break;
+            case SORT_TIME_ACCESS:
+                sortTimeAccess.setChecked(true);
+                break;
         }
 
-        String search = edtSearch.getText().toString().trim();
-        sortName.setOnClickListener(new View.OnClickListener() {
+        RadioGroup radioGroup = dialogSort.findViewById(R.id.rad_group);
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
-            public void onClick(View view) {
-                documents = DocumentDatabase.getInstance(getContext()).documentDAO().sortDocumentFavoriteByName(search);
-                typeSort = SORT_NAME;
-                dialogSort.hide();
-                documentAdapter.setDocuments(documents);
-            }
-        });
-
-        sortTimeCreate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                documents = DocumentDatabase.getInstance(getContext()).documentDAO().sortDocumentFavoriteByTimeCreate(search);
-                typeSort = SORT_TIME_CREATE;
-                dialogSort.hide();
-                documentAdapter.setDocuments(documents);
-            }
-        });
-
-        sortTimeAccess.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                documents = DocumentDatabase.getInstance(getContext()).documentDAO().sortDocumentFavoriteByTimeAccess(search);
-                typeSort = SORT_TIME_ACCESS;
-                dialogSort.hide();
-                documentAdapter.setDocuments(documents);
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId){
+                    case R.id.sort_name:
+                        typeSort = SORT_NAME;
+                        showDocumentsFavorite();
+                        dialogSort.hide();
+                        break;
+                    case R.id.sort_time_create:
+                        typeSort = SORT_TIME_CREATE;
+                        showDocumentsFavorite();
+                        dialogSort.hide();
+                        break;
+                    case R.id.sort_time_access:
+                        typeSort = SORT_TIME_ACCESS;
+                        showDocumentsFavorite();
+                        dialogSort.hide();
+                        break;
+                }
             }
         });
     }
@@ -258,6 +276,7 @@ public class FavoriteFragment extends Fragment {
 
         Window window = dialog.getWindow();
         window.setLayout(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         WindowManager.LayoutParams layoutParams = window.getAttributes();
         layoutParams.gravity = Gravity.CENTER;
         window.setAttributes(layoutParams);

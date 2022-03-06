@@ -3,7 +3,7 @@ package com.prox.docxreader.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -71,7 +71,7 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
 
     public class DocumentViewHolder extends RecyclerView.ViewHolder{
         private TextView txtTitleDocx, txtTimeDocx;
-        private ImageView btnMore;
+        private ImageButton btnMore;
         private ConstraintLayout itemDocx;
 
         public DocumentViewHolder(@NonNull View itemView) {

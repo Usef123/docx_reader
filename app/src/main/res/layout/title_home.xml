@@ -2,7 +2,6 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="#2166B7">
@@ -18,20 +17,21 @@
         android:textColor="@color/white"
         android:textSize="34sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/btn_filter"
+        app:layout_constraintEnd_toStartOf="@+id/btn_sort"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/btn_filter"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+    <ImageButton
+        android:id="@+id/btn_sort"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
         android:layout_marginEnd="16dp"
         android:scaleType="centerCrop"
+        android:background="@drawable/img_button_blue_selector"
         app:layout_constraintBottom_toBottomOf="@+id/txt_title_fragment"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/txt_title_fragment"
-        app:srcCompat="@drawable/ic_filter" />
+        app:srcCompat="@drawable/ic_sort" />
 
     <EditText
         android:id="@+id/edt_search"
