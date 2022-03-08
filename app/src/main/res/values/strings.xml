@@ -18,7 +18,7 @@
     <string name="btn_share">Share</string>
     <string name="btn_favorite">Favorite</string>
 
-    <string name="title_delete">Are you sure delete this document ?</string>
+    <string name="title_delete">Are you sure delete this document?</string>
     <string name="txt_yes">Yes</string>
     <string name="txt_no">No</string>
 
@@ -41,4 +41,12 @@
 
     <string name="notification_add_favorite">Favorite</string>
     <string name="notification_remove_favorite">Remove favorite</string>
+
+    <string name="btn_privacy_policy">Privacy Policy</string>
+    <string name="btn_more_app">More App</string>
+    <string name="btn_feedback">Feedback</string>
+    <string name="btn_share_app">Share</string>
+    <string name="btn_language">Language</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

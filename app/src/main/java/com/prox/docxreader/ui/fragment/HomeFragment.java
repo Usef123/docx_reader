@@ -35,6 +35,9 @@ import com.prox.docxreader.R;
 import com.prox.docxreader.adapter.DocumentAdapter;
 import com.prox.docxreader.database.DocumentDatabase;
 import com.prox.docxreader.modul.Document;
+import com.prox.docxreader.ui.activity.MainActivity;
+import com.wxiwei.office.constant.MainConstant;
+import com.wxiwei.office.officereader.AppActivity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -87,7 +90,9 @@ public class HomeFragment extends Fragment {
                 document.setTimeAccess(new Date().getTime());
                 DocumentDatabase.getInstance(getContext()).documentDAO().updateDocument(document);
 
-                Toast.makeText(getContext(), document.getPath(), Toast.LENGTH_SHORT).show();
+//                Intent intent = new Intent(getActivity(), AppActivity.class);
+//                intent.putExtra(MainConstant.INTENT_FILED_FILE_PATH, document.getPath());
+//                startActivity(intent);
             }
         }, new OnClickMoreListener() {
             @Override

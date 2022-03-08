@@ -7,7 +7,7 @@
         <item name="android:shadowDx">0</item>
         <item name="android:shadowDy">-1</item>
         <item name="android:shadowRadius">0.2</item>
-        <item name="android:textSize">16dp</item>
+        <item name="android:textSize">16sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:background">@drawable/button_selector</item>
         <item name="android:focusable">true</item>
@@ -20,7 +20,7 @@
         <item name="android:shadowDx">0</item>
         <item name="android:shadowDy">-1</item>
         <item name="android:shadowRadius">0.2</item>
-        <item name="android:textSize">16dp</item>
+        <item name="android:textSize">16sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:background">@drawable/img_button_while_selector</item>
         <item name="android:focusable">true</item>
@@ -33,7 +33,7 @@
         <item name="android:shadowDx">0</item>
         <item name="android:shadowDy">-1</item>
         <item name="android:shadowRadius">0.2</item>
-        <item name="android:textSize">16dp</item>
+        <item name="android:textSize">16sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:background">@drawable/img_button_blue_selector</item>
         <item name="android:focusable">true</item>

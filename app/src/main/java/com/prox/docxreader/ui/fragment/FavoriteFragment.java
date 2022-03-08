@@ -90,7 +90,9 @@ public class FavoriteFragment extends Fragment {
                 document.setTimeAccess(new Date().getTime());
                 DocumentDatabase.getInstance(getContext()).documentDAO().updateDocument(document);
 
-                Toast.makeText(getContext(), document.getPath(), Toast.LENGTH_SHORT).show();
+//                Intent intent = new Intent(getActivity(), AppActivity.class);
+//                intent.putExtra(MainConstant.INTENT_FILED_FILE_PATH, document.getPath());
+//                startActivity(intent);
             }
         }, new OnClickMoreListener() {
             @Override

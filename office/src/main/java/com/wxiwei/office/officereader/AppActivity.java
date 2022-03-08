@@ -441,7 +441,7 @@ public class AppActivity extends AppCompatActivity implements IMainFrame {
         Intent intent = getIntent();
 
         filePath = intent.getStringExtra(MainConstant.INTENT_FILED_FILE_PATH);
-        Log.d("AAA", "init: file path :" + filePath);
+        Log.d("AAAAAAAAAAA", "init: file path :" + filePath);
         // 文件关联打开文件
         if (!intent.hasExtra(MainConstant.INTENT_FILED_FILE_PATH)) {
             this.filePath = getRealPath2(intent.getData());

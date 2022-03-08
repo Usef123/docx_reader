@@ -13,7 +13,13 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
-    <style name="YourApplicationTheme" parent="android:style/Theme.NoTitleBar">
+    <style name="ThemeButton" parent="android:style/Theme.NoTitleBar">
         <item name="android:buttonStyle">@style/button</item>
+    </style>
+    <style name="ThemeImgButtonWhile" parent="android:style/Theme.NoTitleBar">
+        <item name="android:buttonStyle">@style/img_button_while</item>
+    </style>
+    <style name="ThemeImgButtonBlue" parent="android:style/Theme.NoTitleBar">
+        <item name="android:buttonStyle">@style/img_button_blue</item>
     </style>
 </resources>

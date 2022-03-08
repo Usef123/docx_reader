@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Docx Reader</string>
+
+    <string name="botton_nav_home">Trang chủ</string>
+    <string name="botton_nav_favorite">Yêu thích</string>
+    <string name="botton_nav_setting">Cài đặt</string>
+
+    <string name="title_home">Khám phá</string>
+    <string name="title_favorite">Dấu trang</string>
+    <string name="hint_search">Tìm tài liệu</string>
+
+    <string name="btn_sort_name">Sắp xếp theo tên tệp</string>
+    <string name="btn_sort_created_time">Sắp xếp theo thời gian đã tạo</string>
+    <string name="btn_sort_access_time">Sắp xếp theo thời gian truy cập</string>
+
+    <string name="btn_delete">Xoá</string>
+    <string name="btn_rename">Đổi tên</string>
+    <string name="btn_share">Chia sẻ</string>
+    <string name="btn_favorite">Yêu thích</string>
+
+    <string name="title_delete">Bạn có chắc muốn xoá tệp này không?</string>
+    <string name="txt_yes">Xoá bỏ</string>
+    <string name="txt_no">Huỷ bỏ</string>
+
+    <string name="title_rename">Đổi tên tệp</string>
+    <string name="txt_ok">Đồng ý</string>
+    <string name="txt_cancel">Huỷ bỏ</string>
+
+    <string name="notification_file_error">Tệp bị lỗi</string>
+
+    <string name="notification_delete_success">Xoá tệp thành công</string>
+    <string name="notification_delete_error">Xoá tệp thất bại</string>
+
+    <string name="notification_rename_empty">Tên tệp không được để trống</string>
+    <string name="notification_file_duplicate">Tên tệp đã tồn tại</string>
+    <string name="notification_rename_success">Đổi tên tệp thành công</string>
+    <string name="notification_rename_error">Đổi tên tệp thất bại</string>
+    <string name="notification_not_rename">Tên tệp không thay đổi</string>
+
+    <string name="notification_share_error">Chia sẻ thất bại</string>
+
+    <string name="notification_add_favorite">Đã thêm vào yêu thích</string>
+    <string name="notification_remove_favorite">Đã xoá khỏi yêu thích</string>
+
+    <string name="btn_privacy_policy">Chính sách bảo mật</string>
+    <string name="btn_more_app">Nhiều ứng dụng hơn</string>
+    <string name="btn_feedback">Phản hồi</string>
+    <string name="btn_share_app">Chia sẻ</string>
+    <string name="btn_language">Ngôn ngữ</string>
+</resources>

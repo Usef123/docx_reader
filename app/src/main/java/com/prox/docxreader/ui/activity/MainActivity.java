@@ -1,8 +1,11 @@
 package com.prox.docxreader.ui.activity;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
@@ -17,16 +20,19 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.view.View;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.prox.docxreader.LocaleHelper;
 import com.prox.docxreader.R;
 import com.prox.docxreader.service.DocumentManagerService;
 
-import java.io.File;
-import java.util.ArrayList;
-
 public class MainActivity extends AppCompatActivity implements ServiceConnection {
     private static final int MY_REQUEST_PERMISSION = 1;
+
+    private NavController navController;
+    private AppBarConfiguration appBarConfiguration;
+    private BottomNavigationView bottomNavigationView;
 
     private DocumentManagerService documentManagerService;
     private boolean isConnecting;
@@ -38,6 +44,8 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        LocaleHelper.loadLanguage(this);
 
         requestPermission();
         setupBottomNav();
@@ -98,16 +106,42 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     private void setupBottomNav() {
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host_fragment);
-        NavController navController = navHostFragment.getNavController();
+        navController = navHostFragment.getNavController();
 
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
+        appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.homeFragment,
                 R.id.favoriteFragment,
                 R.id.settingFragment).build();
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav);
+        bottomNavigationView = findViewById(R.id.bottom_nav);
         bottomNavigationView.setItemIconTintList(null);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration);
+
+        navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
+            @Override
+            public void onDestinationChanged(@NonNull NavController navController,
+                                             @NonNull NavDestination navDestination,
+                                             @Nullable Bundle bundle) {
+                if (navDestination.getId()==R.id.languageFragment){
+                    bottomNavigationView.setVisibility(View.GONE);
+                    toolbar.setVisibility(View.VISIBLE);
+                    toolbar.setTitle(R.string.btn_language);
+                } else{
+                    bottomNavigationView.setVisibility(View.VISIBLE);
+                    toolbar.setVisibility(View.GONE);
+                    toolbar.setTitle("");
+                }
+            }
+        });
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        return NavigationUI.navigateUp(navController, appBarConfiguration)
+                ||super.onSupportNavigateUp();
     }
 
     @Override
