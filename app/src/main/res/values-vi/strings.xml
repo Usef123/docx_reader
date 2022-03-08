@@ -2,6 +2,10 @@
 <resources>
     <string name="app_name">Docx Reader</string>
 
+    <string name="language">Language</string>
+
+    <string name="notification_permission_error">Vui lòng cho phép quyền trước</string>
+
     <string name="botton_nav_home">Trang chủ</string>
     <string name="botton_nav_favorite">Yêu thích</string>
     <string name="botton_nav_setting">Cài đặt</string>

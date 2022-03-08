@@ -2,6 +2,7 @@ package com.prox.docxreader.ui.activity;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.NavController;
@@ -20,16 +21,27 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionGrantedResponse;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.DialogOnAnyDeniedMultiplePermissionsListener;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.karumi.dexter.listener.single.PermissionListener;
 import com.prox.docxreader.LocaleHelper;
 import com.prox.docxreader.R;
 import com.prox.docxreader.service.DocumentManagerService;
 
-public class MainActivity extends AppCompatActivity implements ServiceConnection {
-    private static final int MY_REQUEST_PERMISSION = 1;
+import java.util.List;
 
+public class MainActivity extends AppCompatActivity implements ServiceConnection {
     private NavController navController;
     private AppBarConfiguration appBarConfiguration;
     private BottomNavigationView bottomNavigationView;
@@ -47,17 +59,24 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
 
         LocaleHelper.loadLanguage(this);
 
-        requestPermission();
-        setupBottomNav();
-        startService();
+        requestPermissions();
+        setupUI();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        handler.removeCallbacks(updateFile);
-        handler=null;
-        unbindService(this);
+        if (handler!= null){
+            if (updateFile!=null){
+                handler.removeCallbacks(updateFile);
+                updateFile = null;
+            }
+            handler=null;
+        }
+        if (isConnecting){
+            unbindService(this);
+            isConnecting = false;
+        }
     }
 
     private void startService() {
@@ -79,31 +98,52 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         handler.postDelayed(updateFile, 1000);
     }
 
-    private void requestPermission() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M){
-        }else if(checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-                && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
-        }else{
-            String[] permission = {Manifest.permission.READ_EXTERNAL_STORAGE
-                    , Manifest.permission.WRITE_EXTERNAL_STORAGE};
-            requestPermissions(permission, MY_REQUEST_PERMISSION);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == MY_REQUEST_PERMISSION) {
-            if (grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                    && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-            } else {
-                finish();
+    private void requestPermissions() {
+        Dexter.withContext(this)
+                .withPermissions(
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ).withListener(new MultiplePermissionsListener() {
+            @Override
+            public void onPermissionsChecked(MultiplePermissionsReport report) {
+                if (report.areAllPermissionsGranted()){
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+                        requestPermission();
+                    }else{
+                        startService();
+                    }
+                }else{
+                    Toast.makeText(MainActivity.this, getResources().getString(R.string.notification_permission_error), Toast.LENGTH_SHORT).show();
+                }
             }
-        }
+            @Override
+            public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                token.continuePermissionRequest();
+            }
+        }).check();
     }
 
-    private void setupBottomNav() {
+    @RequiresApi(api = Build.VERSION_CODES.R)
+    private void requestPermission(){
+        Dexter.withContext(this)
+                .withPermission(Manifest.permission.MANAGE_EXTERNAL_STORAGE)
+                .withListener(new PermissionListener() {
+                    @Override
+                    public void onPermissionGranted(PermissionGrantedResponse response) {
+                        startService();
+                    }
+                    @Override
+                    public void onPermissionDenied(PermissionDeniedResponse response) {
+                        Toast.makeText(MainActivity.this, getResources().getString(R.string.notification_permission_error), Toast.LENGTH_SHORT).show();
+                    }
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                }).check();
+    }
+
+    private void setupUI() {
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host_fragment);
         navController = navHostFragment.getNavController();
@@ -128,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                 if (navDestination.getId()==R.id.languageFragment){
                     bottomNavigationView.setVisibility(View.GONE);
                     toolbar.setVisibility(View.VISIBLE);
-                    toolbar.setTitle(R.string.btn_language);
+                    toolbar.setTitle(R.string.language);
                 } else{
                     bottomNavigationView.setVisibility(View.VISIBLE);
                     toolbar.setVisibility(View.GONE);

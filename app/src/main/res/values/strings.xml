@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">Docx Reader</string>
-    <!-- TODO: Remove or change this placeholder text -->
+
+    <string name="language">Language</string>
+
+    <string name="notification_permission_error">Please allow permission first</string>
+    
     <string name="botton_nav_home">Home</string>
     <string name="botton_nav_favorite">Favorite</string>
     <string name="botton_nav_setting">Setting</string>
