@@ -1,10 +1,8 @@
 package com.prox.docxreader.adapter;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -12,18 +10,9 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.prox.docxreader.LocaleHelper;
-import com.prox.docxreader.OnClickItemDocumentListener;
 import com.prox.docxreader.OnClickLanguageListener;
-import com.prox.docxreader.OnClickMoreListener;
 import com.prox.docxreader.R;
-import com.prox.docxreader.modul.Document;
-import com.prox.docxreader.ui.activity.MainActivity;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 public class LangugeAdapter extends RecyclerView.Adapter<LangugeAdapter.LanguageViewHolder> {

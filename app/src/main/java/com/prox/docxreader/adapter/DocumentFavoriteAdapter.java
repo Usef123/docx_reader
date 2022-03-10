@@ -10,8 +10,13 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.chauthai.swipereveallayout.SwipeRevealLayout;
+import com.chauthai.swipereveallayout.ViewBinderHelper;
+import com.prox.docxreader.OnClickDeleteListener;
+import com.prox.docxreader.OnClickFavoriteListener;
 import com.prox.docxreader.OnClickItemDocumentListener;
-import com.prox.docxreader.OnClickMoreListener;
+import com.prox.docxreader.OnClickRenameListener;
+import com.prox.docxreader.OnClickShareListener;
 import com.prox.docxreader.R;
 import com.prox.docxreader.modul.Document;
 
@@ -19,17 +24,21 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.DocumentViewHolder> {
+public class DocumentFavoriteAdapter extends RecyclerView.Adapter<DocumentFavoriteAdapter.DocumentViewHolder> {
     private List<Document> documents;
     private OnClickItemDocumentListener onClickItemDocumentListener;
-    private OnClickMoreListener onClickMoreListener;
+    private OnClickShareListener onClickShareListener;
+    private OnClickFavoriteListener onClickFavoriteListener;
 
-    public DocumentAdapter(List<Document> documents,
-                           OnClickItemDocumentListener onClickItemDocumentListener,
-                           OnClickMoreListener onClickMoreListener){
-        this.documents = documents;
+    private final ViewBinderHelper viewBinderHelper = new ViewBinderHelper();
+
+    public DocumentFavoriteAdapter(OnClickItemDocumentListener onClickItemDocumentListener,
+                                   OnClickShareListener onClickShareListener,
+                                   OnClickFavoriteListener onClickFavoriteListener){
         this.onClickItemDocumentListener = onClickItemDocumentListener;
-        this.onClickMoreListener = onClickMoreListener;
+        this.onClickShareListener = onClickShareListener;
+        this.onClickFavoriteListener = onClickFavoriteListener;
+        viewBinderHelper.setOpenOnlyOne(true);
     }
 
     public void setDocuments(List<Document> documents){
@@ -40,7 +49,7 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
     @NonNull
     @Override
     public DocumentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_docx, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_docx_favorite, parent, false);
         return new DocumentViewHolder(view);
     }
 
@@ -49,11 +58,23 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
         Document document = documents.get(position);
         holder.txtTitleDocx.setText(document.getTitle());
         holder.txtTimeDocx.setText(getDate(document.getTimeCreate()));
+        if (document.isFavorite()){
+            holder.btnFavorite.setImageResource(R.drawable.ic_favorite);
+        }else{
+            holder.btnFavorite.setImageResource(R.drawable.ic_favorite_fill);
+        }
 
-        holder.btnMore.setOnClickListener(new View.OnClickListener() {
+        viewBinderHelper.bind(holder.swipeRevealLayout, String.valueOf(document.getId()));
+        holder.btnShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onClickMoreListener.onClickMore(document);
+                onClickShareListener.onClickShare(document);
+            }
+        });
+        holder.btnFavorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onClickFavoriteListener.onClickFavorite(document);
             }
         });
         holder.itemDocx.setOnClickListener(new View.OnClickListener() {
@@ -71,15 +92,21 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
 
     public class DocumentViewHolder extends RecyclerView.ViewHolder{
         private TextView txtTitleDocx, txtTimeDocx;
-        private ImageButton btnMore;
+        private ImageButton btnDelete, btnRename, btnShare, btnFavorite;
         private ConstraintLayout itemDocx;
+        private SwipeRevealLayout swipeRevealLayout;
 
         public DocumentViewHolder(@NonNull View itemView) {
             super(itemView);
             txtTitleDocx = itemView.findViewById(R.id.txt_title);
             txtTimeDocx = itemView.findViewById(R.id.txt_time);
-            btnMore = itemView.findViewById(R.id.btn_more);
+            btnDelete = itemView.findViewById(R.id.btn_delete);
+            btnRename = itemView.findViewById(R.id.btn_rename);
+            btnShare = itemView.findViewById(R.id.btn_share);
+            btnFavorite = itemView.findViewById(R.id.btn_favorite);
             itemDocx = itemView.findViewById(R.id.itemDocx);
+
+            swipeRevealLayout = itemView.findViewById(R.id.swipeRevealLayout);
         }
     }
 

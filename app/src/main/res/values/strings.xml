@@ -51,6 +51,7 @@
     <string name="btn_feedback">Feedback</string>
     <string name="btn_share_app">Share</string>
     <string name="btn_language">Language</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="subject_email">Feedback Docx Reader</string>
+    <string name="notification_send_mail">Send mail...</string>
 </resources>

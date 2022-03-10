@@ -12,15 +12,11 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import android.Manifest;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
-import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -32,25 +28,19 @@ import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.multi.DialogOnAnyDeniedMultiplePermissionsListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.karumi.dexter.listener.single.PermissionListener;
 import com.prox.docxreader.LocaleHelper;
 import com.prox.docxreader.R;
-import com.prox.docxreader.service.DocumentManagerService;
+import com.prox.docxreader.database.DocumentDatabase;
+import com.prox.docxreader.modul.Document;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements ServiceConnection {
+public class MainActivity extends AppCompatActivity{
     private NavController navController;
     private AppBarConfiguration appBarConfiguration;
     private BottomNavigationView bottomNavigationView;
-
-    private DocumentManagerService documentManagerService;
-    private boolean isConnecting;
-
-    private Handler handler;
-    private Runnable updateFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,42 +50,15 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         LocaleHelper.loadLanguage(this);
 
         requestPermissions();
-        setupUI();
+        init();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (handler!= null){
-            if (updateFile!=null){
-                handler.removeCallbacks(updateFile);
-                updateFile = null;
-            }
-            handler=null;
-        }
-        if (isConnecting){
-            unbindService(this);
-            isConnecting = false;
-        }
-    }
-
-    private void startService() {
-        Intent intentService = new Intent(MainActivity.this, DocumentManagerService.class);
-        startService(intentService);
-        bindService(intentService, this, Context.BIND_AUTO_CREATE);
-
-        handler = new Handler();
-        updateFile = new Runnable() {
-            @Override
-            public void run() {
-                if (isConnecting){
-                    documentManagerService.insertDatabase();
-                    documentManagerService.updateDatabase();
-                }
-                handler.postDelayed(this, 1000);
-            }
-        };
-        handler.postDelayed(updateFile, 1000);
+        bottomNavigationView = null;
+        appBarConfiguration = null;
+        navController=null;
     }
 
     private void requestPermissions() {
@@ -110,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
                         requestPermission();
                     }else{
-                        startService();
+                        insertDatabase();
                     }
                 }else{
                     Toast.makeText(MainActivity.this, getResources().getString(R.string.notification_permission_error), Toast.LENGTH_SHORT).show();
@@ -130,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                 .withListener(new PermissionListener() {
                     @Override
                     public void onPermissionGranted(PermissionGrantedResponse response) {
-                        startService();
+                        insertDatabase();
                     }
                     @Override
                     public void onPermissionDenied(PermissionDeniedResponse response) {
@@ -143,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                 }).check();
     }
 
-    private void setupUI() {
+    private void init() {
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host_fragment);
         navController = navHostFragment.getNavController();
@@ -168,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                 if (navDestination.getId()==R.id.languageFragment){
                     bottomNavigationView.setVisibility(View.GONE);
                     toolbar.setVisibility(View.VISIBLE);
-                    toolbar.setTitle(R.string.language);
+                    toolbar.setTitle(getResources().getString(R.string.language));
                 } else{
                     bottomNavigationView.setVisibility(View.VISIBLE);
                     toolbar.setVisibility(View.GONE);
@@ -184,16 +147,49 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                 ||super.onSupportNavigateUp();
     }
 
-    @Override
-    public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-        DocumentManagerService.MyBinder myBinder = (DocumentManagerService.MyBinder) iBinder;
-        documentManagerService = myBinder.getDocumentManagerService();
-        isConnecting = true;
+    public void insertDatabase() {
+        Uri uri = MediaStore.Files.getContentUri("external");
+
+        final String[] columns = {
+                MediaStore.Files.FileColumns.DISPLAY_NAME,   //tên file
+                MediaStore.Files.FileColumns.DATE_ADDED,     //date tạo
+                MediaStore.Files.FileColumns.MIME_TYPE,      //kiểu: docx
+                MediaStore.Files.FileColumns.DATA};          //path file
+
+        String selection = "_data LIKE '%.doc' OR _data LIKE '%.docx'";
+
+        Cursor cursor = this.getContentResolver().query(uri, columns, selection, null, null);
+        Log.d("database", "number: "+cursor.getCount());
+
+
+        if (cursor != null) {
+            int title = cursor.getColumnIndex(MediaStore.Files.FileColumns.DISPLAY_NAME);
+            int date_add = cursor.getColumnIndex(MediaStore.Files.FileColumns.DATE_ADDED);
+            int path = cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA);
+
+            while (cursor.moveToNext()) {
+                String str_title = cursor.getString(title);
+                String str_path = cursor.getString(path);
+                String str_date_add = cursor.getString(date_add);
+
+                Document document = new Document();
+                document.setPath(str_path);
+                document.setTitle(str_title);
+                document.setTimeCreate(Integer.parseInt(str_date_add));
+                document.setTimeAccess(Integer.parseInt(str_date_add));
+                document.setFavorite(false);
+
+                if (!isDocumentExist(document)){
+                    DocumentDatabase.getInstance(this).documentDAO().insertDocument(document);
+                    Log.d("database", "insert "+document.getPath());
+                }
+            }
+            cursor.close();
+        }
     }
 
-    @Override
-    public void onServiceDisconnected(ComponentName componentName) {
-        documentManagerService = null;
-        isConnecting = false;
+    private boolean isDocumentExist(Document document) {
+        List<Document> documents = DocumentDatabase.getInstance(this).documentDAO().checkDocument(document.getPath());
+        return documents != null && !documents.isEmpty();
     }
 }

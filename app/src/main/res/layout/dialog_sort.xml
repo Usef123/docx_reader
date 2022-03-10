@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RadioGroup
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/rad_group"
     android:layout_width="wrap_content"
@@ -8,33 +8,76 @@
     android:padding="16dp"
     android:background="@drawable/bg_dialog_while">
 
-    <RadioButton
+    <LinearLayout
         android:id="@+id/sort_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/btn_sort_name"
-        android:textSize="24sp"
-        android:padding="4dp"
-        android:drawableLeft="@drawable/ic_sort_name"
-        android:drawablePadding="8dp"/>
-
-    <RadioButton
+        android:orientation="horizontal"
+        android:background="@drawable/img_button_while_selector">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_sort_name"
+            android:paddingEnd="16dp"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="@string/btn_sort_name"
+            android:textSize="24sp"
+            android:paddingEnd="16dp"
+            android:layout_weight="1"/>
+        <ImageView
+            android:id="@+id/name_checked"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_checked"/>
+    </LinearLayout>
+    <LinearLayout
         android:id="@+id/sort_time_create"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/btn_sort_created_time"
-        android:textSize="24sp"
-        android:padding="4dp"
-        android:drawableLeft="@drawable/ic_sort_time_create"
-        android:drawablePadding="8dp"/>
-
-    <RadioButton
+        android:orientation="horizontal"
+        android:background="@drawable/img_button_while_selector">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_sort_time_create"
+            android:paddingEnd="16dp"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="@string/btn_sort_created_time"
+            android:textSize="24sp"
+            android:paddingEnd="16dp"
+            android:layout_weight="1"/>
+        <ImageView
+            android:id="@+id/time_create_checked"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_checked"/>
+    </LinearLayout>
+    <LinearLayout
         android:id="@+id/sort_time_access"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/btn_sort_access_time"
-        android:textSize="24sp"
-        android:padding="4dp"
-        android:drawableLeft="@drawable/ic_sort_time_access"
-        android:drawablePadding="8dp"/>
-</RadioGroup>
+        android:orientation="horizontal"
+        android:background="@drawable/img_button_while_selector">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_sort_time_access"
+            android:paddingEnd="16dp"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="@string/btn_sort_access_time"
+            android:textSize="24sp"
+            android:paddingEnd="16dp"
+            android:layout_weight="1"/>
+        <ImageView
+            android:id="@+id/time_access_checked"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_checked"/>
+    </LinearLayout>
+</LinearLayout>

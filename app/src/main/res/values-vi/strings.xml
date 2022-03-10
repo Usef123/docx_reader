@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">Docx Reader</string>
 
-    <string name="language">Language</string>
+    <string name="language">Ngôn ngữ</string>
 
     <string name="notification_permission_error">Vui lòng cho phép quyền trước</string>
 
@@ -52,4 +52,7 @@
     <string name="btn_feedback">Phản hồi</string>
     <string name="btn_share_app">Chia sẻ</string>
     <string name="btn_language">Ngôn ngữ</string>
+
+    <string name="subject_email">Phản hồi Docx Reader</string>
+    <string name="notification_send_mail">Gửi mail...</string>
 </resources>

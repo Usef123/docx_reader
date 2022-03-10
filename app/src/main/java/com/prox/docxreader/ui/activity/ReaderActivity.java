@@ -1,41 +1,6 @@
-/*
- * 文件名称:           MainControl.java
- *
- * 编译器:             android2.2
- * 时间:               下午1:34:44
- */
+package com.prox.docxreader.ui.activity;
 
-package com.wxiwei.office.officereader;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.wxiwei.office.common.IOfficeToPicture;
-import com.wxiwei.office.constant.EventConstant;
-import com.wxiwei.office.constant.MainConstant;
-import com.wxiwei.office.constant.wp.WPViewConstant;
-import com.wxiwei.office.macro.DialogListener;
-import com.wxiwei.office.officereader.beans.AImageButton;
-import com.wxiwei.office.officereader.beans.AImageCheckButton;
-import com.wxiwei.office.officereader.beans.AToolsbar;
-import com.wxiwei.office.officereader.beans.CalloutToolsbar;
-import com.wxiwei.office.officereader.beans.PDFToolsbar;
-import com.wxiwei.office.officereader.beans.PGToolsbar;
-import com.wxiwei.office.officereader.beans.SSToolsbar;
-import com.wxiwei.office.officereader.beans.WPToolsbar;
-import com.wxiwei.office.officereader.database.DBService;
-import com.wxiwei.office.res.ResKit;
-import com.wxiwei.office.ss.sheetbar.SheetBar;
-import com.wxiwei.office.system.FileKit;
-import com.wxiwei.office.system.IControl;
-import com.wxiwei.office.system.IMainFrame;
-import com.wxiwei.office.system.MainControl;
-import com.wxiwei.office.system.beans.pagelist.IPageListViewListener;
-import com.wxiwei.office.system.dialog.ColorPickerDialog;
-
+import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -64,6 +29,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.webkit.MimeTypeMap;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.Toast;
@@ -74,134 +40,96 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
-/**
- * 文件注释
- * <p>
- * <p>
- * Read版本:        Read V1.0
- * <p>
- * 作者:            梁金晶
- * <p>
- * 日期:            2011-10-27
- * <p>
- * 负责人:          梁金晶
- * <p>
- * 负责小组:
- * <p>
- * <p>
- */
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.prox.docxreader.R;
+import com.wxiwei.office.common.IOfficeToPicture;
+import com.wxiwei.office.constant.EventConstant;
+import com.wxiwei.office.constant.MainConstant;
+import com.wxiwei.office.constant.wp.WPViewConstant;
+import com.wxiwei.office.macro.DialogListener;
+import com.wxiwei.office.officereader.AppFrame;
+import com.wxiwei.office.officereader.FindToolBar;
+import com.wxiwei.office.officereader.beans.AImageButton;
+import com.wxiwei.office.officereader.beans.AImageCheckButton;
+import com.wxiwei.office.officereader.beans.AToolsbar;
+import com.wxiwei.office.officereader.beans.CalloutToolsbar;
+import com.wxiwei.office.officereader.beans.PDFToolsbar;
+import com.wxiwei.office.officereader.beans.PGToolsbar;
+import com.wxiwei.office.officereader.beans.SSToolsbar;
+import com.wxiwei.office.officereader.beans.WPToolsbar;
+import com.wxiwei.office.officereader.database.DBService;
+import com.wxiwei.office.res.ResKit;
+import com.wxiwei.office.ss.sheetbar.SheetBar;
+import com.wxiwei.office.system.FileKit;
+import com.wxiwei.office.system.IControl;
+import com.wxiwei.office.system.IMainFrame;
+import com.wxiwei.office.system.MainControl;
+import com.wxiwei.office.system.beans.pagelist.IPageListViewListener;
+import com.wxiwei.office.system.dialog.ColorPickerDialog;
 
-public class AppActivity extends AppCompatActivity implements IMainFrame {
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ReaderActivity extends AppCompatActivity implements IMainFrame {
+    public static final String FILE_PATH = "FILE_PATH";
+    public static final String FILE_NAME = "FILE_NAME";
 
     FrameLayout frameLayout;
     Toolbar toolbar;
-    private boolean startFromOtherApp = false;
 
-    /**
-     * 构造器
-     */
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        requestWindowFeature(Window.FEATURE_NO_TITLE);
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
+//        requestPermissions();
 
         control = new MainControl(this);
         appFrame = new AppFrame(getApplicationContext());
-        control.setOffictToPicture(new IOfficeToPicture() {
-            public Bitmap getBitmap(int componentWidth, int componentHeight) {
-                if (componentWidth == 0 || componentHeight == 0) {
-                    return null;
-                }
-                if (bitmap == null
-                        || bitmap.getWidth() != componentWidth
-                        || bitmap.getHeight() != componentHeight) {
-                    // custom picture size
-                    if (bitmap != null) {
-                        bitmap.recycle();
-                    }
-                    //bitmap = Bitmap.createBitmap(800, 600,  Config.ARGB_8888);
-                    //
-                    bitmap = Bitmap.createBitmap((int) (componentWidth), (int) (componentHeight), Config.ARGB_8888);
-                }
-                return bitmap;
-                //return null;
-            }
 
-            public void callBack(Bitmap bitmap) {
-                saveBitmapToFile(bitmap);
-            }
-
-            //
-            private Bitmap bitmap;
-
-            @Override
-            public void setModeType(byte modeType) {
-                // TODO Auto-generated method stub
-
-            }
-
-            @Override
-            public byte getModeType() {
-                // TODO Auto-generated method stub
-                return VIEW_CHANGE_END;
-            }
-
-            @Override
-            public boolean isZoom() {
-                // TODO Auto-generated method stub
-                return false;
-            }
-
-            @Override
-            public void dispose() {
-                // TODO Auto-generated method stub
-
-            }
-        });
-        //setTheme(control.getSysKit().isVertical(this) ? R.style.title_background_vertical   : R.style.title_background_horizontal);
         setContentView(R.layout.activity_office_detail);
         toolbar = findViewById(R.id.toolbar_office);
         frameLayout = findViewById(R.id.viewer_office);
 
         toolbar.setNavigationIcon(R.drawable.ic_back_24);
-        toolbar.setTitleTextAppearance(this,
-                R.style.TitleToolBar
-        );
+        toolbar.setTitleTextAppearance(this, R.style.TitleToolBar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         frameLayout.removeAllViews();
         frameLayout.addView(appFrame);
-        frameLayout.post(new Runnable() {
-            /**
-             */
-            public void run() {
-                setFilePath();
-                init();
-            }
+        frameLayout.post(() -> {
+            filePath = getIntent().getStringExtra(FILE_PATH);
+            fileName = getIntent().getStringExtra(FILE_NAME);
+            init();
         });
-
     }
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-//        frameLayout.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                init();
-//            }
-//        });
-        filePath = getRealPath2(intent.getData());
-        int index = getFilePath().indexOf(":");
-        if (index > 0) {
-            filePath = filePath.substring(index + 3);
-        }
-        filePath = Uri.decode(filePath);
-        startFromOtherApp = true;
+    private void requestPermissions() {
+        Dexter.withContext(this)
+                .withPermissions(
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ).withListener(new MultiplePermissionsListener() {
+            @Override
+            public void onPermissionsChecked(MultiplePermissionsReport report) {
+                if (report.areAllPermissionsGranted()){
 
-        init();
+                }else{
+                    Toast.makeText(ReaderActivity.this, getResources().getString(R.string.notification_permission_error), Toast.LENGTH_SHORT).show();
+                }
+            }
+            @Override
+            public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                token.continuePermissionRequest();
+            }
+        }).check();
     }
 
     @Override
@@ -214,68 +142,28 @@ public class AppActivity extends AppCompatActivity implements IMainFrame {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
         if (itemId == android.R.id.home) {
-            onBackPressed();
-            return false;
+            finish();
+            return true;
         } else if (itemId == R.id.share) {
-            shareToOther("");
-            return false;
+            shareToOther();
+            return true;
         }
-        return true;
+        return super.onOptionsItemSelected(item);
     }
-    private void shareToOther(String pkg ) {
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.putExtra(Intent.EXTRA_STREAM, uriFromFile(getApplicationContext(), filePath));
-        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        shareIntent.setType("application/pdf");
-        if (pkg != "") {
-            shareIntent.setPackage(pkg);
-        }
-        startActivity(Intent.createChooser(shareIntent, "share.."));
-    }
+    private void shareToOther() {
+        Intent intentShareFile = new Intent(Intent.ACTION_SEND);
+        File fileWithinMyDir = new File(filePath);
 
-    private Uri uriFromFile(Context context, String filePath) {
-        File file = new File(filePath);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return FileProvider.getUriForFile(
-                    context,
-                     getPackageName() + ".provider",
-                    file
-            );
-        } else {
-            return Uri.fromFile(file);
-        }
-    }
+        int dot = fileName.lastIndexOf('.');       //Vị trí dấu . cuối cùng
+        String type = fileName.substring(dot+1);         //Đuôi file (docx hoặc doc)
 
-    private void saveBitmapToFile(Bitmap bitmap) {
-        if (bitmap == null) {
-            return;
-        }
-        if (tempFilePath == null) {
-            String state = Environment.getExternalStorageState();
-            if (Environment.MEDIA_MOUNTED.equals(state)) {
-                tempFilePath = Environment.getExternalStorageDirectory().getAbsolutePath();
-            }
-            File file = new File(tempFilePath + File.separatorChar + "tempPic");
-            if (!file.exists()) {
-                file.mkdir();
-            }
-            tempFilePath = file.getAbsolutePath();
-        }
+        if(fileWithinMyDir.exists()) {
+            intentShareFile.setType(MimeTypeMap.getSingleton().getMimeTypeFromExtension(type));
+            intentShareFile.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://"+filePath));
 
-        File file = new File(tempFilePath + File.separatorChar + "export_image.jpg");
-        try {
-            if (file.exists()) {
-                file.delete();
-            }
-            file.createNewFile();
-            FileOutputStream fOut = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
-            fOut.flush();
-            fOut.close();
-
-        } catch (IOException e) {
-        } finally {
-            //bitmap.recycle();
+            startActivity(Intent.createChooser(intentShareFile, fileName));
+        }else{
+            Toast.makeText(this, getResources().getString(R.string.notification_share_error), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -333,58 +221,34 @@ public class AppActivity extends AppCompatActivity implements IMainFrame {
     /**
      *
      */
-    public void onBackPressed() {
-        if (isSearchbarActive()) {
-            showSearchBar(false);
-            updateToolsbarStatus();
-        } else {
-            Object obj = control.getActionValue(EventConstant.PG_SLIDESHOW, null);
-            if (obj != null && (Boolean) obj) {
-                fullScreen(false);
-                //
-                this.control.actionEvent(EventConstant.PG_SLIDESHOW_END, null);
-            } else {
-                if (control.getReader() != null) {
-                    control.getReader().abortReader();
-                }
-                if (marked != dbService.queryItem(MainConstant.TABLE_STAR, filePath)) {
-                    if (!marked) {
-                        dbService.deleteItem(MainConstant.TABLE_STAR, filePath);
-                    } else {
-                        dbService.insertStarFiles(MainConstant.TABLE_STAR, filePath);
-                    }
-
-                    Intent intent = new Intent();
-                    intent.putExtra(MainConstant.INTENT_FILED_MARK_STATUS, marked);
-                    setResult(RESULT_OK, intent);
-                }
-
-                if (startFromOtherApp) {
-                    try {
-                        Intent intent = new Intent(this, Class.forName("com.documents.reader.document.viewer.ui.view.MainActivity"));
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        finish();
-                    } catch (ClassNotFoundException e) {
-                        super.onBackPressed();
-                        Log.d("AAA", "onBackPressed: no found main ");
-                    }
-                } else {
-                    super.onBackPressed();
-                }
-
-//                if (control != null && control.isAutoTest())
-//                {
-//                    System.exit(0);
+//    public void onBackPressed() {
+//        if (isSearchbarActive()) {
+//            showSearchBar(false);
+//            updateToolsbarStatus();
+//        } else {
+//            Object obj = control.getActionValue(EventConstant.PG_SLIDESHOW, null);
+//            if (obj != null && (Boolean) obj) {
+//                fullScreen(false);
+//                //
+//                this.control.actionEvent(EventConstant.PG_SLIDESHOW_END, null);
+//            } else {
+//                if (control.getReader() != null) {
+//                    control.getReader().abortReader();
 //                }
-//                else
-//                {
-//                    super.onBackPressed();
+//                if (marked != dbService.queryItem(MainConstant.TABLE_STAR, filePath)) {
+//                    if (!marked) {
+//                        dbService.deleteItem(MainConstant.TABLE_STAR, filePath);
+//                    } else {
+//                        dbService.insertStarFiles(MainConstant.TABLE_STAR, filePath);
+//                    }
+//
+//                    Intent intent = new Intent();
+//                    intent.putExtra(MainConstant.INTENT_FILED_MARK_STATUS, marked);
+//                    setResult(RESULT_OK, intent);
 //                }
-            }
-        }
-    }
+//            }
+//        }
+//    }
 
     /**
      *
@@ -408,7 +272,7 @@ public class AppActivity extends AppCompatActivity implements IMainFrame {
     /**
      * (non-Javadoc)
      *
-     * @see com.wxiwei.office.system.IMainFrame#showProgressBar(boolean)
+     * @see IMainFrame#showProgressBar(boolean)
      */
     public void showProgressBar(boolean visible) {
         setProgressBarIndeterminateVisibility(visible);
@@ -417,97 +281,10 @@ public class AppActivity extends AppCompatActivity implements IMainFrame {
     /**
      *
      */
-    public String getRealPathFromURI(Uri contentUri) {
-        String path = null;
-        String[] proj = {MediaStore.MediaColumns.DATA};
-        Cursor cursor = getContentResolver().query(contentUri, proj, null, null, null);
-        if (cursor.moveToFirst()) {
-            int column_index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
-            path = cursor.getString(column_index);
-        }
-        cursor.close();
-        return path;
-    }
-
-    private String getRealPath2(Uri uri) {
-        String uriPath = uri.getPath();
-        String sub1 = uriPath.substring(uriPath.indexOf(File.separator) + 1);
-        String sub2 = sub1.substring(sub1.indexOf(File.separator) + 1);
-        String result = Environment.getExternalStorageDirectory() + File.separator + sub2;
-        return result;
-    }
-
-    private void setFilePath() {
-        Intent intent = getIntent();
-
-        filePath = intent.getStringExtra(MainConstant.INTENT_FILED_FILE_PATH);
-        if (!intent.hasExtra(MainConstant.INTENT_FILED_FILE_PATH)) {
-            this.filePath = getRealPath2(intent.getData());
-            int index = getFilePath().indexOf(":");
-            if (index > 0) {
-                filePath = filePath.substring(index + 3);
-            }
-            filePath = Uri.decode(filePath);
-            startFromOtherApp = true;
-        }
-    }
 
     private void init() {
-        //
-        toast = Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT);
-        //
         dbService = new DBService(getApplicationContext());
-
-
-
-        String[] temp = filePath.split("\\.");
-        String ext = temp[temp.length - 1];
-
-        int toolColor = R.color.white1;
-        switch (ext) {
-            case "all file":
-                toolColor = R.color.all;
-                break;
-            case "xls":
-            case "xlsx":
-                toolColor = R.color.xls;
-                break;
-            case "doc":
-            case "docx":
-                toolColor = R.color.all;
-                break;
-            case "ppt":
-            case "pptx":
-                toolColor = R.color.ppt;
-                break;
-            case "txt":
-                toolColor = R.color.pdf;
-                break;
-            case "csv":
-                toolColor = R.color.csv;
-                break;
-            case "rtf":
-                toolColor = R.color.all;
-                break;
-            case "fav":
-                toolColor = R.color.pdf;
-                break;
-        }
-
-        Window window = this.getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(this, toolColor));
-        toolbar.setBackgroundColor(getResources().getColor(toolColor));
-
-
-        // 显示打开文件名称
-        int index = filePath.lastIndexOf(File.separator);
-        if (index > 0) {
-            setTitle(filePath.substring(index + 1));
-        } else {
-            setTitle(filePath);
-        }
+        setTitle(fileName);
 
         boolean isSupport = FileKit.instance().isSupport(filePath);
         //写入本地数据库
@@ -594,10 +371,6 @@ public class AppActivity extends AppCompatActivity implements IMainFrame {
             applicationType = MainConstant.APPLICATION_TYPE_WP;
             toolsbar = new WPToolsbar(getApplicationContext(), control);
         }
-        // 添加tool bar
-        //appFrame.addView(toolsbar);
-
-
     }
 
     /**
@@ -708,11 +481,11 @@ public class AppActivity extends AppCompatActivity implements IMainFrame {
         File file = new File(filePath);
         list.add(Uri.fromFile(file));
 
-        Intent intent = new Intent(android.content.Intent.ACTION_SEND_MULTIPLE);
+        Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
         intent.putExtra(Intent.EXTRA_STREAM, list);
         intent.setType("application/octet-stream");
         startActivity(Intent
-                .createChooser(intent, getResources().getText(R.string.sys_share_title)));
+                .createChooser(intent, getResources().getText(com.wxiwei.office.officereader.R.string.sys_share_title)));
     }
 
     /**
@@ -801,7 +574,6 @@ public class AppActivity extends AppCompatActivity implements IMainFrame {
      * @param actionID action ID
      * @param obj      acValue
      * @return True if the listener has consumed the event, false otherwise.
-     * @see #com.wxiwei.constant.wp.AttrIDConstant
      */
     public boolean doActionEvent(int actionID, Object obj) {
         try {
@@ -820,7 +592,7 @@ public class AppActivity extends AppCompatActivity implements IMainFrame {
 
                 case EventConstant.SYS_HELP_ID: //show help net
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(getResources()
-                            .getString(R.string.sys_url_wxiwei)));
+                            .getString(com.wxiwei.office.officereader.R.string.sys_url_wxiwei)));
                     startActivity(intent);
                     break;
 
@@ -966,7 +738,7 @@ public class AppActivity extends AppCompatActivity implements IMainFrame {
         View app = control.getView();
         appFrame.addView(app,
                 new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-        // 
+        //
         /*if (applicationType == MainConstant.APPLICATION_TYPE_SS)
         {
             bottomBar = new SheetBar(getApplicationContext(), control, getResources().getDisplayMetrics().widthPixels);
@@ -1003,7 +775,6 @@ public class AppActivity extends AppCompatActivity implements IMainFrame {
      * @param yValue          eventNethodType is ON_SCROLL, this is value distanceY
      *                        eventNethodType is ON_FLING, this is value velocityY
      *                        eventNethodType is other type, this is value -1
-     * @param eventNethodType event method
      * @see IMainFrame#ON_CLICK
      * @see IMainFrame#ON_DOUBLE_TAP
      * @see IMainFrame#ON_DOUBLE_TAP_EVENT
@@ -1029,7 +800,7 @@ public class AppActivity extends AppCompatActivity implements IMainFrame {
      *
      */
     public String getAppName() {
-        return getString(R.string.sys_name);
+        return getString(com.wxiwei.office.officereader.R.string.sys_name);
     }
 
     /**
@@ -1073,56 +844,56 @@ public class AppActivity extends AppCompatActivity implements IMainFrame {
         //icon width and height
         BitmapFactory.Options opts = new BitmapFactory.Options();
         opts.inJustDecodeBounds = true;
-        BitmapFactory.decodeResource(getResources(), R.drawable.file_slideshow_left, opts);
+        BitmapFactory.decodeResource(getResources(), com.wxiwei.office.officereader.R.drawable.file_slideshow_left, opts);
 
         //load page up button
         Resources res = getResources();
-        pageUp = new AImageButton(this, control, res.getString(R.string.pg_slideshow_pageup), -1,
+        pageUp = new AImageButton(this, control, res.getString(com.wxiwei.office.officereader.R.string.pg_slideshow_pageup), -1,
                 -1, EventConstant.APP_PAGE_UP_ID);
-        pageUp.setNormalBgResID(R.drawable.file_slideshow_left);
-        pageUp.setPushBgResID(R.drawable.file_slideshow_left_push);
+        pageUp.setNormalBgResID(com.wxiwei.office.officereader.R.drawable.file_slideshow_left);
+        pageUp.setPushBgResID(com.wxiwei.office.officereader.R.drawable.file_slideshow_left_push);
         pageUp.setLayoutParams(new LayoutParams(opts.outWidth, opts.outHeight));
 
         //load page down button
-        pageDown = new AImageButton(this, control, res.getString(R.string.pg_slideshow_pagedown),
+        pageDown = new AImageButton(this, control, res.getString(com.wxiwei.office.officereader.R.string.pg_slideshow_pagedown),
                 -1, -1, EventConstant.APP_PAGE_DOWN_ID);
-        pageDown.setNormalBgResID(R.drawable.file_slideshow_right);
-        pageDown.setPushBgResID(R.drawable.file_slideshow_right_push);
+        pageDown.setNormalBgResID(com.wxiwei.office.officereader.R.drawable.file_slideshow_right);
+        pageDown.setPushBgResID(com.wxiwei.office.officereader.R.drawable.file_slideshow_right_push);
         pageDown.setLayoutParams(new LayoutParams(opts.outWidth, opts.outHeight));
 
-        BitmapFactory.decodeResource(getResources(), R.drawable.file_slideshow_pen_normal, opts);
+        BitmapFactory.decodeResource(getResources(), com.wxiwei.office.officereader.R.drawable.file_slideshow_pen_normal, opts);
         // load pen button
         penButton = new AImageCheckButton(this, control,
-                res.getString(R.string.app_toolsbar_pen_check), res.getString(R.string.app_toolsbar_pen),
-                R.drawable.file_slideshow_pen_check, R.drawable.file_slideshow_pen_normal,
-                R.drawable.file_slideshow_pen_normal, EventConstant.APP_PEN_ID);
-        penButton.setNormalBgResID(R.drawable.file_slideshow_pen_normal);
-        penButton.setPushBgResID(R.drawable.file_slideshow_pen_push);
+                res.getString(com.wxiwei.office.officereader.R.string.app_toolsbar_pen_check), res.getString(com.wxiwei.office.officereader.R.string.app_toolsbar_pen),
+                com.wxiwei.office.officereader.R.drawable.file_slideshow_pen_check, com.wxiwei.office.officereader.R.drawable.file_slideshow_pen_normal,
+                com.wxiwei.office.officereader.R.drawable.file_slideshow_pen_normal, EventConstant.APP_PEN_ID);
+        penButton.setNormalBgResID(com.wxiwei.office.officereader.R.drawable.file_slideshow_pen_normal);
+        penButton.setPushBgResID(com.wxiwei.office.officereader.R.drawable.file_slideshow_pen_push);
         penButton.setLayoutParams(new LayoutParams(opts.outWidth, opts.outHeight));
 
         // load eraser button
         eraserButton = new AImageCheckButton(this, control,
-                res.getString(R.string.app_toolsbar_eraser_check), res.getString(R.string.app_toolsbar_eraser),
-                R.drawable.file_slideshow_eraser_check, R.drawable.file_slideshow_eraser_normal,
-                R.drawable.file_slideshow_eraser_normal, EventConstant.APP_ERASER_ID);
-        eraserButton.setNormalBgResID(R.drawable.file_slideshow_eraser_normal);
-        eraserButton.setPushBgResID(R.drawable.file_slideshow_eraser_push);
+                res.getString(com.wxiwei.office.officereader.R.string.app_toolsbar_eraser_check), res.getString(com.wxiwei.office.officereader.R.string.app_toolsbar_eraser),
+                com.wxiwei.office.officereader.R.drawable.file_slideshow_eraser_check, com.wxiwei.office.officereader.R.drawable.file_slideshow_eraser_normal,
+                com.wxiwei.office.officereader.R.drawable.file_slideshow_eraser_normal, EventConstant.APP_ERASER_ID);
+        eraserButton.setNormalBgResID(com.wxiwei.office.officereader.R.drawable.file_slideshow_eraser_normal);
+        eraserButton.setPushBgResID(com.wxiwei.office.officereader.R.drawable.file_slideshow_eraser_push);
         eraserButton.setLayoutParams(new LayoutParams(opts.outWidth, opts.outHeight));
 
         // load settings button
-        settingsButton = new AImageButton(this, control, res.getString(R.string.app_toolsbar_color),
+        settingsButton = new AImageButton(this, control, res.getString(com.wxiwei.office.officereader.R.string.app_toolsbar_color),
                 -1, -1, EventConstant.APP_COLOR_ID);
-        settingsButton.setNormalBgResID(R.drawable.file_slideshow_settings_normal);
-        settingsButton.setPushBgResID(R.drawable.file_slideshow_settings_push);
+        settingsButton.setNormalBgResID(com.wxiwei.office.officereader.R.drawable.file_slideshow_settings_normal);
+        settingsButton.setPushBgResID(com.wxiwei.office.officereader.R.drawable.file_slideshow_settings_push);
         settingsButton.setLayoutParams(new LayoutParams(opts.outWidth, opts.outHeight));
 
         wm = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
         wmParams = new WindowManager.LayoutParams();
 
-        wmParams.type = android.view.WindowManager.LayoutParams.TYPE_PHONE;
+        wmParams.type = WindowManager.LayoutParams.TYPE_PHONE;
         wmParams.format = PixelFormat.RGBA_8888;
-        wmParams.flags = android.view.WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-                | android.view.WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+        wmParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
         wmParams.width = opts.outWidth;
         wmParams.height = opts.outHeight;
     }
@@ -1262,9 +1033,9 @@ public class AppActivity extends AppCompatActivity implements IMainFrame {
     /**
      *
      */
-    public DialogListener getDialogListener() {
-        return null;
-    }
+//    public DialogListener getDialogListener() {
+//        return null;
+//    }
 
 
     @Override
@@ -1407,6 +1178,8 @@ public class AppActivity extends AppCompatActivity implements IMainFrame {
     private boolean marked;
     //
     private int applicationType = -1;
+    //
+    private String fileName;
     //
     private String filePath;
     // application activity control

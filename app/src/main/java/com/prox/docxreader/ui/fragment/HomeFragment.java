@@ -1,5 +1,8 @@
 package com.prox.docxreader.ui.fragment;
 
+import static com.prox.docxreader.ui.activity.ReaderActivity.FILE_NAME;
+import static com.prox.docxreader.ui.activity.ReaderActivity.FILE_PATH;
+
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -24,20 +27,23 @@ import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.prox.docxreader.OnClickFavoriteListener;
 import com.prox.docxreader.OnClickItemDocumentListener;
-import com.prox.docxreader.OnClickMoreListener;
+import com.prox.docxreader.OnClickDeleteListener;
+import com.prox.docxreader.OnClickRenameListener;
+import com.prox.docxreader.OnClickShareListener;
 import com.prox.docxreader.R;
-import com.prox.docxreader.adapter.DocumentAdapter;
+import com.prox.docxreader.adapter.DocumentHomeAdapter;
 import com.prox.docxreader.database.DocumentDatabase;
 import com.prox.docxreader.modul.Document;
-import com.prox.docxreader.ui.activity.MainActivity;
-import com.wxiwei.office.constant.MainConstant;
-import com.wxiwei.office.officereader.AppActivity;
+import com.prox.docxreader.ui.activity.ReaderActivity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -46,7 +52,7 @@ import java.util.List;
 
 public class HomeFragment extends Fragment {
     private View view;
-    private DocumentAdapter documentAdapter;
+    private DocumentHomeAdapter documentHomeAdapter;
     private List<Document> documents;
     private EditText edtSearch;
 
@@ -76,43 +82,87 @@ public class HomeFragment extends Fragment {
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(manager);
 
-        documents = new ArrayList<>();
-
-        documentAdapter = new DocumentAdapter(documents, new OnClickItemDocumentListener() {
+        documentHomeAdapter = new DocumentHomeAdapter(new OnClickItemDocumentListener() {
             @Override
             public void onClickItemDocument(Document document) {
-                if (!(new File(document.getPath())).exists()){
-                    Toast.makeText(getContext(), getResources().getString(R.string.notification_file_error), Toast.LENGTH_SHORT).show();
-                    showDocuments();
-                    return;
-                }
-                //Update Time Access
-                document.setTimeAccess(new Date().getTime());
-                DocumentDatabase.getInstance(getContext()).documentDAO().updateDocument(document);
-
-//                Intent intent = new Intent(getActivity(), AppActivity.class);
-//                intent.putExtra(MainConstant.INTENT_FILED_FILE_PATH, document.getPath());
-//                startActivity(intent);
+                clickItemDocument(document);
             }
-        }, new OnClickMoreListener() {
+        }, new OnClickDeleteListener() {
             @Override
-            public void onClickMore(Document document) {
-                if (!(new File(document.getPath())).exists()){
-                    Toast.makeText(getContext(), getResources().getString(R.string.notification_file_error), Toast.LENGTH_SHORT).show();
-                    showDocuments();
-                    return;
-                }
-                openDialogMore(document);
+            public void onClickDelete(Document document) {
+                clickDelete(document);
+            }
+        }, new OnClickRenameListener() {
+            @Override
+            public void onClickRename(Document document) {
+                clickRename(document);
+            }
+        }, new OnClickShareListener() {
+            @Override
+            public void onClickShare(Document document) {
+                clickShare(document);
+            }
+        }, new OnClickFavoriteListener() {
+            @Override
+            public void onClickFavorite(Document document) {
+                clickFavorite(document);
             }
         });
 
-        recyclerView.setAdapter(documentAdapter);
+        recyclerView.setAdapter(documentHomeAdapter);
 
         DividerItemDecoration dividerHorizontal = new DividerItemDecoration(getContext(),
                 DividerItemDecoration.VERTICAL);
         recyclerView.addItemDecoration(dividerHorizontal);
 
         showDocuments();
+    }
+
+    private void clickItemDocument(Document document) {
+        if (!(new File(document.getPath())).exists()) {
+            Toast.makeText(getContext(), getResources().getString(R.string.notification_file_error), Toast.LENGTH_SHORT).show();
+            DocumentDatabase.getInstance(getContext()).documentDAO().deleteDocument(document);
+            showDocuments();
+            return;
+        }
+        //Update Time Access
+        document.setTimeAccess(new Date().getTime());
+        DocumentDatabase.getInstance(getContext()).documentDAO().updateDocument(document);
+
+        Intent intent = new Intent(getActivity(), ReaderActivity.class);
+        intent.putExtra(FILE_PATH, document.getPath());
+        intent.putExtra(FILE_NAME, document.getTitle());
+        startActivity(intent);
+    }
+
+    private void clickDelete(Document document) {
+        if (!(new File(document.getPath())).exists()){
+            Toast.makeText(getContext(), getResources().getString(R.string.notification_file_error), Toast.LENGTH_SHORT).show();
+            DocumentDatabase.getInstance(getContext()).documentDAO().deleteDocument(document);
+            showDocuments();
+            return;
+        }
+        openDialogDelete(document);
+    }
+
+    private void clickRename(Document document) {
+        if (!(new File(document.getPath())).exists()){
+            Toast.makeText(getContext(), getResources().getString(R.string.notification_file_error), Toast.LENGTH_SHORT).show();
+            DocumentDatabase.getInstance(getContext()).documentDAO().deleteDocument(document);
+            showDocuments();
+            return;
+        }
+        openDialogRename(document);
+    }
+
+    private void clickShare(Document document) {
+        if (!(new File(document.getPath())).exists()){
+            Toast.makeText(getContext(), getResources().getString(R.string.notification_file_error), Toast.LENGTH_SHORT).show();
+            DocumentDatabase.getInstance(getContext()).documentDAO().deleteDocument(document);
+            showDocuments();
+            return;
+        }
+        shareDocument(document);
     }
 
     private void showDocuments() {
@@ -128,83 +178,17 @@ public class HomeFragment extends Fragment {
                 documents = DocumentDatabase.getInstance(getContext()).documentDAO().sortDocumentByTimeAccess(search);
                 break;
         }
-        documentAdapter.setDocuments(documents);
+        documentHomeAdapter.setDocuments(documents);
     }
 
-    private void openDialogMore(Document document) {
-        Dialog dialogMore = createCustomDialog(R.layout.dialog_more_home);
-        dialogMore.show();
-
-        Button btnDelete, btnRename, btnShare, btnFavorite;
-        btnDelete = dialogMore.findViewById(R.id.btn_delete);
-        btnRename = dialogMore.findViewById(R.id.btn_rename);
-        btnShare = dialogMore.findViewById(R.id.btn_share);
-        btnFavorite = dialogMore.findViewById(R.id.btn_favorite);
-
-        TextView txtTitle = dialogMore.findViewById(R.id.txt_title);
-        txtTitle.setText(document.getTitle());
-
-        if (document.isFavorite()){
-            btnFavorite.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite,0,0,0);
-        }else{
-            btnFavorite.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite_fill,0,0,0);
+    private void clickFavorite(Document document) {
+        if (!(new File(document.getPath())).exists()){
+            Toast.makeText(getContext(), getResources().getString(R.string.notification_file_error), Toast.LENGTH_SHORT).show();
+            DocumentDatabase.getInstance(getContext()).documentDAO().deleteDocument(document);
+            showDocuments();
+            return;
         }
-
-        btnDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!(new File(document.getPath())).exists()){
-                    Toast.makeText(getContext(), getResources().getString(R.string.notification_file_error), Toast.LENGTH_SHORT).show();
-                    dialogMore.hide();
-                    showDocuments();
-                    return;
-                }
-                openDialogDelete(document);
-                dialogMore.hide();
-            }
-        });
-
-        btnRename.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!(new File(document.getPath())).exists()){
-                    Toast.makeText(getContext(), getResources().getString(R.string.notification_file_error), Toast.LENGTH_SHORT).show();
-                    dialogMore.hide();
-                    showDocuments();
-                    return;
-                }
-                openDialogRename(document);
-                dialogMore.hide();
-            }
-        });
-
-        btnShare.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!(new File(document.getPath())).exists()){
-                    Toast.makeText(getContext(), getResources().getString(R.string.notification_file_error), Toast.LENGTH_SHORT).show();
-                    dialogMore.hide();
-                    showDocuments();
-                    return;
-                }
-                shareDocument(document);
-                dialogMore.hide();
-            }
-        });
-
-        btnFavorite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!(new File(document.getPath())).exists()){
-                    Toast.makeText(getContext(), getResources().getString(R.string.notification_file_error), Toast.LENGTH_SHORT).show();
-                    dialogMore.hide();
-                    showDocuments();
-                    return;
-                }
-                setFavorite(document);
-                dialogMore.hide();
-            }
-        });
+        setFavorite(document);
     }
 
     private void openDialogDelete(Document document) {
@@ -221,6 +205,7 @@ public class HomeFragment extends Fragment {
                 File file = new File(document.getPath());
                 if (!file.exists()){
                     Toast.makeText(getContext(), getResources().getString(R.string.notification_file_error), Toast.LENGTH_SHORT).show();
+                    DocumentDatabase.getInstance(getContext()).documentDAO().deleteDocument(document);
                     dialogDelete.hide();
                     showDocuments();
                     return;
@@ -277,6 +262,7 @@ public class HomeFragment extends Fragment {
                     File fileOld = new File(document.getPath());
                     if (!fileOld.exists()){
                         Toast.makeText(getContext(), getResources().getString(R.string.notification_file_error), Toast.LENGTH_SHORT).show();
+                        DocumentDatabase.getInstance(getContext()).documentDAO().deleteDocument(document);
                         dialogRename.hide();
                         showDocuments();
                         return;
@@ -341,6 +327,7 @@ public class HomeFragment extends Fragment {
     private void setFavorite(Document document) {
         document.setFavorite(!document.isFavorite());
         DocumentDatabase.getInstance(getContext()).documentDAO().updateDocument(document);
+        showDocuments();
         if (document.isFavorite()){
             Toast.makeText(getContext(), getResources().getString(R.string.notification_add_favorite), Toast.LENGTH_SHORT).show();
         }else {
@@ -382,43 +369,55 @@ public class HomeFragment extends Fragment {
         Dialog dialogSort = createCustomDialog(R.layout.dialog_sort);
         dialogSort.show();
 
-        RadioButton sortName, sortTimeCreate, sortTimeAccess;
+        LinearLayout sortName, sortTimeCreate, sortTimeAccess;
         sortName = dialogSort.findViewById(R.id.sort_name);
         sortTimeCreate = dialogSort.findViewById(R.id.sort_time_create);
         sortTimeAccess = dialogSort.findViewById(R.id.sort_time_access);
+
+        ImageView nameChecked, timeCreateChecked, timeAccessChecked;
+        nameChecked = dialogSort.findViewById(R.id.name_checked);
+        timeCreateChecked = dialogSort.findViewById(R.id.time_create_checked);
+        timeAccessChecked = dialogSort.findViewById(R.id.time_access_checked);
         switch (typeSort){
             case SORT_NAME:
-                sortName.setChecked(true);
+                nameChecked.setVisibility(View.VISIBLE);
+                timeCreateChecked.setVisibility(View.INVISIBLE);
+                timeAccessChecked.setVisibility(View.INVISIBLE);
                 break;
             case SORT_TIME_CREATE:
-                sortTimeCreate.setChecked(true);
+                nameChecked.setVisibility(View.INVISIBLE);
+                timeCreateChecked.setVisibility(View.VISIBLE);
+                timeAccessChecked.setVisibility(View.INVISIBLE);
                 break;
             case SORT_TIME_ACCESS:
-                sortTimeAccess.setChecked(true);
+                nameChecked.setVisibility(View.INVISIBLE);
+                timeCreateChecked.setVisibility(View.INVISIBLE);
+                timeAccessChecked.setVisibility(View.VISIBLE);
                 break;
         }
 
-        RadioGroup radioGroup = dialogSort.findViewById(R.id.rad_group);
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        sortName.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId){
-                    case R.id.sort_name:
-                        typeSort = SORT_NAME;
-                        showDocuments();
-                        dialogSort.hide();
-                        break;
-                    case R.id.sort_time_create:
-                        typeSort = SORT_TIME_CREATE;
-                        showDocuments();
-                        dialogSort.hide();
-                        break;
-                    case R.id.sort_time_access:
-                        typeSort = SORT_TIME_ACCESS;
-                        showDocuments();
-                        dialogSort.hide();
-                        break;
-                }
+            public void onClick(View v) {
+                typeSort = SORT_NAME;
+                showDocuments();
+                dialogSort.hide();
+            }
+        });
+        sortTimeCreate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                typeSort = SORT_TIME_CREATE;
+                showDocuments();
+                dialogSort.hide();
+            }
+        });
+        sortTimeAccess.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                typeSort = SORT_TIME_ACCESS;
+                showDocuments();
+                dialogSort.hide();
             }
         });
     }
