@@ -16,9 +16,6 @@ public interface DocumentDAO {
     @Insert
     void insertDocument(Document document);
 
-    @Query("SELECT * FROM document")
-    List<Document> getDocuments();
-
     @Query("SELECT * FROM document WHERE path= :path")
     List<Document> checkDocument(String path);
 

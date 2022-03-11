@@ -1,5 +1,6 @@
 package com.prox.docxreader.adapter;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +19,6 @@ import com.prox.docxreader.OnClickDeleteListener;
 import com.prox.docxreader.OnClickRenameListener;
 import com.prox.docxreader.OnClickShareListener;
 import com.prox.docxreader.R;
-import com.prox.docxreader.database.DocumentDatabase;
 import com.prox.docxreader.modul.Document;
 
 import java.text.SimpleDateFormat;
@@ -27,11 +27,11 @@ import java.util.List;
 
 public class DocumentHomeAdapter extends RecyclerView.Adapter<DocumentHomeAdapter.DocumentViewHolder> {
     private List<Document> documents;
-    private OnClickItemDocumentListener onClickItemDocumentListener;
-    private OnClickDeleteListener onClickDeleteListener;
-    private OnClickRenameListener onClickRenameListener;
-    private OnClickShareListener onClickShareListener;
-    private OnClickFavoriteListener onClickFavoriteListener;
+    private final OnClickItemDocumentListener onClickItemDocumentListener;
+    private final OnClickDeleteListener onClickDeleteListener;
+    private final OnClickRenameListener onClickRenameListener;
+    private final OnClickShareListener onClickShareListener;
+    private final OnClickFavoriteListener onClickFavoriteListener;
 
     private final ViewBinderHelper viewBinderHelper = new ViewBinderHelper();
 
@@ -48,6 +48,7 @@ public class DocumentHomeAdapter extends RecyclerView.Adapter<DocumentHomeAdapte
         viewBinderHelper.setOpenOnlyOne(true);
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void setDocuments(List<Document> documents){
         this.documents = documents;
         notifyDataSetChanged();
@@ -72,36 +73,11 @@ public class DocumentHomeAdapter extends RecyclerView.Adapter<DocumentHomeAdapte
         }
 
         viewBinderHelper.bind(holder.swipeRevealLayout, String.valueOf(document.getId()));
-        holder.btnDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onClickDeleteListener.onClickDelete(document);
-            }
-        });
-        holder.btnRename.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onClickRenameListener.onClickRename(document);
-            }
-        });
-        holder.btnShare.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onClickShareListener.onClickShare(document);
-            }
-        });
-        holder.btnFavorite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onClickFavoriteListener.onClickFavorite(document);
-            }
-        });
-        holder.itemDocx.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onClickItemDocumentListener.onClickItemDocument(document);
-            }
-        });
+        holder.btnDelete.setOnClickListener(view -> onClickDeleteListener.onClickDelete(document));
+        holder.btnRename.setOnClickListener(view -> onClickRenameListener.onClickRename(document));
+        holder.btnShare.setOnClickListener(view -> onClickShareListener.onClickShare(document));
+        holder.btnFavorite.setOnClickListener(view -> onClickFavoriteListener.onClickFavorite(document));
+        holder.itemDocx.setOnClickListener(v -> onClickItemDocumentListener.onClickItemDocument(document));
     }
 
     @Override
@@ -109,11 +85,15 @@ public class DocumentHomeAdapter extends RecyclerView.Adapter<DocumentHomeAdapte
         return documents.size();
     }
 
-    public class DocumentViewHolder extends RecyclerView.ViewHolder{
-        private TextView txtTitleDocx, txtTimeDocx;
-        private ImageButton btnDelete, btnRename, btnShare, btnFavorite;
-        private ConstraintLayout itemDocx;
-        private SwipeRevealLayout swipeRevealLayout;
+    public static class DocumentViewHolder extends RecyclerView.ViewHolder{
+        private final TextView txtTitleDocx;
+        private final TextView txtTimeDocx;
+        private final ImageButton btnDelete;
+        private final ImageButton btnRename;
+        private final ImageButton btnShare;
+        private final ImageButton btnFavorite;
+        private final ConstraintLayout itemDocx;
+        private final SwipeRevealLayout swipeRevealLayout;
 
         public DocumentViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -129,6 +109,7 @@ public class DocumentHomeAdapter extends RecyclerView.Adapter<DocumentHomeAdapte
         }
     }
 
+    @SuppressLint("SimpleDateFormat")
     private String getDate(long val){
         return new SimpleDateFormat("HH:mm:ss, dd/MM/yyyy").format(new Date(val*1000));
     }

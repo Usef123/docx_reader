@@ -1,5 +1,6 @@
 package com.prox.docxreader.adapter;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.chauthai.swipereveallayout.SwipeRevealLayout;
 import com.chauthai.swipereveallayout.ViewBinderHelper;
-import com.prox.docxreader.OnClickDeleteListener;
 import com.prox.docxreader.OnClickFavoriteListener;
 import com.prox.docxreader.OnClickItemDocumentListener;
-import com.prox.docxreader.OnClickRenameListener;
 import com.prox.docxreader.OnClickShareListener;
 import com.prox.docxreader.R;
 import com.prox.docxreader.modul.Document;
@@ -26,9 +25,9 @@ import java.util.List;
 
 public class DocumentFavoriteAdapter extends RecyclerView.Adapter<DocumentFavoriteAdapter.DocumentViewHolder> {
     private List<Document> documents;
-    private OnClickItemDocumentListener onClickItemDocumentListener;
-    private OnClickShareListener onClickShareListener;
-    private OnClickFavoriteListener onClickFavoriteListener;
+    private final OnClickItemDocumentListener onClickItemDocumentListener;
+    private final OnClickShareListener onClickShareListener;
+    private final OnClickFavoriteListener onClickFavoriteListener;
 
     private final ViewBinderHelper viewBinderHelper = new ViewBinderHelper();
 
@@ -41,6 +40,7 @@ public class DocumentFavoriteAdapter extends RecyclerView.Adapter<DocumentFavori
         viewBinderHelper.setOpenOnlyOne(true);
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void setDocuments(List<Document> documents){
         this.documents = documents;
         notifyDataSetChanged();
@@ -65,24 +65,9 @@ public class DocumentFavoriteAdapter extends RecyclerView.Adapter<DocumentFavori
         }
 
         viewBinderHelper.bind(holder.swipeRevealLayout, String.valueOf(document.getId()));
-        holder.btnShare.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onClickShareListener.onClickShare(document);
-            }
-        });
-        holder.btnFavorite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onClickFavoriteListener.onClickFavorite(document);
-            }
-        });
-        holder.itemDocx.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onClickItemDocumentListener.onClickItemDocument(document);
-            }
-        });
+        holder.btnShare.setOnClickListener(view -> onClickShareListener.onClickShare(document));
+        holder.btnFavorite.setOnClickListener(view -> onClickFavoriteListener.onClickFavorite(document));
+        holder.itemDocx.setOnClickListener(v -> onClickItemDocumentListener.onClickItemDocument(document));
     }
 
     @Override
@@ -90,18 +75,18 @@ public class DocumentFavoriteAdapter extends RecyclerView.Adapter<DocumentFavori
         return documents.size();
     }
 
-    public class DocumentViewHolder extends RecyclerView.ViewHolder{
-        private TextView txtTitleDocx, txtTimeDocx;
-        private ImageButton btnDelete, btnRename, btnShare, btnFavorite;
-        private ConstraintLayout itemDocx;
-        private SwipeRevealLayout swipeRevealLayout;
+    public static class DocumentViewHolder extends RecyclerView.ViewHolder{
+        private final TextView txtTitleDocx;
+        private final TextView txtTimeDocx;
+        private final ImageButton btnShare;
+        private final ImageButton btnFavorite;
+        private final ConstraintLayout itemDocx;
+        private final SwipeRevealLayout swipeRevealLayout;
 
         public DocumentViewHolder(@NonNull View itemView) {
             super(itemView);
             txtTitleDocx = itemView.findViewById(R.id.txt_title);
             txtTimeDocx = itemView.findViewById(R.id.txt_time);
-            btnDelete = itemView.findViewById(R.id.btn_delete);
-            btnRename = itemView.findViewById(R.id.btn_rename);
             btnShare = itemView.findViewById(R.id.btn_share);
             btnFavorite = itemView.findViewById(R.id.btn_favorite);
             itemDocx = itemView.findViewById(R.id.itemDocx);
@@ -110,6 +95,7 @@ public class DocumentFavoriteAdapter extends RecyclerView.Adapter<DocumentFavori
         }
     }
 
+    @SuppressLint("SimpleDateFormat")
     private String getDate(long val){
         return new SimpleDateFormat("HH:mm:ss, dd/MM/yyyy").format(new Date(val*1000));
     }

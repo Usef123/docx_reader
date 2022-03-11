@@ -17,30 +17,33 @@ import com.prox.docxreader.R;
 public class SettingFragment extends Fragment {
     public static final String EMAIL_FEEDBACK = "duclet2k@outlook.com";
 
-    private View view;
-    private Button btnLanguage, btnShare, btnFeedback, btnMoreApp, btnPrivacyPolicy;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_setting, container, false);
+        View view = inflater.inflate(R.layout.fragment_setting, container, false);
 
-        btnLanguage = view.findViewById(R.id.btn_language);
-        btnLanguage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Navigation.findNavController(view).navigate(R.id.action_settingFragment_to_languageFragment);
-            }
+        Button btnLanguage = view.findViewById(R.id.btn_language);
+        btnLanguage.setOnClickListener(v ->
+                Navigation.findNavController(view).navigate(R.id.action_settingFragment_to_languageFragment)
+        );
+
+        Button btnFeedback = view.findViewById(R.id.btn_feedback);
+        btnFeedback.setOnClickListener(v -> openEmail());
+
+        Button btnShare = view.findViewById(R.id.btn_share);
+        btnShare.setOnClickListener(v -> {
+
         });
 
+        Button btnMoreApp = view.findViewById(R.id.btn_more_app);
+        btnMoreApp.setOnClickListener(v -> {
 
-        btnFeedback = view.findViewById(R.id.btn_feedback);
-        btnFeedback.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openEmail();
-            }
+        });
+
+        Button btnPrivacyPolicy = view.findViewById(R.id.btn_privacy_policy);
+        btnPrivacyPolicy.setOnClickListener(v -> {
+
         });
         return view;
     }
@@ -52,7 +55,7 @@ public class SettingFragment extends Fragment {
         final Intent emailIntent = new Intent(Intent.ACTION_SEND);
         emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{EMAIL_FEEDBACK});
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.subject_email));
-        emailIntent.setSelector( selectorIntent );
+        emailIntent.setSelector(selectorIntent);
 
         startActivity(Intent.createChooser(emailIntent, getResources().getString(R.string.notification_send_mail)));
     }

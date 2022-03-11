@@ -1,12 +1,9 @@
 package com.prox.docxreader.ui.activity;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.NavController;
-import androidx.navigation.NavDestination;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
@@ -47,9 +44,13 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //Load ngôn ngữ
         LocaleHelper.loadLanguage(this);
 
+        //Cấp quyền
         requestPermissions();
+
+        //Tạo UI
         init();
     }
 
@@ -61,6 +62,7 @@ public class MainActivity extends AppCompatActivity{
         navController=null;
     }
 
+    //Cấp quyền Read và Write
     private void requestPermissions() {
         Dexter.withContext(this)
                 .withPermissions(
@@ -70,10 +72,11 @@ public class MainActivity extends AppCompatActivity{
             @Override
             public void onPermissionsChecked(MultiplePermissionsReport report) {
                 if (report.areAllPermissionsGranted()){
+                    //Cấp quyền Manage đối với API 30 trở lên
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
                         requestPermission();
                     }else{
-                        insertDatabase();
+                        insertDatabase(); //Đẩy list file vào DB
                     }
                 }else{
                     Toast.makeText(MainActivity.this, getResources().getString(R.string.notification_permission_error), Toast.LENGTH_SHORT).show();
@@ -86,6 +89,7 @@ public class MainActivity extends AppCompatActivity{
         }).check();
     }
 
+    //Cấp quyền Manage đối với API 30 trở lên
     @RequiresApi(api = Build.VERSION_CODES.R)
     private void requestPermission(){
         Dexter.withContext(this)
@@ -93,7 +97,7 @@ public class MainActivity extends AppCompatActivity{
                 .withListener(new PermissionListener() {
                     @Override
                     public void onPermissionGranted(PermissionGrantedResponse response) {
-                        insertDatabase();
+                        insertDatabase(); //Đẩy list file vào DB
                     }
                     @Override
                     public void onPermissionDenied(PermissionDeniedResponse response) {
@@ -106,9 +110,14 @@ public class MainActivity extends AppCompatActivity{
                 }).check();
     }
 
+    //Tạo UI
     private void init() {
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host_fragment);
+
+        if (navHostFragment == null){
+            return;
+        }
         navController = navHostFragment.getNavController();
 
         appBarConfiguration = new AppBarConfiguration.Builder(
@@ -123,20 +132,15 @@ public class MainActivity extends AppCompatActivity{
         Toolbar toolbar = findViewById(R.id.toolbar);
         NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration);
 
-        navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
-            @Override
-            public void onDestinationChanged(@NonNull NavController navController,
-                                             @NonNull NavDestination navDestination,
-                                             @Nullable Bundle bundle) {
-                if (navDestination.getId()==R.id.languageFragment){
-                    bottomNavigationView.setVisibility(View.GONE);
-                    toolbar.setVisibility(View.VISIBLE);
-                    toolbar.setTitle(getResources().getString(R.string.language));
-                } else{
-                    bottomNavigationView.setVisibility(View.VISIBLE);
-                    toolbar.setVisibility(View.GONE);
-                    toolbar.setTitle("");
-                }
+        navController.addOnDestinationChangedListener((navController, navDestination, bundle) -> {
+            if (navDestination.getId()==R.id.languageFragment){
+                bottomNavigationView.setVisibility(View.GONE);
+                toolbar.setVisibility(View.VISIBLE);
+                toolbar.setTitle(getResources().getString(R.string.language));
+            } else{
+                bottomNavigationView.setVisibility(View.VISIBLE);
+                toolbar.setVisibility(View.GONE);
+                toolbar.setTitle("");
             }
         });
     }
@@ -147,13 +151,13 @@ public class MainActivity extends AppCompatActivity{
                 ||super.onSupportNavigateUp();
     }
 
+    //Đẩy list file vào DB
     public void insertDatabase() {
         Uri uri = MediaStore.Files.getContentUri("external");
 
         final String[] columns = {
                 MediaStore.Files.FileColumns.DISPLAY_NAME,   //tên file
                 MediaStore.Files.FileColumns.DATE_ADDED,     //date tạo
-                MediaStore.Files.FileColumns.MIME_TYPE,      //kiểu: docx
                 MediaStore.Files.FileColumns.DATA};          //path file
 
         String selection = "_data LIKE '%.doc' OR _data LIKE '%.docx'";
@@ -162,30 +166,28 @@ public class MainActivity extends AppCompatActivity{
         Log.d("database", "number: "+cursor.getCount());
 
 
-        if (cursor != null) {
-            int title = cursor.getColumnIndex(MediaStore.Files.FileColumns.DISPLAY_NAME);
-            int date_add = cursor.getColumnIndex(MediaStore.Files.FileColumns.DATE_ADDED);
-            int path = cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA);
+        int title = cursor.getColumnIndex(MediaStore.Files.FileColumns.DISPLAY_NAME);
+        int date_add = cursor.getColumnIndex(MediaStore.Files.FileColumns.DATE_ADDED);
+        int path = cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA);
 
-            while (cursor.moveToNext()) {
-                String str_title = cursor.getString(title);
-                String str_path = cursor.getString(path);
-                String str_date_add = cursor.getString(date_add);
+        while (cursor.moveToNext()) {
+            String str_title = cursor.getString(title);
+            String str_path = cursor.getString(path);
+            String str_date_add = cursor.getString(date_add);
 
-                Document document = new Document();
-                document.setPath(str_path);
-                document.setTitle(str_title);
-                document.setTimeCreate(Integer.parseInt(str_date_add));
-                document.setTimeAccess(Integer.parseInt(str_date_add));
-                document.setFavorite(false);
+            Document document = new Document();
+            document.setPath(str_path);
+            document.setTitle(str_title);
+            document.setTimeCreate(Integer.parseInt(str_date_add));
+            document.setTimeAccess(Integer.parseInt(str_date_add));
+            document.setFavorite(false);
 
-                if (!isDocumentExist(document)){
-                    DocumentDatabase.getInstance(this).documentDAO().insertDocument(document);
-                    Log.d("database", "insert "+document.getPath());
-                }
+            if (!isDocumentExist(document)){
+                DocumentDatabase.getInstance(this).documentDAO().insertDocument(document);
+                Log.d("database", "insert "+document.getPath());
             }
-            cursor.close();
         }
+        cursor.close();
     }
 
     private boolean isDocumentExist(Document document) {

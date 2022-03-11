@@ -1,6 +1,5 @@
 package com.prox.docxreader.ui.activity;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -10,18 +9,11 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,20 +29,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
-
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.MultiplePermissionsReport;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.prox.docxreader.FileUtils;
 import com.prox.docxreader.R;
-import com.wxiwei.office.common.IOfficeToPicture;
 import com.wxiwei.office.constant.EventConstant;
 import com.wxiwei.office.constant.MainConstant;
 import com.wxiwei.office.constant.wp.WPViewConstant;
-import com.wxiwei.office.macro.DialogListener;
 import com.wxiwei.office.officereader.AppFrame;
 import com.wxiwei.office.officereader.FindToolBar;
 import com.wxiwei.office.officereader.beans.AImageButton;
@@ -72,14 +55,12 @@ import com.wxiwei.office.system.beans.pagelist.IPageListViewListener;
 import com.wxiwei.office.system.dialog.ColorPickerDialog;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ReaderActivity extends AppCompatActivity implements IMainFrame {
     public static final String FILE_PATH = "FILE_PATH";
-    public static final String FILE_NAME = "FILE_NAME";
+    public static final String ACTION_FRAGMENT = "ACTION_FRAGMENT";
 
     FrameLayout frameLayout;
     Toolbar toolbar;
@@ -87,8 +68,6 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-
-//        requestPermissions();
 
         control = new MainControl(this);
         appFrame = new AppFrame(getApplicationContext());
@@ -105,31 +84,17 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
         frameLayout.removeAllViews();
         frameLayout.addView(appFrame);
         frameLayout.post(() -> {
-            filePath = getIntent().getStringExtra(FILE_PATH);
-            fileName = getIntent().getStringExtra(FILE_NAME);
+            Intent intent = getIntent();
+            String action = intent.getAction();
+            if (action.equals(Intent.ACTION_VIEW)){
+                Uri data = intent.getData();
+                filePath = FileUtils.getRealPath(this,data);
+            }else if(action.equals(ACTION_FRAGMENT)){
+                filePath = intent.getStringExtra(FILE_PATH);
+            }
+            fileName = filePath.substring(filePath.lastIndexOf('/')+1);
             init();
         });
-    }
-
-    private void requestPermissions() {
-        Dexter.withContext(this)
-                .withPermissions(
-                        Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE
-                ).withListener(new MultiplePermissionsListener() {
-            @Override
-            public void onPermissionsChecked(MultiplePermissionsReport report) {
-                if (report.areAllPermissionsGranted()){
-
-                }else{
-                    Toast.makeText(ReaderActivity.this, getResources().getString(R.string.notification_permission_error), Toast.LENGTH_SHORT).show();
-                }
-            }
-            @Override
-            public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
-                token.continuePermissionRequest();
-            }
-        }).check();
     }
 
     @Override
@@ -155,7 +120,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
         File fileWithinMyDir = new File(filePath);
 
         int dot = fileName.lastIndexOf('.');       //Vị trí dấu . cuối cùng
-        String type = fileName.substring(dot+1);         //Đuôi file (docx hoặc doc)
+        String type = fileName.substring(dot+1);         //Đuôi file
 
         if(fileWithinMyDir.exists()) {
             intentShareFile.setType(MimeTypeMap.getSingleton().getMimeTypeFromExtension(type));
@@ -1219,5 +1184,5 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
     //
     private boolean fullscreen;
     //
-    private String tempFilePath;
+//    private String tempFilePath;
 }

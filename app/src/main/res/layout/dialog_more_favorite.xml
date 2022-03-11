@@ -27,7 +27,7 @@
         android:theme="@style/ThemeImgButtonWhile"
         android:gravity="left"
         android:drawablePadding="16dp"
-        android:drawableLeft="@drawable/ic_share"/>
+        android:drawableStart="@drawable/ic_share"/>
 
     <Button
         android:id="@+id/btn_favorite"
@@ -40,6 +40,6 @@
         android:theme="@style/ThemeImgButtonWhile"
         android:gravity="left"
         android:drawablePadding="16dp"
-        android:drawableLeft="@drawable/ic_favorite"/>
+        android:drawableStart="@drawable/ic_favorite"/>
 </LinearLayout>
 

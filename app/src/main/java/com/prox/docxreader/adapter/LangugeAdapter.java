@@ -16,9 +16,10 @@ import com.prox.docxreader.R;
 import java.util.Locale;
 
 public class LangugeAdapter extends RecyclerView.Adapter<LangugeAdapter.LanguageViewHolder> {
-    private String[] languages, typeLanguages;
+    private final String[] languages;
+    private final String[] typeLanguages;
     private ImageView imgChecked;
-    private OnClickLanguageListener onClickLanguageListener;
+    private final OnClickLanguageListener onClickLanguageListener;
 
     public LangugeAdapter(String[] languages, String[] typeLanguages, OnClickLanguageListener onClickLanguageListener){
         this.languages = languages;
@@ -43,15 +44,12 @@ public class LangugeAdapter extends RecyclerView.Adapter<LangugeAdapter.Language
             holder.imgChecked.setVisibility(View.INVISIBLE);
         }
 
-        holder.itemLanguage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                imgChecked.setVisibility(View.INVISIBLE);
-                holder.imgChecked.setVisibility(View.VISIBLE);
-                imgChecked = holder.imgChecked;
+        holder.itemLanguage.setOnClickListener(v -> {
+            imgChecked.setVisibility(View.INVISIBLE);
+            holder.imgChecked.setVisibility(View.VISIBLE);
+            imgChecked = holder.imgChecked;
 
-                onClickLanguageListener.onClickLanguage(typeLanguages[position]);
-            }
+            onClickLanguageListener.onClickLanguage(typeLanguages[position]);
         });
     }
 
@@ -60,10 +58,10 @@ public class LangugeAdapter extends RecyclerView.Adapter<LangugeAdapter.Language
         return languages.length;
     }
 
-    public class LanguageViewHolder extends RecyclerView.ViewHolder{
-        private TextView txtLanguage;
-        private ImageView imgChecked;
-        private ConstraintLayout itemLanguage;
+    public static class LanguageViewHolder extends RecyclerView.ViewHolder{
+        private final TextView txtLanguage;
+        private final ImageView imgChecked;
+        private final ConstraintLayout itemLanguage;
 
         public LanguageViewHolder(@NonNull View itemView) {
             super(itemView);

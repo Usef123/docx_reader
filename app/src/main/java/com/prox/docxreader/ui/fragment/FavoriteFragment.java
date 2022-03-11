@@ -1,8 +1,9 @@
 package com.prox.docxreader.ui.fragment;
 
-import static com.prox.docxreader.ui.activity.ReaderActivity.FILE_NAME;
+import static com.prox.docxreader.ui.activity.ReaderActivity.ACTION_FRAGMENT;
 import static com.prox.docxreader.ui.activity.ReaderActivity.FILE_PATH;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -24,23 +25,15 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.MimeTypeMap;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.prox.docxreader.OnClickFavoriteListener;
-import com.prox.docxreader.OnClickItemDocumentListener;
-import com.prox.docxreader.OnClickDeleteListener;
-import com.prox.docxreader.OnClickShareListener;
 import com.prox.docxreader.R;
 import com.prox.docxreader.adapter.DocumentFavoriteAdapter;
-import com.prox.docxreader.adapter.DocumentHomeAdapter;
 import com.prox.docxreader.database.DocumentDatabase;
 import com.prox.docxreader.modul.Document;
 import com.prox.docxreader.ui.activity.ReaderActivity;
@@ -59,14 +52,16 @@ public class FavoriteFragment extends Fragment {
     private static final int SORT_NAME = 1;
     private static final int SORT_TIME_CREATE = 2;
     private static final int SORT_TIME_ACCESS = 3;
-    private int typeSort;
+    private int typeSort; //Kiểu sắp xếp
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_favorite, container, false);
+
         edtSearch = view.findViewById(R.id.edt_search);
-        typeSort = SORT_NAME;
+
+        typeSort = SORT_NAME; //Sắp xếp theo tên
 
         TextView txtTitle = view.findViewById(R.id.txt_title_fragment);
         txtTitle.setText(getResources().getString(R.string.title_favorite));
@@ -87,26 +82,14 @@ public class FavoriteFragment extends Fragment {
 
         documents = new ArrayList<>();
 
-        documentFavoriteAdapter = new DocumentFavoriteAdapter(new OnClickItemDocumentListener() {
-            @Override
-            public void onClickItemDocument(Document document) {
-                clickItemDocument(document);
-            }
-        }, new OnClickShareListener() {
-            @Override
-            public void onClickShare(Document document) {
-                clickShare(document);
-            }
-        }, new OnClickFavoriteListener(){
-            @Override
-            public void onClickFavorite(Document document) {
-                clickFavorite(document);
-            }
-        });
+        documentFavoriteAdapter = new DocumentFavoriteAdapter(
+                this::clickItemDocument,
+                this::clickShare,
+                this::clickFavorite);
 
         recyclerView.setAdapter(documentFavoriteAdapter);
 
-        DividerItemDecoration dividerHorizontal = new DividerItemDecoration(getContext(),
+        DividerItemDecoration dividerHorizontal = new DividerItemDecoration(requireContext(),
                 DividerItemDecoration.VERTICAL);
         recyclerView.addItemDecoration(dividerHorizontal);
 
@@ -117,7 +100,8 @@ public class FavoriteFragment extends Fragment {
         if (!(new File(document.getPath())).exists()){
             Toast.makeText(getContext(), getResources().getString(R.string.notification_file_error), Toast.LENGTH_SHORT).show();
             DocumentDatabase.getInstance(getContext()).documentDAO().deleteDocument(document);
-            showDocumentsFavorite();
+            documents.remove(document);
+            documentFavoriteAdapter.setDocuments(documents);
             return;
         }
         //Update Time Access
@@ -126,7 +110,7 @@ public class FavoriteFragment extends Fragment {
 
         Intent intent = new Intent(getActivity(), ReaderActivity.class);
         intent.putExtra(FILE_PATH, document.getPath());
-        intent.putExtra(FILE_NAME, document.getTitle());
+        intent.setAction(ACTION_FRAGMENT);
         startActivity(intent);
     }
 
@@ -134,7 +118,8 @@ public class FavoriteFragment extends Fragment {
         if (!(new File(document.getPath())).exists()){
             Toast.makeText(getContext(), getResources().getString(R.string.notification_file_error), Toast.LENGTH_SHORT).show();
             DocumentDatabase.getInstance(getContext()).documentDAO().deleteDocument(document);
-            showDocumentsFavorite();
+            documents.remove(document);
+            documentFavoriteAdapter.setDocuments(documents);
             return;
         }
         shareDocument(document);
@@ -144,7 +129,8 @@ public class FavoriteFragment extends Fragment {
         if (!(new File(document.getPath())).exists()){
             Toast.makeText(getContext(), getResources().getString(R.string.notification_file_error), Toast.LENGTH_SHORT).show();
             DocumentDatabase.getInstance(getContext()).documentDAO().deleteDocument(document);
-            showDocumentsFavorite();
+            documents.remove(document);
+            documentFavoriteAdapter.setDocuments(documents);
             return;
         }
         removeFavorite(document);
@@ -168,27 +154,24 @@ public class FavoriteFragment extends Fragment {
 
     private void shareDocument(Document document) {
         Intent intentShareFile = new Intent(Intent.ACTION_SEND);
-        File fileWithinMyDir = new File(document.getPath());
 
         String titleFull = document.getTitle();         //Tên file có đuôi (.docx hoặc .doc)
         int dot = titleFull.lastIndexOf('.');       //Vị trí dấu . cuối cùng
         String type = titleFull.substring(dot+1);         //Đuôi file (docx hoặc doc)
 
-        if(fileWithinMyDir.exists()) {
-            intentShareFile.setType(MimeTypeMap.getSingleton().getMimeTypeFromExtension(type));
-            intentShareFile.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://"+document.getPath()));
+        intentShareFile.setType(MimeTypeMap.getSingleton().getMimeTypeFromExtension(type));
+        intentShareFile.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://"+document.getPath()));
 
-            startActivity(Intent.createChooser(intentShareFile, titleFull));
-        }else{
-            Toast.makeText(getContext(), getResources().getString(R.string.notification_share_error), Toast.LENGTH_SHORT).show();
-        }
+        startActivity(Intent.createChooser(intentShareFile, titleFull));
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private void removeFavorite(Document document) {
         document.setFavorite(false);
         DocumentDatabase.getInstance(getContext()).documentDAO().updateDocument(document);
+        documents.remove(document);
+        documentFavoriteAdapter.notifyDataSetChanged();
         Toast.makeText(getContext(), getResources().getString(R.string.notification_remove_favorite), Toast.LENGTH_SHORT).show();
-        showDocumentsFavorite();
     }
 
     private void addSearchDocument() {
@@ -212,12 +195,7 @@ public class FavoriteFragment extends Fragment {
 
     private void addBtnSort() {
         ImageButton btnSort = view.findViewById(R.id.btn_sort);
-        btnSort.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openDialogSort();
-            }
-        });
+        btnSort.setOnClickListener(view -> openDialogSort());
     }
 
     private void openDialogSort() {
@@ -251,29 +229,20 @@ public class FavoriteFragment extends Fragment {
                 break;
         }
 
-        sortName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                typeSort = SORT_NAME;
-                showDocumentsFavorite();
-                dialogSort.hide();
-            }
+        sortName.setOnClickListener(v -> {
+            typeSort = SORT_NAME;
+            showDocumentsFavorite();
+            dialogSort.hide();
         });
-        sortTimeCreate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                typeSort = SORT_TIME_CREATE;
-                showDocumentsFavorite();
-                dialogSort.hide();
-            }
+        sortTimeCreate.setOnClickListener(v -> {
+            typeSort = SORT_TIME_CREATE;
+            showDocumentsFavorite();
+            dialogSort.hide();
         });
-        sortTimeAccess.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                typeSort = SORT_TIME_ACCESS;
-                showDocumentsFavorite();
-                dialogSort.hide();
-            }
+        sortTimeAccess.setOnClickListener(v -> {
+            typeSort = SORT_TIME_ACCESS;
+            showDocumentsFavorite();
+            dialogSort.hide();
         });
     }
 
