@@ -4,7 +4,7 @@
     <string name="language">Language</string>
 
     <string name="notification_permission_error">Please allow permission first</string>
-    
+
     <string name="botton_nav_home">Home</string>
     <string name="botton_nav_favorite">Favorite</string>
     <string name="botton_nav_setting">Setting</string>
@@ -54,4 +54,8 @@
 
     <string name="subject_email">Feedback Docx Reader</string>
     <string name="notification_send_mail">Send mail...</string>
+
+    <string name="notification_share_to">Share to...</string>
+
+    <string name="privacy_policy">Privacy Policy</string>
 </resources>

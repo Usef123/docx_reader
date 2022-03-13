@@ -55,4 +55,8 @@
 
     <string name="subject_email">Phản hồi Docx Reader</string>
     <string name="notification_send_mail">Gửi mail...</string>
+
+    <string name="notification_share_to">Chia sẻ với...</string>
+
+    <string name="privacy_policy">Chính sách bảo mật</string>
 </resources>

@@ -133,10 +133,14 @@ public class MainActivity extends AppCompatActivity{
         NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration);
 
         navController.addOnDestinationChangedListener((navController, navDestination, bundle) -> {
-            if (navDestination.getId()==R.id.languageFragment){
+            if (navDestination.getId()==R.id.languageFragment) {
                 bottomNavigationView.setVisibility(View.GONE);
                 toolbar.setVisibility(View.VISIBLE);
                 toolbar.setTitle(getResources().getString(R.string.language));
+            }else if (navDestination.getId()==R.id.policyFragment){
+                bottomNavigationView.setVisibility(View.GONE);
+                toolbar.setVisibility(View.VISIBLE);
+                toolbar.setTitle(getResources().getString(R.string.privacy_policy));
             } else{
                 bottomNavigationView.setVisibility(View.VISIBLE);
                 toolbar.setVisibility(View.GONE);
