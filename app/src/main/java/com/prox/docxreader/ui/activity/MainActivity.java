@@ -2,7 +2,6 @@ package com.prox.docxreader.ui.activity;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -18,7 +17,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -30,19 +28,22 @@ import com.karumi.dexter.listener.single.PermissionListener;
 import com.prox.docxreader.LocaleHelper;
 import com.prox.docxreader.R;
 import com.prox.docxreader.database.DocumentDatabase;
+import com.prox.docxreader.databinding.ActivityMainBinding;
 import com.prox.docxreader.modul.Document;
 
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity{
+    private ActivityMainBinding binding;
+
     private NavController navController;
     private AppBarConfiguration appBarConfiguration;
-    private BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         //Load ngôn ngữ
         LocaleHelper.loadLanguage(this);
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity{
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        bottomNavigationView = null;
+        binding = null;
         appBarConfiguration = null;
         navController=null;
     }
@@ -125,26 +126,24 @@ public class MainActivity extends AppCompatActivity{
                 R.id.favoriteFragment,
                 R.id.settingFragment).build();
 
-        bottomNavigationView = findViewById(R.id.bottom_nav);
-        bottomNavigationView.setItemIconTintList(null);
-        NavigationUI.setupWithNavController(bottomNavigationView, navController);
+        binding.bottomNav.setItemIconTintList(null);
+        NavigationUI.setupWithNavController(binding.bottomNav, navController);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration);
+        NavigationUI.setupWithNavController(binding.toolbar, navController, appBarConfiguration);
 
         navController.addOnDestinationChangedListener((navController, navDestination, bundle) -> {
             if (navDestination.getId()==R.id.languageFragment) {
-                bottomNavigationView.setVisibility(View.GONE);
-                toolbar.setVisibility(View.VISIBLE);
-                toolbar.setTitle(getResources().getString(R.string.language));
+                binding.bottomNav.setVisibility(View.GONE);
+                binding.toolbar.setVisibility(View.VISIBLE);
+                binding.toolbar.setTitle(getResources().getString(R.string.language));
             }else if (navDestination.getId()==R.id.policyFragment){
-                bottomNavigationView.setVisibility(View.GONE);
-                toolbar.setVisibility(View.VISIBLE);
-                toolbar.setTitle(getResources().getString(R.string.privacy_policy));
+                binding.bottomNav.setVisibility(View.GONE);
+                binding.toolbar.setVisibility(View.VISIBLE);
+                binding.toolbar.setTitle(getResources().getString(R.string.privacy_policy));
             } else{
-                bottomNavigationView.setVisibility(View.VISIBLE);
-                toolbar.setVisibility(View.GONE);
-                toolbar.setTitle("");
+                binding.bottomNav.setVisibility(View.VISIBLE);
+                binding.toolbar.setVisibility(View.GONE);
+                binding.toolbar.setTitle("");
             }
         });
     }

@@ -4,14 +4,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.prox.docxreader.OnClickLanguageListener;
-import com.prox.docxreader.R;
+import com.prox.docxreader.databinding.ItemLanguageBinding;
 
 import java.util.Locale;
 
@@ -30,24 +28,24 @@ public class LangugeAdapter extends RecyclerView.Adapter<LangugeAdapter.Language
     @NonNull
     @Override
     public LanguageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_language, parent, false);
-        return new LanguageViewHolder(view);
+        ItemLanguageBinding binding = ItemLanguageBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        return new LanguageViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull LanguageViewHolder holder, int position) {
-        holder.txtLanguage.setText(languages[position]);
+        holder.binding.txtLanguage.setText(languages[position]);
         if (Locale.getDefault().getLanguage().contains(typeLanguages[position])){
-            holder.imgChecked.setVisibility(View.VISIBLE);
-            imgChecked = holder.imgChecked;
+            holder.binding.imgChecked.setVisibility(View.VISIBLE);
+            imgChecked = holder.binding.imgChecked;
         }else{
-            holder.imgChecked.setVisibility(View.INVISIBLE);
+            holder.binding.imgChecked.setVisibility(View.INVISIBLE);
         }
 
-        holder.itemLanguage.setOnClickListener(v -> {
+        holder.binding.itemLanguage.setOnClickListener(v -> {
             imgChecked.setVisibility(View.INVISIBLE);
-            holder.imgChecked.setVisibility(View.VISIBLE);
-            imgChecked = holder.imgChecked;
+            holder.binding.imgChecked.setVisibility(View.VISIBLE);
+            imgChecked = holder.binding.imgChecked;
 
             onClickLanguageListener.onClickLanguage(typeLanguages[position]);
         });
@@ -59,15 +57,11 @@ public class LangugeAdapter extends RecyclerView.Adapter<LangugeAdapter.Language
     }
 
     public static class LanguageViewHolder extends RecyclerView.ViewHolder{
-        private final TextView txtLanguage;
-        private final ImageView imgChecked;
-        private final ConstraintLayout itemLanguage;
+        private final ItemLanguageBinding binding;
 
-        public LanguageViewHolder(@NonNull View itemView) {
-            super(itemView);
-            txtLanguage = itemView.findViewById(R.id.txt_language);
-            imgChecked = itemView.findViewById(R.id.img_checked);
-            itemLanguage = itemView.findViewById(R.id.item_language);
+        public LanguageViewHolder(ItemLanguageBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 }

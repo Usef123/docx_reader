@@ -10,9 +10,9 @@ import androidx.navigation.Navigation;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.prox.docxreader.R;
+import com.prox.docxreader.databinding.FragmentSettingBinding;
 
 public class SettingFragment extends Fragment {
     public static final String EMAIL_FEEDBACK = "duclet2k@outlook.com";
@@ -22,32 +22,22 @@ public class SettingFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_setting, container, false);
+        FragmentSettingBinding binding = FragmentSettingBinding.inflate(inflater, container, false);
 
-        Button btnLanguage = view.findViewById(R.id.btn_language);
-        btnLanguage.setOnClickListener(v ->
-                Navigation.findNavController(view).navigate(R.id.action_settingFragment_to_languageFragment)
+        binding.btnLanguage.setOnClickListener(v ->
+                Navigation.findNavController(binding.getRoot()).navigate(R.id.action_settingFragment_to_languageFragment)
         );
 
-        Button btnFeedback = view.findViewById(R.id.btn_feedback);
-        btnFeedback.setOnClickListener(v -> openEmail());
+        binding.btnFeedback.setOnClickListener(v -> openEmail());
 
-        Button btnShare = view.findViewById(R.id.btn_share);
-        btnShare.setOnClickListener(v -> {
-            shareApp();
-        });
+        binding.btnShare.setOnClickListener(v -> shareApp());
 
-        Button btnMoreApp = view.findViewById(R.id.btn_more_app);
-        btnMoreApp.setOnClickListener(v -> {
-            openCHPlay();
-        });
+        binding.btnMoreApp.setOnClickListener(v -> openCHPlay());
 
-        Button btnPrivacyPolicy = view.findViewById(R.id.btn_privacy_policy);
-        btnPrivacyPolicy.setOnClickListener(v ->
-            Navigation.findNavController(view).navigate(R.id.action_settingFragment_to_policyFragment)
+        binding.btnPrivacyPolicy.setOnClickListener(v ->
+            Navigation.findNavController(binding.getRoot()).navigate(R.id.action_settingFragment_to_policyFragment)
         );
-        return view;
+        return binding.getRoot();
     }
 
     private void openCHPlay() {

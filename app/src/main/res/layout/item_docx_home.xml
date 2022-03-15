@@ -49,7 +49,9 @@
     </LinearLayout>
 
     <!-- Your main layout here -->
-    <include layout="@layout/item_docx"
+    <include
+        android:id="@+id/item_docx"
+        layout="@layout/item_docx"
         android:layout_height="match_parent"
         android:layout_width="match_parent"/>
 

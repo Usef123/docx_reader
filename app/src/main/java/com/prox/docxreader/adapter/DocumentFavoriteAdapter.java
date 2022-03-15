@@ -2,21 +2,17 @@ package com.prox.docxreader.adapter;
 
 import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.chauthai.swipereveallayout.SwipeRevealLayout;
 import com.chauthai.swipereveallayout.ViewBinderHelper;
 import com.prox.docxreader.OnClickFavoriteListener;
 import com.prox.docxreader.OnClickItemDocumentListener;
 import com.prox.docxreader.OnClickShareListener;
 import com.prox.docxreader.R;
+import com.prox.docxreader.databinding.ItemDocxFavoriteBinding;
 import com.prox.docxreader.modul.Document;
 
 import java.text.SimpleDateFormat;
@@ -49,49 +45,41 @@ public class DocumentFavoriteAdapter extends RecyclerView.Adapter<DocumentFavori
     @NonNull
     @Override
     public DocumentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_docx_favorite, parent, false);
-        return new DocumentViewHolder(view);
+        ItemDocxFavoriteBinding binding = ItemDocxFavoriteBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        return new DocumentViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull DocumentViewHolder holder, int position) {
         Document document = documents.get(position);
-        holder.txtTitleDocx.setText(document.getTitle());
-        holder.txtTimeDocx.setText(getDate(document.getTimeCreate()));
+        holder.binding.itemDocx.txtTitle.setText(document.getTitle());
+        holder.binding.itemDocx.txtTime.setText(getDate(document.getTimeCreate()));
         if (document.isFavorite()){
-            holder.btnFavorite.setImageResource(R.drawable.ic_favorite);
+            holder.binding.btnFavorite.setImageResource(R.drawable.ic_favorite);
         }else{
-            holder.btnFavorite.setImageResource(R.drawable.ic_favorite_fill);
+            holder.binding.btnFavorite.setImageResource(R.drawable.ic_favorite_fill);
         }
 
-        viewBinderHelper.bind(holder.swipeRevealLayout, String.valueOf(document.getId()));
-        holder.btnShare.setOnClickListener(view -> onClickShareListener.onClickShare(document));
-        holder.btnFavorite.setOnClickListener(view -> onClickFavoriteListener.onClickFavorite(document));
-        holder.itemDocx.setOnClickListener(v -> onClickItemDocumentListener.onClickItemDocument(document));
+        viewBinderHelper.bind(holder.binding.swipeRevealLayout, String.valueOf(document.getId()));
+        holder.binding.btnShare.setOnClickListener(view -> onClickShareListener.onClickShare(document));
+        holder.binding.btnFavorite.setOnClickListener(view -> onClickFavoriteListener.onClickFavorite(document));
+        holder.binding.itemDocx.itemDocx.setOnClickListener(v -> onClickItemDocumentListener.onClickItemDocument(document));
     }
 
     @Override
     public int getItemCount() {
+        if (documents == null){
+            return 0;
+        }
         return documents.size();
     }
 
     public static class DocumentViewHolder extends RecyclerView.ViewHolder{
-        private final TextView txtTitleDocx;
-        private final TextView txtTimeDocx;
-        private final ImageButton btnShare;
-        private final ImageButton btnFavorite;
-        private final ConstraintLayout itemDocx;
-        private final SwipeRevealLayout swipeRevealLayout;
+        private final ItemDocxFavoriteBinding binding;
 
-        public DocumentViewHolder(@NonNull View itemView) {
-            super(itemView);
-            txtTitleDocx = itemView.findViewById(R.id.txt_title);
-            txtTimeDocx = itemView.findViewById(R.id.txt_time);
-            btnShare = itemView.findViewById(R.id.btn_share);
-            btnFavorite = itemView.findViewById(R.id.btn_favorite);
-            itemDocx = itemView.findViewById(R.id.itemDocx);
-
-            swipeRevealLayout = itemView.findViewById(R.id.swipeRevealLayout);
+        public DocumentViewHolder(ItemDocxFavoriteBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 
