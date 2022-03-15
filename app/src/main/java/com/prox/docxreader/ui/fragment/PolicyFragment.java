@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import com.prox.docxreader.databinding.FragmentPolicyBinding;
 
 public class PolicyFragment extends Fragment {
-    private static final String URI_POLICY = "https://docs.yoctoproject.org/overview-manual/intro.html#";
+    private static final String URI_POLICY = "https://hellowordapp.github.io/policy/privacy.html";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
