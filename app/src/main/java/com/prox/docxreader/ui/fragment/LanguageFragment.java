@@ -1,5 +1,6 @@
 package com.prox.docxreader.ui.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -14,6 +15,7 @@ import com.prox.docxreader.LocaleHelper;
 import com.prox.docxreader.R;
 import com.prox.docxreader.adapter.LangugeAdapter;
 import com.prox.docxreader.databinding.FragmentLanguageBinding;
+import com.prox.docxreader.ui.activity.MainActivity;
 
 public class LanguageFragment extends Fragment {
 
@@ -27,7 +29,9 @@ public class LanguageFragment extends Fragment {
                 getResources().getStringArray(R.array.type_language),
                 typeLanguage -> {
                     LocaleHelper.setLocale(getContext(), typeLanguage);
-                    requireActivity().recreate();
+                    Intent intent = new Intent(getActivity(), MainActivity.class);
+                    startActivity(intent);
+                    getActivity().finish();
                 });
 
         LinearLayoutManager manager = new LinearLayoutManager(getContext());

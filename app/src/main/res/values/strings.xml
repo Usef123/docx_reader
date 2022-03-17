@@ -58,4 +58,9 @@
     <string name="notification_share_to">Share to...</string>
 
     <string name="privacy_policy">Privacy Policy</string>
+
+    <string name="list_empty">No Item</string>
+
+    <string name="dialog_message">Access to read all file Docx in your device</string>
+    <string name="dialog_title">DocxReader</string>
 </resources>

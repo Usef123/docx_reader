@@ -59,4 +59,9 @@
     <string name="notification_share_to">Chia sẻ với...</string>
 
     <string name="privacy_policy">Chính sách bảo mật</string>
+
+    <string name="list_empty">Danh sách trống</string>
+
+    <string name="dialog_message">Cho phép đọc tất cả tệp Docx trong thiết bị của bạn</string>
+    <string name="dialog_title">DocxReader</string>
 </resources>

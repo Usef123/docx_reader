@@ -91,6 +91,11 @@ public class HomeFragment extends Fragment {
         homeBinding.recyclerViewHome.addItemDecoration(dividerHorizontal);
 
         documents = DocumentDatabase.getInstance(getContext()).documentDAO().sortDocumentByName("");
+        if (documents.size()==0){
+            homeBinding.notiList.setVisibility(View.VISIBLE);
+        }else{
+            homeBinding.notiList.setVisibility(View.GONE);
+        }
         documentHomeAdapter.setDocuments(documents);
     }
 
@@ -158,6 +163,11 @@ public class HomeFragment extends Fragment {
 
     private void showDocuments() {
         String search = homeBinding.include.edtSearch.getText().toString().trim();
+        if (search.isEmpty()){
+            homeBinding.include.btnClear.setVisibility(View.GONE);
+        }else{
+            homeBinding.include.btnClear.setVisibility(View.VISIBLE);
+        }
         switch (typeSort){
             case SORT_NAME:
                 documents = DocumentDatabase.getInstance(getContext()).documentDAO().sortDocumentByName(search);
@@ -168,6 +178,11 @@ public class HomeFragment extends Fragment {
             case SORT_TIME_ACCESS:
                 documents = DocumentDatabase.getInstance(getContext()).documentDAO().sortDocumentByTimeAccess(search);
                 break;
+        }
+        if (documents.size()==0){
+            homeBinding.notiList.setVisibility(View.VISIBLE);
+        }else{
+            homeBinding.notiList.setVisibility(View.GONE);
         }
         documentHomeAdapter.setDocuments(documents);
     }
@@ -273,7 +288,7 @@ public class HomeFragment extends Fragment {
         String type = titleFull.substring(dot+1);         //Đuôi file (docx hoặc doc)
 
         intentShareFile.setType(MimeTypeMap.getSingleton().getMimeTypeFromExtension(type));
-        intentShareFile.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://"+document.getPath()));
+        intentShareFile.putExtra(Intent.EXTRA_STREAM, Uri.parse("content://"+document.getPath()));
 
         startActivity(Intent.createChooser(intentShareFile, titleFull));
     }
@@ -312,6 +327,12 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        homeBinding.include.btnClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                homeBinding.include.edtSearch.setText("");
+            }
+        });
     }
 
     private void openDialogSort() {

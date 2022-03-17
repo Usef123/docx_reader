@@ -92,7 +92,9 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
             }else if(action.equals(ACTION_FRAGMENT)){
                 filePath = intent.getStringExtra(FILE_PATH);
             }
-            fileName = filePath.substring(filePath.lastIndexOf('/')+1);
+            if (filePath != null) {
+                fileName = filePath.substring(filePath.lastIndexOf('/')+1);
+            }
             init();
         });
     }
@@ -124,7 +126,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
 
         if(fileWithinMyDir.exists()) {
             intentShareFile.setType(MimeTypeMap.getSingleton().getMimeTypeFromExtension(type));
-            intentShareFile.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://"+filePath));
+            intentShareFile.putExtra(Intent.EXTRA_STREAM, Uri.parse("content://"+filePath));
 
             startActivity(Intent.createChooser(intentShareFile, fileName));
         }else{

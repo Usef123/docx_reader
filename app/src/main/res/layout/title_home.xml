@@ -15,7 +15,7 @@
         android:layout_marginEnd="16dp"
         android:text="@string/title_home"
         android:textColor="@color/white"
-        android:textSize="34sp"
+        android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/btn_sort"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,10 +23,9 @@
 
     <ImageButton
         android:id="@+id/btn_sort"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:scaleType="centerCrop"
         android:background="@drawable/img_button_blue_selector"
         app:layout_constraintBottom_toBottomOf="@+id/txt_title_fragment"
         app:layout_constraintEnd_toEndOf="parent"
@@ -42,22 +41,34 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:hint="@string/hint_search"
+        android:imeOptions="actionSearch"
+        android:inputType="text"
         android:textColor="@color/white"
         android:textColorHint="#80FFFFFF"
-        android:textSize="16sp"
-        android:imeOptions="actionSearch"
+        android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btn_clear"
         app:layout_constraintStart_toEndOf="@+id/search"
         app:layout_constraintTop_toBottomOf="@+id/txt_title_fragment" />
 
     <ImageView
         android:id="@+id/search"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="@+id/edt_search"
         app:layout_constraintStart_toStartOf="@+id/txt_title_fragment"
         app:layout_constraintTop_toTopOf="@+id/edt_search"
         app:srcCompat="@drawable/ic_search" />
+
+    <ImageView
+        android:id="@+id/btn_clear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/edt_search"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/edt_search"
+        app:srcCompat="@drawable/ic_baseline_close_24"
+        android:visibility="gone"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

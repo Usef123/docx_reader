@@ -22,6 +22,8 @@
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/home_selector.xml" value="0.123" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/ic_app.xml" value="0.144" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/ic_back_24.xml" value="0.1255" />
+        <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/ic_button_more.xml" value="0.1255" />
+        <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/ic_checked.xml" value="0.1255" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/ic_docx.xml" value="0.123" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/ic_dot.xml" value="0.144" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/ic_edit.xml" value="0.144" />
@@ -31,12 +33,16 @@
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/ic_filter.xml" value="0.144" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/ic_home.xml" value="0.123" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/ic_home_fill.xml" value="0.144" />
+        <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/ic_infor_app.xml" value="0.1255" />
+        <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/ic_language.xml" value="0.1255" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/ic_languge.xml" value="0.144" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/ic_more_app.xml" value="0.144" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/ic_privacy_policy.xml" value="0.144" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/ic_search.xml" value="0.144" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/ic_share.xml" value="0.144" />
+        <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/ic_share2.xml" value="0.1255" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/ic_share_black.xml" value="0.1255" />
+        <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/ic_sort.xml" value="0.1255" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/ic_sort_name.xml" value="0.144" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/ic_sort_time_access.xml" value="0.144" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/ic_sort_time_create.xml" value="0.144" />
@@ -45,6 +51,7 @@
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/ic_trast.xml" value="0.144" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/ic_user.xml" value="0.123" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/ic_user_fill.xml" value="0.123" />
+        <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/img_button_while_selector.xml" value="0.1255" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/item_dialog_selector.xml" value="0.144" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/more_enabled.xml" value="0.144" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/drawable/more_pressed.xml" value="0.144" />
@@ -65,7 +72,7 @@
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/layout/fragment_home.xml" value="0.2210144927536232" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/layout/fragment_language.xml" value="0.25" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/layout/fragment_policy.xml" value="0.23641304347826086" />
-        <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/layout/fragment_setting.xml" value="0.25" />
+        <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/layout/fragment_setting.xml" value="0.152" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/layout/item_content.xml" value="0.2210144927536232" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/layout/item_docx.xml" value="0.264" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/layout/item_docx_favorite.xml" value="0.23641304347826086" />

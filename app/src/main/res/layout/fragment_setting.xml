@@ -1,80 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".ui.fragment.SettingFragment">
-
-    <ImageView
-        android:padding="16dp"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_infor_app" />
-    <Button
-        android:id="@+id/btn_language"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:drawableStart="@drawable/ic_language"
-        android:drawablePadding="16dp"
-        android:padding="16dp"
-        android:textSize="24sp"
-        android:textStyle="normal"
-        android:theme="@style/ThemeImgButtonWhile"
-        android:gravity="left"
-        android:text="@string/btn_language" />
+        android:orientation="vertical">
 
-    <Button
-        android:id="@+id/btn_share"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:drawableStart="@drawable/ic_share2"
-        android:drawablePadding="16dp"
-        android:padding="16dp"
-        android:textSize="24sp"
-        android:textStyle="normal"
-        android:theme="@style/ThemeImgButtonWhile"
-        android:gravity="left"
-        android:text="@string/btn_share_app" />
+        <ImageView
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="64dp"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_infor_app" />
 
-    <Button
-        android:id="@+id/btn_feedback"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:drawableStart="@drawable/ic_feedback"
-        android:drawablePadding="16dp"
-        android:padding="16dp"
-        android:textSize="24sp"
-        android:textStyle="normal"
-        android:theme="@style/ThemeImgButtonWhile"
-        android:gravity="left"
-        android:text="@string/btn_feedback" />
+        <Button
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:id="@+id/btn_language"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_language"
+            android:drawablePadding="16dp"
+            android:padding="16dp"
+            android:textSize="20sp"
+            android:textStyle="normal"
+            android:theme="@style/ThemeImgButtonWhile"
+            android:gravity="left"
+            android:text="@string/btn_language" />
 
-    <Button
-        android:id="@+id/btn_more_app"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:drawableStart="@drawable/ic_more_app"
-        android:drawablePadding="16dp"
-        android:padding="16dp"
-        android:textSize="24sp"
-        android:textStyle="normal"
-        android:theme="@style/ThemeImgButtonWhile"
-        android:gravity="left"
-        android:text="@string/btn_more_app" />
+        <Button
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:id="@+id/btn_share"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_share2"
+            android:drawablePadding="16dp"
+            android:padding="16dp"
+            android:textSize="20sp"
+            android:textStyle="normal"
+            android:theme="@style/ThemeImgButtonWhile"
+            android:gravity="left"
+            android:text="@string/btn_share_app" />
 
-    <Button
-        android:id="@+id/btn_privacy_policy"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:drawableStart="@drawable/ic_privacy_policy"
-        android:drawablePadding="16dp"
-        android:padding="16dp"
-        android:textSize="24sp"
-        android:textStyle="normal"
-        android:theme="@style/ThemeImgButtonWhile"
-        android:gravity="left"
-        android:text="@string/btn_privacy_policy" />
-</LinearLayout>
+        <Button
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:id="@+id/btn_feedback"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_feedback"
+            android:drawablePadding="16dp"
+            android:padding="16dp"
+            android:textSize="20sp"
+            android:textStyle="normal"
+            android:theme="@style/ThemeImgButtonWhile"
+            android:gravity="left"
+            android:text="@string/btn_feedback" />
+
+        <Button
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:id="@+id/btn_more_app"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_more_app"
+            android:drawablePadding="16dp"
+            android:padding="16dp"
+            android:textSize="20sp"
+            android:textStyle="normal"
+            android:theme="@style/ThemeImgButtonWhile"
+            android:gravity="left"
+            android:text="@string/btn_more_app" />
+
+        <Button
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:id="@+id/btn_privacy_policy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_privacy_policy"
+            android:drawablePadding="16dp"
+            android:padding="16dp"
+            android:textSize="20sp"
+            android:textStyle="normal"
+            android:theme="@style/ThemeImgButtonWhile"
+            android:gravity="left"
+            android:text="@string/btn_privacy_policy" />
+    </LinearLayout>
+</ScrollView>

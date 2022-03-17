@@ -23,7 +23,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:text="@string/btn_sort_name"
-            android:textSize="24sp"
+            android:textSize="16sp"
             android:paddingEnd="16dp"
             android:layout_weight="1"/>
         <ImageView
@@ -47,7 +47,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:text="@string/btn_sort_created_time"
-            android:textSize="24sp"
+            android:textSize="16sp"
             android:paddingEnd="16dp"
             android:layout_weight="1"/>
         <ImageView
@@ -67,13 +67,14 @@
             android:layout_height="match_parent"
             android:src="@drawable/ic_sort_time_access"
             android:paddingEnd="16dp"/>
+
         <TextView
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:text="@string/btn_sort_access_time"
-            android:textSize="24sp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:paddingEnd="16dp"
-            android:layout_weight="1"/>
+            android:text="@string/btn_sort_access_time"
+            android:textSize="16sp" />
         <ImageView
             android:id="@+id/time_access_checked"
             android:layout_width="wrap_content"

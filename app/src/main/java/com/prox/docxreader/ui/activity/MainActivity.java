@@ -1,39 +1,44 @@
 package com.prox.docxreader.ui.activity;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import android.Manifest;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.MultiplePermissionsReport;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionDeniedResponse;
-import com.karumi.dexter.listener.PermissionGrantedResponse;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
-import com.karumi.dexter.listener.single.PermissionListener;
+import com.prox.docxreader.BuildConfig;
 import com.prox.docxreader.LocaleHelper;
 import com.prox.docxreader.R;
 import com.prox.docxreader.database.DocumentDatabase;
 import com.prox.docxreader.databinding.ActivityMainBinding;
 import com.prox.docxreader.modul.Document;
 
+import java.io.File;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity{
+    private static final int REQUEST_PERMISSION_MANAGE = 123;
+    private static final int REQUEST_PERMISSION_READ_WRITE = 456;
     private ActivityMainBinding binding;
 
     private NavController navController;
@@ -48,11 +53,26 @@ public class MainActivity extends AppCompatActivity{
         //Load ngôn ngữ
         LocaleHelper.loadLanguage(this);
 
-        //Cấp quyền
-        requestPermissions();
-
         //Tạo UI
         init();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //Cấp quyền
+        if(permission()){
+            insertDatabase();
+        }else {
+            requestPermissions();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        DocumentDatabase.getInstance(this).documentDAO().deleteAllDocument();
+        Log.d("database", "delete all");
     }
 
     @Override
@@ -60,55 +80,95 @@ public class MainActivity extends AppCompatActivity{
         super.onDestroy();
         binding = null;
         appBarConfiguration = null;
-        navController=null;
+        navController = null;
     }
 
-    //Cấp quyền Read và Write
+    //Kiểm tra quyền
+    private boolean permission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+            return Environment.isExternalStorageManager();
+        }else{
+            int write = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            int read = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
+            return (write == PackageManager.PERMISSION_GRANTED && read == PackageManager.PERMISSION_GRANTED);
+        }
+    }
+
+    //Cấp quyền
     private void requestPermissions() {
-        Dexter.withContext(this)
-                .withPermissions(
-                        Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE
-                ).withListener(new MultiplePermissionsListener() {
-            @Override
-            public void onPermissionsChecked(MultiplePermissionsReport report) {
-                if (report.areAllPermissionsGranted()){
-                    //Cấp quyền Manage đối với API 30 trở lên
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
-                        requestPermission();
-                    }else{
-                        insertDatabase(); //Đẩy list file vào DB
-                    }
-                }else{
-                    Toast.makeText(MainActivity.this, getResources().getString(R.string.notification_permission_error), Toast.LENGTH_SHORT).show();
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M){
+            return;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            openDialogAccessAllFile();
+        } else {
+            String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE};
+            requestPermissions(permissions, REQUEST_PERMISSION_READ_WRITE);
+        }
+    }
+
+    private void openDialogAccessAllFile() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.dialog_message)
+                .setTitle(R.string.dialog_title);
+
+        builder.setPositiveButton(R.string.txt_ok, new DialogInterface.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.R)
+            public void onClick(DialogInterface dialog, int id) {
+                requestAccessAllFile();
+            }
+        });
+        builder.setNegativeButton(R.string.txt_cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                Toast.makeText(getApplicationContext(), R.string.notification_permission_error, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.R)
+    private void requestAccessAllFile() {
+        try {
+            Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+            intent.addCategory("android.intent.category.DEFAULT");
+            intent.setData(Uri.parse("package:" + BuildConfig.APPLICATION_ID));
+            startActivityForResult(intent, REQUEST_PERMISSION_MANAGE);
+        } catch (Exception e) {
+            Intent intent = new Intent();
+            intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+            startActivityForResult(intent, REQUEST_PERMISSION_MANAGE);
+        }
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_PERMISSION_READ_WRITE) {
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                    && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                insertDatabase();
+            } else {
+                Toast.makeText(this, R.string.notification_permission_error, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_PERMISSION_MANAGE) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                if (Environment.isExternalStorageManager()) {
+                    insertDatabase();
+                } else {
+                    Toast.makeText(this, R.string.notification_permission_error, Toast.LENGTH_SHORT).show();
                 }
             }
-            @Override
-            public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
-                token.continuePermissionRequest();
-            }
-        }).check();
-    }
-
-    //Cấp quyền Manage đối với API 30 trở lên
-    @RequiresApi(api = Build.VERSION_CODES.R)
-    private void requestPermission(){
-        Dexter.withContext(this)
-                .withPermission(Manifest.permission.MANAGE_EXTERNAL_STORAGE)
-                .withListener(new PermissionListener() {
-                    @Override
-                    public void onPermissionGranted(PermissionGrantedResponse response) {
-                        insertDatabase(); //Đẩy list file vào DB
-                    }
-                    @Override
-                    public void onPermissionDenied(PermissionDeniedResponse response) {
-                        Toast.makeText(MainActivity.this, getResources().getString(R.string.notification_permission_error), Toast.LENGTH_SHORT).show();
-                    }
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
-                        token.continuePermissionRequest();
-                    }
-                }).check();
+        }
     }
 
     //Tạo UI
@@ -158,7 +218,7 @@ public class MainActivity extends AppCompatActivity{
     public void insertDatabase() {
         Uri uri = MediaStore.Files.getContentUri("external");
 
-        final String[] columns = {
+        String[] columns = {
                 MediaStore.Files.FileColumns.DISPLAY_NAME,   //tên file
                 MediaStore.Files.FileColumns.DATE_ADDED,     //date tạo
                 MediaStore.Files.FileColumns.DATA};          //path file
@@ -166,8 +226,6 @@ public class MainActivity extends AppCompatActivity{
         String selection = "_data LIKE '%.doc' OR _data LIKE '%.docx'";
 
         Cursor cursor = this.getContentResolver().query(uri, columns, selection, null, null);
-        Log.d("database", "number: "+cursor.getCount());
-
 
         int title = cursor.getColumnIndex(MediaStore.Files.FileColumns.DISPLAY_NAME);
         int date_add = cursor.getColumnIndex(MediaStore.Files.FileColumns.DATE_ADDED);
@@ -185,7 +243,10 @@ public class MainActivity extends AppCompatActivity{
             document.setTimeAccess(Integer.parseInt(str_date_add));
             document.setFavorite(false);
 
-            if (!isDocumentExist(document)){
+            Log.d("database", "check "+document.getPath());
+            if (new File(document.getPath()).exists()
+                    && !isDocumentExist(document)
+                    && !document.getPath().contains("Trash")){
                 DocumentDatabase.getInstance(this).documentDAO().insertDocument(document);
                 Log.d("database", "insert "+document.getPath());
             }

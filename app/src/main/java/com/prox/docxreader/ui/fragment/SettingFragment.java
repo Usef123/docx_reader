@@ -17,7 +17,7 @@ import com.prox.docxreader.databinding.FragmentSettingBinding;
 public class SettingFragment extends Fragment {
     public static final String EMAIL_FEEDBACK = "duclet2k@outlook.com";
     private static final String URI_APP = "https://play.google.com/store/apps/details?id=com.facebook.katana";
-    private static final String URI_PACKAGE = "https://play.google.com/store/apps/dev?id=5700313618786177705";
+    private static final String URI_PACKAGE = "https://play.google.com/store/apps/developer?id=Andromeda+App";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

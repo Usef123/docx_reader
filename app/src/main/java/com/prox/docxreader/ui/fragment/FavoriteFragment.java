@@ -83,6 +83,11 @@ public class FavoriteFragment extends Fragment {
         favoriteBinding.recyclerViewFavorite.addItemDecoration(dividerHorizontal);
 
         documents = DocumentDatabase.getInstance(getContext()).documentDAO().sortDocumentFavoriteByName("");
+        if (documents.size()==0){
+            favoriteBinding.notiList.setVisibility(View.VISIBLE);
+        }else{
+            favoriteBinding.notiList.setVisibility(View.GONE);
+        }
         documentFavoriteAdapter.setDocuments(documents);
     }
 
@@ -128,6 +133,11 @@ public class FavoriteFragment extends Fragment {
 
     private void showDocumentsFavorite() {
         String search = favoriteBinding.include.edtSearch.getText().toString().trim();
+        if (search.isEmpty()){
+            favoriteBinding.include.btnClear.setVisibility(View.GONE);
+        }else{
+            favoriteBinding.include.btnClear.setVisibility(View.VISIBLE);
+        }
         switch (typeSort){
             case SORT_NAME:
                 documents = DocumentDatabase.getInstance(getContext()).documentDAO().sortDocumentFavoriteByName(search);
@@ -138,6 +148,11 @@ public class FavoriteFragment extends Fragment {
             case SORT_TIME_ACCESS:
                 documents = DocumentDatabase.getInstance(getContext()).documentDAO().sortDocumentFavoriteByTimeAccess(search);
                 break;
+        }
+        if (documents.size()==0){
+            favoriteBinding.notiList.setVisibility(View.VISIBLE);
+        }else{
+            favoriteBinding.notiList.setVisibility(View.GONE);
         }
         documentFavoriteAdapter.setDocuments(documents);
     }
@@ -150,7 +165,7 @@ public class FavoriteFragment extends Fragment {
         String type = titleFull.substring(dot+1);         //Đuôi file (docx hoặc doc)
 
         intentShareFile.setType(MimeTypeMap.getSingleton().getMimeTypeFromExtension(type));
-        intentShareFile.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://"+document.getPath()));
+        intentShareFile.putExtra(Intent.EXTRA_STREAM, Uri.parse("content://"+document.getPath()));
 
         startActivity(Intent.createChooser(intentShareFile, titleFull));
     }
@@ -179,6 +194,13 @@ public class FavoriteFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable editable) {
 
+            }
+        });
+
+        favoriteBinding.include.btnClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                favoriteBinding.include.edtSearch.setText("");
             }
         });
     }

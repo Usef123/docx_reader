@@ -25,6 +25,9 @@ public interface DocumentDAO {
     @Delete
     void deleteDocument(Document document);
 
+    @Query("DELETE FROM document")
+    void deleteAllDocument();
+
     @Query("SELECT * FROM document WHERE title LIKE '%' || :title || '%' ORDER BY title ASC")
     List<Document> sortDocumentByName(String title);
 
