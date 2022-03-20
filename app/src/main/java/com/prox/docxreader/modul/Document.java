@@ -3,10 +3,8 @@ package com.prox.docxreader.modul;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-import java.io.Serializable;
-
 @Entity(tableName = "document")
-public class Document implements Serializable {
+public class Document{
     @PrimaryKey(autoGenerate = true)
     private int id;
     private String path;
@@ -14,6 +12,7 @@ public class Document implements Serializable {
     private long timeCreate;
     private long timeAccess;
     private boolean isFavorite;
+    private boolean isExist;
 
     public Document() {
     }
@@ -72,5 +71,13 @@ public class Document implements Serializable {
 
     public void setFavorite(boolean favorite) {
         isFavorite = favorite;
+    }
+
+    public boolean isExist() {
+        return isExist;
+    }
+
+    public void setExist(boolean exist) {
+        isExist = exist;
     }
 }

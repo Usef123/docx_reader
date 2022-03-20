@@ -1,5 +1,6 @@
 package com.prox.docxreader.database;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -14,36 +15,29 @@ import java.util.List;
 public interface DocumentDAO {
 
     @Insert
-    void insertDocument(Document document);
+    void insert(Document document);
 
     @Query("SELECT * FROM document WHERE path= :path")
-    List<Document> checkDocument(String path);
+    List<Document> check(String path);
 
     @Update
-    void updateDocument(Document document);
+    void update(Document document);
+
+    @Query("UPDATE document SET isExist = 0")
+    void updateIsExist();
 
     @Delete
-    void deleteDocument(Document document);
+    void delete(Document document);
 
-    @Query("DELETE FROM document")
-    void deleteAllDocument();
+    @Query("DELETE FROM document WHERE isExist = 0")
+    void deleteNotExist();
 
-    @Query("SELECT * FROM document WHERE title LIKE '%' || :title || '%' ORDER BY title ASC")
-    List<Document> sortDocumentByName(String title);
+    @Query("SELECT * FROM document WHERE title LIKE '%' || :title || '%' AND (isFavorite = :isFavorite OR isFavorite = 1) ORDER BY title ASC")
+    LiveData<List<Document>> getDocumentByName(boolean isFavorite, String title);
 
-    @Query("SELECT * FROM document WHERE title LIKE '%' || :title || '%' ORDER BY timeCreate DESC")
-    List<Document> sortDocumentByTimeCreate(String title);
+    @Query("SELECT * FROM document WHERE title LIKE '%' || :title || '%' AND (isFavorite = :isFavorite OR isFavorite = 1) ORDER BY timeCreate DESC")
+    LiveData<List<Document>> getDocumentByTimeCreate(boolean isFavorite, String title);
 
-    @Query("SELECT * FROM document WHERE title LIKE '%' || :title || '%' ORDER BY timeAccess DESC")
-    List<Document> sortDocumentByTimeAccess(String title);
-
-
-    @Query("SELECT * FROM document WHERE title LIKE '%' || :title || '%' AND isFavorite = 1 ORDER BY title ASC")
-    List<Document> sortDocumentFavoriteByName(String title);
-
-    @Query("SELECT * FROM document WHERE title LIKE '%' || :title || '%' AND isFavorite = 1 ORDER BY timeCreate DESC")
-    List<Document> sortDocumentFavoriteByTimeCreate(String title);
-
-    @Query("SELECT * FROM document WHERE title LIKE '%' || :title || '%' AND isFavorite = 1 ORDER BY timeAccess DESC")
-    List<Document> sortDocumentFavoriteByTimeAccess(String title);
+    @Query("SELECT * FROM document WHERE title LIKE '%' || :title || '%' AND (isFavorite = :isFavorite OR isFavorite = 1) ORDER BY timeAccess DESC")
+    LiveData<List<Document>> getDocumentByTimeAccess(boolean isFavorite, String title);
 }

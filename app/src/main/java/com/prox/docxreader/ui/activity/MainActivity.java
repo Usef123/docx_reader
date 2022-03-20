@@ -6,17 +6,19 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import android.Manifest;
-import android.content.DialogInterface;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -29,17 +31,22 @@ import android.widget.Toast;
 import com.prox.docxreader.BuildConfig;
 import com.prox.docxreader.LocaleHelper;
 import com.prox.docxreader.R;
+import com.prox.docxreader.DocumentViewModel;
 import com.prox.docxreader.database.DocumentDatabase;
 import com.prox.docxreader.databinding.ActivityMainBinding;
 import com.prox.docxreader.modul.Document;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity{
     private static final int REQUEST_PERMISSION_MANAGE = 123;
     private static final int REQUEST_PERMISSION_READ_WRITE = 456;
+
     private ActivityMainBinding binding;
+
+    private DocumentViewModel viewModel;
 
     private NavController navController;
     private AppBarConfiguration appBarConfiguration;
@@ -47,6 +54,7 @@ public class MainActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -55,32 +63,23 @@ public class MainActivity extends AppCompatActivity{
 
         //Tạo UI
         init();
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+        viewModel = new ViewModelProvider(this).get(DocumentViewModel.class);
+
         //Cấp quyền
         if(permission()){
-            insertDatabase();
+            new InsertDBAsyncTask(this).execute();
         }else {
             requestPermissions();
         }
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        DocumentDatabase.getInstance(this).documentDAO().deleteAllDocument();
-        Log.d("database", "delete all");
-    }
-
-    @Override
     protected void onDestroy() {
-        super.onDestroy();
-        binding = null;
         appBarConfiguration = null;
         navController = null;
+        binding = null;
+        super.onDestroy();
     }
 
     //Kiểm tra quyền
@@ -107,22 +106,14 @@ public class MainActivity extends AppCompatActivity{
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.R)
     private void openDialogAccessAllFile() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.dialog_message)
                 .setTitle(R.string.dialog_title);
 
-        builder.setPositiveButton(R.string.txt_ok, new DialogInterface.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.R)
-            public void onClick(DialogInterface dialog, int id) {
-                requestAccessAllFile();
-            }
-        });
-        builder.setNegativeButton(R.string.txt_cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                Toast.makeText(getApplicationContext(), R.string.notification_permission_error, Toast.LENGTH_SHORT).show();
-            }
-        });
+        builder.setPositiveButton(R.string.txt_ok, (dialog, id) -> requestAccessAllFile());
+        builder.setNegativeButton(R.string.txt_cancel, (dialog, id) -> finish());
 
         AlertDialog dialog = builder.create();
         dialog.show();
@@ -131,17 +122,14 @@ public class MainActivity extends AppCompatActivity{
     @RequiresApi(api = Build.VERSION_CODES.R)
     private void requestAccessAllFile() {
         try {
-            Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
-            intent.addCategory("android.intent.category.DEFAULT");
-            intent.setData(Uri.parse("package:" + BuildConfig.APPLICATION_ID));
+            Uri uri = Uri.parse("package:" + BuildConfig.APPLICATION_ID);
+            Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION, uri);
             startActivityForResult(intent, REQUEST_PERMISSION_MANAGE);
         } catch (Exception e) {
-            Intent intent = new Intent();
-            intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+            Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
             startActivityForResult(intent, REQUEST_PERMISSION_MANAGE);
         }
     }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -150,7 +138,7 @@ public class MainActivity extends AppCompatActivity{
             if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED
                     && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                insertDatabase();
+                new InsertDBAsyncTask(this).execute();
             } else {
                 Toast.makeText(this, R.string.notification_permission_error, Toast.LENGTH_SHORT).show();
             }
@@ -163,9 +151,7 @@ public class MainActivity extends AppCompatActivity{
         if (requestCode == REQUEST_PERMISSION_MANAGE) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 if (Environment.isExternalStorageManager()) {
-                    insertDatabase();
-                } else {
-                    Toast.makeText(this, R.string.notification_permission_error, Toast.LENGTH_SHORT).show();
+                    new InsertDBAsyncTask(this).execute();
                 }
             }
         }
@@ -214,48 +200,76 @@ public class MainActivity extends AppCompatActivity{
                 ||super.onSupportNavigateUp();
     }
 
-    //Đẩy list file vào DB
-    public void insertDatabase() {
-        Uri uri = MediaStore.Files.getContentUri("external");
+    private class InsertDBAsyncTask extends AsyncTask<Void, Void, Void> {
+        private final Context context;
 
-        String[] columns = {
-                MediaStore.Files.FileColumns.DISPLAY_NAME,   //tên file
-                MediaStore.Files.FileColumns.DATE_ADDED,     //date tạo
-                MediaStore.Files.FileColumns.DATA};          //path file
-
-        String selection = "_data LIKE '%.doc' OR _data LIKE '%.docx'";
-
-        Cursor cursor = this.getContentResolver().query(uri, columns, selection, null, null);
-
-        int title = cursor.getColumnIndex(MediaStore.Files.FileColumns.DISPLAY_NAME);
-        int date_add = cursor.getColumnIndex(MediaStore.Files.FileColumns.DATE_ADDED);
-        int path = cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA);
-
-        while (cursor.moveToNext()) {
-            String str_title = cursor.getString(title);
-            String str_path = cursor.getString(path);
-            String str_date_add = cursor.getString(date_add);
-
-            Document document = new Document();
-            document.setPath(str_path);
-            document.setTitle(str_title);
-            document.setTimeCreate(Integer.parseInt(str_date_add));
-            document.setTimeAccess(Integer.parseInt(str_date_add));
-            document.setFavorite(false);
-
-            Log.d("database", "check "+document.getPath());
-            if (new File(document.getPath()).exists()
-                    && !isDocumentExist(document)
-                    && !document.getPath().contains("Trash")){
-                DocumentDatabase.getInstance(this).documentDAO().insertDocument(document);
-                Log.d("database", "insert "+document.getPath());
-            }
+        private InsertDBAsyncTask(Context context) {
+            this.context = context;
         }
-        cursor.close();
-    }
 
-    private boolean isDocumentExist(Document document) {
-        List<Document> documents = DocumentDatabase.getInstance(this).documentDAO().checkDocument(document.getPath());
-        return documents != null && !documents.isEmpty();
+        @Override
+        protected Void doInBackground(Void... voids) {
+            List<Document> documents = getDocuments();
+            List<Document> documentCheck;
+            for (Document document : documents){
+                Log.d("viewmodel", "check: "+document.getPath());
+                documentCheck = DocumentDatabase.getInstance(context).documentDAO().check(document.getPath());
+                if (!documentCheck.isEmpty()){
+                    documentCheck.get(0).setExist(true);
+                    viewModel.update(documentCheck.get(0));
+                }else {
+                    viewModel.insert(document);
+                }
+            }
+
+            viewModel.deleteNotExist();
+            viewModel.updateIsExist();
+            return null;
+        }
+
+        //Lấy list file
+        private List<Document> getDocuments() {
+            List<Document> documents = new ArrayList<>();
+
+            Uri uri = MediaStore.Files.getContentUri("external");
+
+            String[] columns = {
+                    MediaStore.Files.FileColumns.DISPLAY_NAME,   //tên file
+                    MediaStore.Files.FileColumns.DATE_ADDED,     //date tạo
+                    MediaStore.Files.FileColumns.DATA};          //path file
+
+            String selection = "_data LIKE '%.doc' OR _data LIKE '%.docx'";
+
+            Cursor cursor = context.getContentResolver().query(uri, columns, selection, null, null);
+
+            int title = cursor.getColumnIndex(MediaStore.Files.FileColumns.DISPLAY_NAME);
+            int date_add = cursor.getColumnIndex(MediaStore.Files.FileColumns.DATE_ADDED);
+            int path = cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA);
+
+            while (cursor.moveToNext()) {
+                String str_title = cursor.getString(title);
+                String str_path = cursor.getString(path);
+                String str_date_add = cursor.getString(date_add);
+
+                Document document = new Document();
+                document.setPath(str_path);
+                document.setTitle(str_title);
+                document.setTimeCreate(Integer.parseInt(str_date_add));
+                document.setTimeAccess(Integer.parseInt(str_date_add));
+                document.setFavorite(false);
+                document.setExist(true);
+
+                if (!document.getPath().contains("Trash")){
+                    documents.add(document);
+                }
+            }
+            cursor.close();
+            return documents;
+        }
+
+        private boolean isDocumentExist(Document document) {
+            List<Document> documents = DocumentDatabase.getInstance(context).documentDAO().check(document.getPath());
+            return documents != null && !documents.isEmpty();
+        }
     }
 }

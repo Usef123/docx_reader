@@ -63,4 +63,6 @@
 
     <string name="dialog_message">Access to read all file Docx in your device</string>
     <string name="dialog_title">DocxReader</string>
+
+    <string name="notification_file_not_found">File not found</string>
 </resources>

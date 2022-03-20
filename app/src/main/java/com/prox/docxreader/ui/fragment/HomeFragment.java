@@ -1,9 +1,11 @@
 package com.prox.docxreader.ui.fragment;
 
+import static com.prox.docxreader.DocumentViewModel.SORT_NAME;
+import static com.prox.docxreader.DocumentViewModel.SORT_TIME_ACCESS;
+import static com.prox.docxreader.DocumentViewModel.SORT_TIME_CREATE;
 import static com.prox.docxreader.ui.activity.ReaderActivity.ACTION_FRAGMENT;
 import static com.prox.docxreader.ui.activity.ReaderActivity.FILE_PATH;
 
-import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -11,12 +13,15 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +33,7 @@ import android.widget.Toast;
 
 import com.prox.docxreader.R;
 import com.prox.docxreader.adapter.DocumentHomeAdapter;
-import com.prox.docxreader.database.DocumentDatabase;
+import com.prox.docxreader.DocumentViewModel;
 import com.prox.docxreader.databinding.DialogDeleteBinding;
 import com.prox.docxreader.databinding.DialogRenameBinding;
 import com.prox.docxreader.databinding.DialogSortBinding;
@@ -38,25 +43,21 @@ import com.prox.docxreader.ui.activity.ReaderActivity;
 
 import java.io.File;
 import java.util.Date;
-import java.util.List;
+import java.util.Objects;
 
 public class HomeFragment extends Fragment {
     private FragmentHomeBinding homeBinding;
 
-    private DocumentHomeAdapter documentHomeAdapter;
-    private List<Document> documents;
+    private DocumentViewModel viewModel;
 
-    private static final int SORT_NAME = 1;
-    private static final int SORT_TIME_CREATE = 2;
-    private static final int SORT_TIME_ACCESS = 3;
-    private int typeSort; //Kiểu sắp xếp
+    private DocumentHomeAdapter documentHomeAdapter;
+
+    private int typeSort = SORT_NAME; //Kiểu sắp xếp
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         homeBinding = FragmentHomeBinding.inflate(inflater, container, false);
-
-        typeSort = SORT_NAME; //Sắp xếp theo tên
 
         setupRecyclerView();
 
@@ -64,12 +65,18 @@ public class HomeFragment extends Fragment {
 
         homeBinding.include.btnSort.setOnClickListener(view -> openDialogSort());
 
+        viewModel = new ViewModelProvider(requireActivity()).get(DocumentViewModel.class);
+
+        showDocuments();
+
         return homeBinding.getRoot();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        documentHomeAdapter = null;
+        viewModel = null;
         homeBinding = null;
     }
 
@@ -89,27 +96,17 @@ public class HomeFragment extends Fragment {
         DividerItemDecoration dividerHorizontal = new DividerItemDecoration(requireContext(),
                 DividerItemDecoration.VERTICAL);
         homeBinding.recyclerViewHome.addItemDecoration(dividerHorizontal);
-
-        documents = DocumentDatabase.getInstance(getContext()).documentDAO().sortDocumentByName("");
-        if (documents.size()==0){
-            homeBinding.notiList.setVisibility(View.VISIBLE);
-        }else{
-            homeBinding.notiList.setVisibility(View.GONE);
-        }
-        documentHomeAdapter.setDocuments(documents);
     }
 
     private void clickItemDocument(Document document) {
         if (!(new File(document.getPath())).exists()) {
-            Toast.makeText(getContext(), getResources().getString(R.string.notification_file_error), Toast.LENGTH_SHORT).show();
-            DocumentDatabase.getInstance(getContext()).documentDAO().deleteDocument(document);
-            documents.remove(document);
-            documentHomeAdapter.setDocuments(documents);
+            Toast.makeText(getContext(), R.string.notification_file_not_found, Toast.LENGTH_SHORT).show();
+            viewModel.delete(document);
             return;
         }
         //Update Time Access
         document.setTimeAccess(new Date().getTime());
-        DocumentDatabase.getInstance(getContext()).documentDAO().updateDocument(document);
+        viewModel.update(document);
 
         Intent intent = new Intent(getActivity(), ReaderActivity.class);
         intent.putExtra(FILE_PATH, document.getPath());
@@ -119,10 +116,8 @@ public class HomeFragment extends Fragment {
 
     private void clickDelete(Document document) {
         if (!(new File(document.getPath())).exists()){
-            Toast.makeText(getContext(), getResources().getString(R.string.notification_file_error), Toast.LENGTH_SHORT).show();
-            DocumentDatabase.getInstance(getContext()).documentDAO().deleteDocument(document);
-            documents.remove(document);
-            documentHomeAdapter.setDocuments(documents);
+            Toast.makeText(getContext(), R.string.notification_file_not_found, Toast.LENGTH_SHORT).show();
+            viewModel.delete(document);
             return;
         }
         openDialogDelete(document);
@@ -130,10 +125,8 @@ public class HomeFragment extends Fragment {
 
     private void clickRename(Document document) {
         if (!(new File(document.getPath())).exists()){
-            Toast.makeText(getContext(), getResources().getString(R.string.notification_file_error), Toast.LENGTH_SHORT).show();
-            DocumentDatabase.getInstance(getContext()).documentDAO().deleteDocument(document);
-            documents.remove(document);
-            documentHomeAdapter.setDocuments(documents);
+            Toast.makeText(getContext(), R.string.notification_file_not_found, Toast.LENGTH_SHORT).show();
+            viewModel.delete(document);
             return;
         }
         openDialogRename(document);
@@ -141,10 +134,8 @@ public class HomeFragment extends Fragment {
 
     private void clickShare(Document document) {
         if (!(new File(document.getPath())).exists()){
-            Toast.makeText(getContext(), getResources().getString(R.string.notification_file_error), Toast.LENGTH_SHORT).show();
-            DocumentDatabase.getInstance(getContext()).documentDAO().deleteDocument(document);
-            documents.remove(document);
-            documentHomeAdapter.setDocuments(documents);
+            Toast.makeText(getContext(), R.string.notification_file_not_found, Toast.LENGTH_SHORT).show();
+            viewModel.delete(document);
             return;
         }
         shareDocument(document);
@@ -152,10 +143,8 @@ public class HomeFragment extends Fragment {
 
     private void clickFavorite(Document document) {
         if (!(new File(document.getPath())).exists()){
-            Toast.makeText(getContext(), getResources().getString(R.string.notification_file_error), Toast.LENGTH_SHORT).show();
-            DocumentDatabase.getInstance(getContext()).documentDAO().deleteDocument(document);
-            documents.remove(document);
-            documentHomeAdapter.setDocuments(documents);
+            Toast.makeText(getContext(), R.string.notification_file_not_found, Toast.LENGTH_SHORT).show();
+            viewModel.delete(document);
             return;
         }
         setFavorite(document);
@@ -168,23 +157,16 @@ public class HomeFragment extends Fragment {
         }else{
             homeBinding.include.btnClear.setVisibility(View.VISIBLE);
         }
-        switch (typeSort){
-            case SORT_NAME:
-                documents = DocumentDatabase.getInstance(getContext()).documentDAO().sortDocumentByName(search);
-                break;
-            case SORT_TIME_CREATE:
-                documents = DocumentDatabase.getInstance(getContext()).documentDAO().sortDocumentByTimeCreate(search);
-                break;
-            case SORT_TIME_ACCESS:
-                documents = DocumentDatabase.getInstance(getContext()).documentDAO().sortDocumentByTimeAccess(search);
-                break;
-        }
-        if (documents.size()==0){
-            homeBinding.notiList.setVisibility(View.VISIBLE);
-        }else{
-            homeBinding.notiList.setVisibility(View.GONE);
-        }
-        documentHomeAdapter.setDocuments(documents);
+
+        viewModel.getDocuments(false, typeSort, search).observe(getViewLifecycleOwner(), documents -> {
+            Log.d("viewmodel", "onChange");
+            documentHomeAdapter.setDocuments(documents);
+            if (documents.size()==0){
+                homeBinding.notiList.setVisibility(View.VISIBLE);
+            }else{
+                homeBinding.notiList.setVisibility(View.GONE);
+            }
+        });
     }
 
     private void openDialogDelete(Document document) {
@@ -195,23 +177,19 @@ public class HomeFragment extends Fragment {
         dialogDeleteBinding.btnOk.setOnClickListener(view -> {
             File file = new File(document.getPath());
             if (!file.exists()){
-                Toast.makeText(getContext(), getResources().getString(R.string.notification_file_error), Toast.LENGTH_SHORT).show();
-                DocumentDatabase.getInstance(getContext()).documentDAO().deleteDocument(document);
+                Toast.makeText(getContext(), R.string.notification_file_not_found, Toast.LENGTH_SHORT).show();
+                viewModel.delete(document);
                 dialogDelete.hide();
-                documents.remove(document);
-                documentHomeAdapter.setDocuments(documents);
                 return;
             }
             if (file.delete()){
-                DocumentDatabase.getInstance(getContext()).documentDAO().deleteDocument(document);
-                Toast.makeText(getContext(), getResources().getString(R.string.notification_delete_success), Toast.LENGTH_SHORT).show();
-                dialogDelete.hide();
-                documents.remove(document);
-                documentHomeAdapter.setDocuments(documents);
+                Toast.makeText(getContext(), R.string.notification_delete_success, Toast.LENGTH_SHORT).show();
+                broadcastScanFile(file.getPath());
+                viewModel.delete(document);
             }else{
-                Toast.makeText(getContext(), getResources().getString(R.string.notification_delete_error), Toast.LENGTH_SHORT).show();
-                dialogDelete.hide();
+                Toast.makeText(getContext(), R.string.notification_delete_error, Toast.LENGTH_SHORT).show();
             }
+            dialogDelete.hide();
         });
 
         dialogDeleteBinding.btnCancel.setOnClickListener(view -> dialogDelete.hide());
@@ -232,7 +210,7 @@ public class HomeFragment extends Fragment {
             String rename = dialogRenameBinding.edtRename.getText().toString().trim();
             //Tên để trống
             if (rename.isEmpty()) {
-                Toast.makeText(getContext(), getResources().getString(R.string.notification_rename_empty), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.notification_rename_empty, Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -241,11 +219,9 @@ public class HomeFragment extends Fragment {
                 //File không tồn tại --> Báo lỗi, xoá file trong DB và RecyclerView
                 File fileOld = new File(document.getPath());
                 if (!fileOld.exists()){
-                    Toast.makeText(getContext(), getResources().getString(R.string.notification_file_error), Toast.LENGTH_SHORT).show();
-                    DocumentDatabase.getInstance(getContext()).documentDAO().deleteDocument(document);
+                    Toast.makeText(getContext(), R.string.notification_file_not_found, Toast.LENGTH_SHORT).show();
+                    viewModel.delete(document);
                     dialogRename.hide();
-                    documents.remove(document);
-                    documentHomeAdapter.setDocuments(documents);
                     return;
                 }
 
@@ -257,24 +233,23 @@ public class HomeFragment extends Fragment {
                 //Tên đã tồn tại
                 File fileNew = new File(document.getPath());
                 if (fileNew.exists()){
-                    Toast.makeText(getContext(), getResources().getString(R.string.notification_file_duplicate), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), R.string.notification_file_duplicate, Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 //Đổi tên thành công
                 if(fileOld.renameTo(new File(newPath))){
-                    DocumentDatabase.getInstance(getContext()).documentDAO().updateDocument(document);
-                    Toast.makeText(getContext(), getResources().getString(R.string.notification_rename_success), Toast.LENGTH_SHORT).show();
-                    dialogRename.hide();
-                    showDocuments();
+                    broadcastScanFile(fileNew.getPath());
+                    broadcastScanFile(fileOld.getPath());
+                    viewModel.update(document);
+                    Toast.makeText(getContext(), R.string.notification_rename_success, Toast.LENGTH_SHORT).show();
                 }else{ //Đổi tên thất bại
-                    Toast.makeText(getContext(), getResources().getString(R.string.notification_rename_error), Toast.LENGTH_SHORT).show();
-                    dialogRename.hide();
+                    Toast.makeText(getContext(), R.string.notification_rename_error, Toast.LENGTH_SHORT).show();
                 }
             }else{ //Tên không thay đổi
-                Toast.makeText(getContext(), getResources().getString(R.string.notification_not_rename), Toast.LENGTH_SHORT).show();
-                dialogRename.hide();
+                Toast.makeText(getContext(), R.string.notification_not_rename, Toast.LENGTH_SHORT).show();
             }
+            dialogRename.hide();
         });
 
         dialogRenameBinding.btnCancel.setOnClickListener(view -> dialogRename.hide());
@@ -293,19 +268,13 @@ public class HomeFragment extends Fragment {
         startActivity(Intent.createChooser(intentShareFile, titleFull));
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     private void setFavorite(Document document) {
         document.setFavorite(!document.isFavorite());
-        DocumentDatabase.getInstance(getContext()).documentDAO().updateDocument(document);
-        int index = documents.indexOf(document);
-        if (index != -1){
-            documents.get(index).setFavorite(document.isFavorite());
-            documentHomeAdapter.notifyDataSetChanged();
-        }
+        viewModel.update(document);
         if (document.isFavorite()){
-            Toast.makeText(getContext(), getResources().getString(R.string.notification_add_favorite), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.notification_add_favorite, Toast.LENGTH_SHORT).show();
         }else {
-            Toast.makeText(getContext(), getResources().getString(R.string.notification_remove_favorite), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.notification_remove_favorite, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -327,12 +296,7 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        homeBinding.include.btnClear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                homeBinding.include.edtSearch.setText("");
-            }
-        });
+        homeBinding.include.btnClear.setOnClickListener(v -> homeBinding.include.edtSearch.setText(""));
     }
 
     private void openDialogSort() {
@@ -389,5 +353,15 @@ public class HomeFragment extends Fragment {
         window.setAttributes(layoutParams);
 
         return dialog;
+    }
+
+    private void broadcastScanFile(String path) {
+        Intent intentNotify = new Intent();
+        int dot = path.lastIndexOf('.');    //Vị trí dấu . cuối cùng
+        String type = path.substring(dot+1);   //Đuôi file (docx hoặc doc)
+        intentNotify.setType(MimeTypeMap.getSingleton().getMimeTypeFromExtension(type));
+        intentNotify.setAction(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        intentNotify.setData(Uri.fromFile(new File(path)));
+        requireActivity().sendBroadcast(intentNotify);
     }
 }

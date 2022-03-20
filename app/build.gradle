@@ -14,7 +14,6 @@ android {
         versionName "1.0.1"
         setProperty("archivesBaseName", "v$versionName($versionCode)-DocxReader")
     }
-
     buildTypes {
         release {
             minifyEnabled false
@@ -43,4 +42,9 @@ dependencies {
     annotationProcessor "androidx.room:room-compiler:2.4.2"
 
     implementation 'com.chauthai.swipereveallayout:swipe-reveal-layout:1.4.1'
+
+    // ViewModel
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.0-alpha04"
+    // LiveData
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.5.0-alpha04"
 }

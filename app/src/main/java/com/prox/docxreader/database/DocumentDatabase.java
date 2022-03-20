@@ -11,7 +11,10 @@ import com.prox.docxreader.modul.Document;
 @Database(entities = {Document.class}, version = 1)
 public abstract class DocumentDatabase extends RoomDatabase {
     private static final String DATABASE_NAME = "document.db";
+
     private static DocumentDatabase instance;
+
+    public abstract DocumentDAO documentDAO();
 
     public static synchronized DocumentDatabase getInstance(Context context){
         if (instance==null){
@@ -21,6 +24,4 @@ public abstract class DocumentDatabase extends RoomDatabase {
         }
         return instance;
     }
-
-    public abstract DocumentDAO documentDAO();
 }

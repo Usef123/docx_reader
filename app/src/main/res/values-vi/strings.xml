@@ -64,4 +64,6 @@
 
     <string name="dialog_message">Cho phép đọc tất cả tệp Docx trong thiết bị của bạn</string>
     <string name="dialog_title">DocxReader</string>
+
+    <string name="notification_file_not_found">Tệp không tìm thấy</string>
 </resources>

@@ -17,6 +17,8 @@ import com.prox.docxreader.adapter.LangugeAdapter;
 import com.prox.docxreader.databinding.FragmentLanguageBinding;
 import com.prox.docxreader.ui.activity.MainActivity;
 
+import java.util.Objects;
+
 public class LanguageFragment extends Fragment {
 
     @Override
@@ -29,9 +31,9 @@ public class LanguageFragment extends Fragment {
                 getResources().getStringArray(R.array.type_language),
                 typeLanguage -> {
                     LocaleHelper.setLocale(getContext(), typeLanguage);
-                    Intent intent = new Intent(getActivity(), MainActivity.class);
+                    Intent intent = new Intent(requireActivity(), MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
-                    getActivity().finish();
                 });
 
         LinearLayoutManager manager = new LinearLayoutManager(getContext());

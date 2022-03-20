@@ -1,5 +1,8 @@
 package com.prox.docxreader.ui.fragment;
 
+import static com.prox.docxreader.DocumentViewModel.SORT_NAME;
+import static com.prox.docxreader.DocumentViewModel.SORT_TIME_ACCESS;
+import static com.prox.docxreader.DocumentViewModel.SORT_TIME_CREATE;
 import static com.prox.docxreader.ui.activity.ReaderActivity.ACTION_FRAGMENT;
 import static com.prox.docxreader.ui.activity.ReaderActivity.FILE_PATH;
 
@@ -11,12 +14,15 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +34,7 @@ import android.widget.Toast;
 
 import com.prox.docxreader.R;
 import com.prox.docxreader.adapter.DocumentFavoriteAdapter;
-import com.prox.docxreader.database.DocumentDatabase;
+import com.prox.docxreader.DocumentViewModel;
 import com.prox.docxreader.databinding.DialogSortBinding;
 import com.prox.docxreader.databinding.FragmentFavoriteBinding;
 import com.prox.docxreader.modul.Document;
@@ -36,25 +42,20 @@ import com.prox.docxreader.ui.activity.ReaderActivity;
 
 import java.io.File;
 import java.util.Date;
-import java.util.List;
 
 public class FavoriteFragment extends Fragment {
     private FragmentFavoriteBinding favoriteBinding;
 
-    private DocumentFavoriteAdapter documentFavoriteAdapter;
-    private List<Document> documents;
+    private DocumentViewModel viewModel;
 
-    private static final int SORT_NAME = 1;
-    private static final int SORT_TIME_CREATE = 2;
-    private static final int SORT_TIME_ACCESS = 3;
-    private int typeSort; //Kiểu sắp xếp
+    private DocumentFavoriteAdapter documentFavoriteAdapter;
+
+    private int typeSort = SORT_NAME; //Kiểu sắp xếp
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         favoriteBinding = FragmentFavoriteBinding.inflate(inflater, container, false);
-
-        typeSort = SORT_NAME; //Sắp xếp theo tên
 
         favoriteBinding.include.txtTitleFragment.setText(getResources().getString(R.string.title_favorite));
 
@@ -64,7 +65,19 @@ public class FavoriteFragment extends Fragment {
 
         favoriteBinding.include.btnSort.setOnClickListener(view -> openDialogSort());
 
+        viewModel = new ViewModelProvider(requireActivity()).get(DocumentViewModel.class);
+
+        showDocumentsFavorite();
+
         return favoriteBinding.getRoot();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        documentFavoriteAdapter = null;
+        viewModel = null;
+        favoriteBinding = null;
     }
 
     private void setupRecyclerView() {
@@ -81,27 +94,17 @@ public class FavoriteFragment extends Fragment {
         DividerItemDecoration dividerHorizontal = new DividerItemDecoration(requireContext(),
                 DividerItemDecoration.VERTICAL);
         favoriteBinding.recyclerViewFavorite.addItemDecoration(dividerHorizontal);
-
-        documents = DocumentDatabase.getInstance(getContext()).documentDAO().sortDocumentFavoriteByName("");
-        if (documents.size()==0){
-            favoriteBinding.notiList.setVisibility(View.VISIBLE);
-        }else{
-            favoriteBinding.notiList.setVisibility(View.GONE);
-        }
-        documentFavoriteAdapter.setDocuments(documents);
     }
 
     private void clickItemDocument(Document document) {
         if (!(new File(document.getPath())).exists()){
-            Toast.makeText(getContext(), getResources().getString(R.string.notification_file_error), Toast.LENGTH_SHORT).show();
-            DocumentDatabase.getInstance(getContext()).documentDAO().deleteDocument(document);
-            documents.remove(document);
-            documentFavoriteAdapter.setDocuments(documents);
+            Toast.makeText(getContext(), R.string.notification_file_not_found, Toast.LENGTH_SHORT).show();
+            viewModel.delete(document);
             return;
         }
         //Update Time Access
         document.setTimeAccess(new Date().getTime());
-        DocumentDatabase.getInstance(getContext()).documentDAO().updateDocument(document);
+        viewModel.update(document);
 
         Intent intent = new Intent(getActivity(), ReaderActivity.class);
         intent.putExtra(FILE_PATH, document.getPath());
@@ -111,10 +114,8 @@ public class FavoriteFragment extends Fragment {
 
     private void clickShare(Document document) {
         if (!(new File(document.getPath())).exists()){
-            Toast.makeText(getContext(), getResources().getString(R.string.notification_file_error), Toast.LENGTH_SHORT).show();
-            DocumentDatabase.getInstance(getContext()).documentDAO().deleteDocument(document);
-            documents.remove(document);
-            documentFavoriteAdapter.setDocuments(documents);
+            Toast.makeText(getContext(), R.string.notification_file_not_found, Toast.LENGTH_SHORT).show();
+            viewModel.delete(document);
             return;
         }
         shareDocument(document);
@@ -122,10 +123,8 @@ public class FavoriteFragment extends Fragment {
 
     private void clickFavorite(Document document) {
         if (!(new File(document.getPath())).exists()){
-            Toast.makeText(getContext(), getResources().getString(R.string.notification_file_error), Toast.LENGTH_SHORT).show();
-            DocumentDatabase.getInstance(getContext()).documentDAO().deleteDocument(document);
-            documents.remove(document);
-            documentFavoriteAdapter.setDocuments(documents);
+            Toast.makeText(getContext(), R.string.notification_file_not_found, Toast.LENGTH_SHORT).show();
+            viewModel.delete(document);
             return;
         }
         removeFavorite(document);
@@ -138,23 +137,15 @@ public class FavoriteFragment extends Fragment {
         }else{
             favoriteBinding.include.btnClear.setVisibility(View.VISIBLE);
         }
-        switch (typeSort){
-            case SORT_NAME:
-                documents = DocumentDatabase.getInstance(getContext()).documentDAO().sortDocumentFavoriteByName(search);
-                break;
-            case SORT_TIME_CREATE:
-                documents = DocumentDatabase.getInstance(getContext()).documentDAO().sortDocumentFavoriteByTimeCreate(search);
-                break;
-            case SORT_TIME_ACCESS:
-                documents = DocumentDatabase.getInstance(getContext()).documentDAO().sortDocumentFavoriteByTimeAccess(search);
-                break;
-        }
-        if (documents.size()==0){
-            favoriteBinding.notiList.setVisibility(View.VISIBLE);
-        }else{
-            favoriteBinding.notiList.setVisibility(View.GONE);
-        }
-        documentFavoriteAdapter.setDocuments(documents);
+        viewModel.getDocuments(true, typeSort, search).observe(getViewLifecycleOwner(), documents -> {
+            Log.d("viewmodel", "onChange");
+            documentFavoriteAdapter.setDocuments(documents);
+            if (documents.size()==0){
+                favoriteBinding.notiList.setVisibility(View.VISIBLE);
+            }else{
+                favoriteBinding.notiList.setVisibility(View.GONE);
+            }
+        });
     }
 
     private void shareDocument(Document document) {
@@ -173,10 +164,8 @@ public class FavoriteFragment extends Fragment {
     @SuppressLint("NotifyDataSetChanged")
     private void removeFavorite(Document document) {
         document.setFavorite(false);
-        DocumentDatabase.getInstance(getContext()).documentDAO().updateDocument(document);
-        documents.remove(document);
-        documentFavoriteAdapter.notifyDataSetChanged();
-        Toast.makeText(getContext(), getResources().getString(R.string.notification_remove_favorite), Toast.LENGTH_SHORT).show();
+        viewModel.update(document);
+        Toast.makeText(getContext(), R.string.notification_remove_favorite, Toast.LENGTH_SHORT).show();
     }
 
     private void addSearchDocument() {
@@ -197,12 +186,7 @@ public class FavoriteFragment extends Fragment {
             }
         });
 
-        favoriteBinding.include.btnClear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                favoriteBinding.include.edtSearch.setText("");
-            }
-        });
+        favoriteBinding.include.btnClear.setOnClickListener(v -> favoriteBinding.include.edtSearch.setText(""));
     }
 
     private void openDialogSort() {
