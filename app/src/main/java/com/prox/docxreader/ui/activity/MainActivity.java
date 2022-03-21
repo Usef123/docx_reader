@@ -266,10 +266,5 @@ public class MainActivity extends AppCompatActivity{
             cursor.close();
             return documents;
         }
-
-        private boolean isDocumentExist(Document document) {
-            List<Document> documents = DocumentDatabase.getInstance(context).documentDAO().check(document.getPath());
-            return documents != null && !documents.isEmpty();
-        }
     }
 }

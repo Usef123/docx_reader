@@ -83,10 +83,24 @@
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/menu/bottom_menu.xml" value="0.25" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/menu/menu_app_act.xml" value="0.18333333333333332" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.123" />
+        <entry key="..\:/AndroidStudioProjects/docx-reader/office/src/main/res/drawable/file_list_selector.xml" value="0.125" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/office/src/main/res/drawable/ic_back_24.xml" value="0.1255" />
+        <entry key="..\:/AndroidStudioProjects/docx-reader/office/src/main/res/drawable/ic_menu_jump.xml" value="0.125" />
+        <entry key="..\:/AndroidStudioProjects/docx-reader/office/src/main/res/drawable/ic_menu_more.xml" value="0.125" />
+        <entry key="..\:/AndroidStudioProjects/docx-reader/office/src/main/res/drawable/ic_menu_print.xml" value="0.125" />
+        <entry key="..\:/AndroidStudioProjects/docx-reader/office/src/main/res/drawable/ic_menu_share.xml" value="0.125" />
+        <entry key="..\:/AndroidStudioProjects/docx-reader/office/src/main/res/drawable/ic_menu_upload.xml" value="0.125" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/office/src/main/res/drawable/ic_share_black.xml" value="0.1255" />
+        <entry key="..\:/AndroidStudioProjects/docx-reader/office/src/main/res/drawable/ic_star.xml" value="0.125" />
+        <entry key="..\:/AndroidStudioProjects/docx-reader/office/src/main/res/drawable/ic_view_full.xml" value="0.125" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/office/src/main/res/layout/activity_office_detail.xml" value="0.24583333333333332" />
+        <entry key="..\:/AndroidStudioProjects/docx-reader/office/src/main/res/layout/file_item_view.xml" value="0.1140625" />
+        <entry key="..\:/AndroidStudioProjects/docx-reader/office/src/main/res/layout/pen_setting_dialog.xml" value="0.1140625" />
+        <entry key="..\:/AndroidStudioProjects/docx-reader/office/src/main/res/layout/select_dialog_singlechoice.xml" value="0.1140625" />
+        <entry key="..\:/AndroidStudioProjects/docx-reader/office/src/main/res/layout/setting_dialog_item.xml" value="0.1140625" />
         <entry key="..\:/AndroidStudioProjects/docx-reader/office/src/main/res/menu/menu_app_act.xml" value="0.18333333333333332" />
+        <entry key="..\:/AndroidStudioProjects/docx-reader/office/src/main/res/menu/menu_app_with_jump.xml" value="0.1140625" />
+        <entry key="..\:/AndroidStudioProjects/docx-reader/office/src/main/res/menu/sys_menu.xml" value="0.264" />
       </map>
     </option>
   </component>

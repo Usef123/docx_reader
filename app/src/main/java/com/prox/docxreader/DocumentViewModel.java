@@ -1,13 +1,11 @@
 package com.prox.docxreader;
 
 import android.app.Application;
-import android.nfc.tech.NfcA;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
 import com.prox.docxreader.modul.Document;
 import com.prox.docxreader.repository.DocumentRepository;
@@ -19,7 +17,7 @@ public class DocumentViewModel extends AndroidViewModel {
     public static final int SORT_TIME_CREATE = 2;
     public static final int SORT_TIME_ACCESS = 3;
 
-    private DocumentRepository repository;
+    private final DocumentRepository repository;
     private LiveData<List<Document>> documents;
 
     public DocumentViewModel(@NonNull Application application) {
