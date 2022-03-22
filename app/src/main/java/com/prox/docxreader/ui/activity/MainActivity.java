@@ -65,7 +65,11 @@ public class MainActivity extends AppCompatActivity{
         init();
 
         viewModel = new ViewModelProvider(this).get(DocumentViewModel.class);
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
         //Cấp quyền
         if(permission()){
             new InsertDBAsyncTask(this).execute();

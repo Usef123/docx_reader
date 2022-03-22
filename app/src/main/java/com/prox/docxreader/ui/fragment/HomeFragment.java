@@ -8,12 +8,15 @@ import static com.prox.docxreader.ui.activity.ReaderActivity.FILE_PATH;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -43,7 +46,7 @@ import com.prox.docxreader.ui.activity.ReaderActivity;
 
 import java.io.File;
 import java.util.Date;
-import java.util.Objects;
+import java.util.List;
 
 public class HomeFragment extends Fragment {
     private FragmentHomeBinding homeBinding;
@@ -73,6 +76,12 @@ public class HomeFragment extends Fragment {
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        homeBinding.include.edtSearch.setText("");
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
         documentHomeAdapter = null;
@@ -95,6 +104,7 @@ public class HomeFragment extends Fragment {
 
         DividerItemDecoration dividerHorizontal = new DividerItemDecoration(requireContext(),
                 DividerItemDecoration.VERTICAL);
+        dividerHorizontal.setDrawable(getResources().getDrawable(R.drawable.line_custom));
         homeBinding.recyclerViewHome.addItemDecoration(dividerHorizontal);
     }
 
@@ -179,7 +189,7 @@ public class HomeFragment extends Fragment {
             if (!file.exists()){
                 Toast.makeText(getContext(), R.string.notification_file_not_found, Toast.LENGTH_SHORT).show();
                 viewModel.delete(document);
-                dialogDelete.hide();
+                dialogDelete.cancel();
                 return;
             }
             if (file.delete()){
@@ -189,10 +199,10 @@ public class HomeFragment extends Fragment {
             }else{
                 Toast.makeText(getContext(), R.string.notification_delete_error, Toast.LENGTH_SHORT).show();
             }
-            dialogDelete.hide();
+            dialogDelete.cancel();
         });
 
-        dialogDeleteBinding.btnCancel.setOnClickListener(view -> dialogDelete.hide());
+        dialogDeleteBinding.btnCancel.setOnClickListener(view -> dialogDelete.cancel());
     }
 
     private void openDialogRename(Document document) {
@@ -221,7 +231,7 @@ public class HomeFragment extends Fragment {
                 if (!fileOld.exists()){
                     Toast.makeText(getContext(), R.string.notification_file_not_found, Toast.LENGTH_SHORT).show();
                     viewModel.delete(document);
-                    dialogRename.hide();
+                    dialogRename.cancel();
                     return;
                 }
 
@@ -249,13 +259,16 @@ public class HomeFragment extends Fragment {
             }else{ //Tên không thay đổi
                 Toast.makeText(getContext(), R.string.notification_not_rename, Toast.LENGTH_SHORT).show();
             }
-            dialogRename.hide();
+            dialogRename.cancel();
         });
 
-        dialogRenameBinding.btnCancel.setOnClickListener(view -> dialogRename.hide());
+        dialogRenameBinding.btnCancel.setOnClickListener(view -> dialogRename.cancel());
     }
 
     private void shareDocument(Document document) {
+        File file = new File(document.getPath());
+        Uri uri = FileProvider.getUriForFile(requireContext(), "com.prox.docxreader.fileprovider", file);
+
         Intent intentShareFile = new Intent(Intent.ACTION_SEND);
 
         String titleFull = document.getTitle();         //Tên file có đuôi (.docx hoặc .doc)
@@ -263,9 +276,19 @@ public class HomeFragment extends Fragment {
         String type = titleFull.substring(dot+1);         //Đuôi file (docx hoặc doc)
 
         intentShareFile.setType(MimeTypeMap.getSingleton().getMimeTypeFromExtension(type));
-        intentShareFile.putExtra(Intent.EXTRA_STREAM, Uri.parse("content://"+document.getPath()));
+        intentShareFile.putExtra(Intent.EXTRA_STREAM, uri);
+        intentShareFile.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-        startActivity(Intent.createChooser(intentShareFile, titleFull));
+        Intent chooser = Intent.createChooser(intentShareFile, titleFull);
+
+        List<ResolveInfo> resInfoList = requireContext().getPackageManager().queryIntentActivities(chooser, PackageManager.MATCH_DEFAULT_ONLY);
+
+        for (ResolveInfo resolveInfo : resInfoList) {
+            String packageName = resolveInfo.activityInfo.packageName;
+            requireContext().grantUriPermission(packageName, uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        }
+
+        startActivity(chooser);
     }
 
     private void setFavorite(Document document) {
@@ -325,17 +348,17 @@ public class HomeFragment extends Fragment {
         dialogSortBinding.sortName.setOnClickListener(v -> {
             typeSort = SORT_NAME;
             showDocuments();
-            dialogSort.hide();
+            dialogSort.cancel();
         });
         dialogSortBinding.sortTimeCreate.setOnClickListener(v -> {
             typeSort = SORT_TIME_CREATE;
             showDocuments();
-            dialogSort.hide();
+            dialogSort.cancel();
         });
         dialogSortBinding.sortTimeAccess.setOnClickListener(v -> {
             typeSort = SORT_TIME_ACCESS;
             showDocuments();
-            dialogSort.hide();
+            dialogSort.cancel();
         });
     }
 

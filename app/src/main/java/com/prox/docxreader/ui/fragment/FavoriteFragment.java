@@ -9,12 +9,15 @@ import static com.prox.docxreader.ui.activity.ReaderActivity.FILE_PATH;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -42,6 +45,7 @@ import com.prox.docxreader.ui.activity.ReaderActivity;
 
 import java.io.File;
 import java.util.Date;
+import java.util.List;
 
 public class FavoriteFragment extends Fragment {
     private FragmentFavoriteBinding favoriteBinding;
@@ -73,6 +77,12 @@ public class FavoriteFragment extends Fragment {
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        favoriteBinding.include.edtSearch.setText("");
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
         documentFavoriteAdapter = null;
@@ -93,6 +103,7 @@ public class FavoriteFragment extends Fragment {
 
         DividerItemDecoration dividerHorizontal = new DividerItemDecoration(requireContext(),
                 DividerItemDecoration.VERTICAL);
+        dividerHorizontal.setDrawable(getResources().getDrawable(R.drawable.line_custom));
         favoriteBinding.recyclerViewFavorite.addItemDecoration(dividerHorizontal);
     }
 
@@ -149,6 +160,9 @@ public class FavoriteFragment extends Fragment {
     }
 
     private void shareDocument(Document document) {
+        File file = new File(document.getPath());
+        Uri uri = FileProvider.getUriForFile(requireContext(), "com.prox.docxreader.fileprovider", file);
+
         Intent intentShareFile = new Intent(Intent.ACTION_SEND);
 
         String titleFull = document.getTitle();         //Tên file có đuôi (.docx hoặc .doc)
@@ -156,9 +170,19 @@ public class FavoriteFragment extends Fragment {
         String type = titleFull.substring(dot+1);         //Đuôi file (docx hoặc doc)
 
         intentShareFile.setType(MimeTypeMap.getSingleton().getMimeTypeFromExtension(type));
-        intentShareFile.putExtra(Intent.EXTRA_STREAM, Uri.parse("content://"+document.getPath()));
+        intentShareFile.putExtra(Intent.EXTRA_STREAM, uri);
+        intentShareFile.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-        startActivity(Intent.createChooser(intentShareFile, titleFull));
+        Intent chooser = Intent.createChooser(intentShareFile, titleFull);
+
+        List<ResolveInfo> resInfoList = requireContext().getPackageManager().queryIntentActivities(chooser, PackageManager.MATCH_DEFAULT_ONLY);
+
+        for (ResolveInfo resolveInfo : resInfoList) {
+            String packageName = resolveInfo.activityInfo.packageName;
+            requireContext().grantUriPermission(packageName, uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        }
+
+        startActivity(chooser);
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -215,17 +239,17 @@ public class FavoriteFragment extends Fragment {
         dialogSortBinding.sortName.setOnClickListener(v -> {
             typeSort = SORT_NAME;
             showDocumentsFavorite();
-            dialogSort.hide();
+            dialogSort.cancel();
         });
         dialogSortBinding.sortTimeCreate.setOnClickListener(v -> {
             typeSort = SORT_TIME_CREATE;
             showDocumentsFavorite();
-            dialogSort.hide();
+            dialogSort.cancel();
         });
         dialogSortBinding.sortTimeAccess.setOnClickListener(v -> {
             typeSort = SORT_TIME_ACCESS;
             showDocumentsFavorite();
-            dialogSort.hide();
+            dialogSort.cancel();
         });
     }
 

@@ -66,4 +66,6 @@
     <string name="dialog_title">DocxReader</string>
 
     <string name="notification_file_not_found">Tệp không tìm thấy</string>
+
+    <string name="hint_rename">Nhập tên mới của tệp</string>
 </resources>

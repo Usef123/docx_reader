@@ -120,6 +120,6 @@ public class DocumentHomeAdapter extends RecyclerView.Adapter<DocumentHomeAdapte
 
     @SuppressLint("SimpleDateFormat")
     private String getDate(long val){
-        return new SimpleDateFormat("HH:mm:ss, dd/MM/yyyy").format(new Date(val*1000));
+        return new SimpleDateFormat("HH:mm, dd/MM/yyyy").format(new Date(val*1000));
     }
 }

@@ -65,4 +65,6 @@
     <string name="dialog_title">DocxReader</string>
 
     <string name="notification_file_not_found">File not found</string>
+
+    <string name="hint_rename">Enter file\'s new name</string>
 </resources>

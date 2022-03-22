@@ -16,7 +16,6 @@ import com.prox.docxreader.databinding.FragmentSettingBinding;
 
 public class SettingFragment extends Fragment {
     public static final String EMAIL_FEEDBACK = "duclet2k@outlook.com";
-    private static final String URI_APP = "https://play.google.com/store/apps/details?id=com.facebook.katana";
     private static final String URI_PACKAGE = "https://play.google.com/store/apps/developer?id=Andromeda+App";
 
     @Override
@@ -50,7 +49,7 @@ public class SettingFragment extends Fragment {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.app_name));
-        intent.putExtra(Intent.EXTRA_TEXT, URI_APP);
+        intent.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id="+requireActivity().getApplicationContext().getPackageName());
         startActivity(Intent.createChooser(intent, getResources().getString(R.string.notification_share_to)));
     }
 

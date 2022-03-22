@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
@@ -30,6 +32,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.FileProvider;
+
 import com.prox.docxreader.FileUtils;
 import com.prox.docxreader.R;
 import com.wxiwei.office.constant.EventConstant;
@@ -89,7 +93,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
             String action = intent.getAction();
             if (action.equals(Intent.ACTION_VIEW)){
                 Uri data = intent.getData();
-                filePath = FileUtils.getRealPath(this,data);
+                filePath = FileUtils.getFilePathForN(data, this);
             }else if(action.equals(ACTION_FRAGMENT)){
                 filePath = intent.getStringExtra(FILE_PATH);
             }
@@ -119,20 +123,28 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
         return super.onOptionsItemSelected(item);
     }
     private void shareToOther() {
+        File file = new File(filePath);
+        Uri uri = FileProvider.getUriForFile(this, "com.prox.docxreader.fileprovider", file);
+
         Intent intentShareFile = new Intent(Intent.ACTION_SEND);
-        File fileWithinMyDir = new File(filePath);
 
         int dot = fileName.lastIndexOf('.');       //Vị trí dấu . cuối cùng
-        String type = fileName.substring(dot+1);         //Đuôi file
+        String type = fileName.substring(dot+1);         //Đuôi file (docx hoặc doc)
 
-        if(fileWithinMyDir.exists()) {
-            intentShareFile.setType(MimeTypeMap.getSingleton().getMimeTypeFromExtension(type));
-            intentShareFile.putExtra(Intent.EXTRA_STREAM, Uri.parse("content://"+filePath));
+        intentShareFile.setType(MimeTypeMap.getSingleton().getMimeTypeFromExtension(type));
+        intentShareFile.putExtra(Intent.EXTRA_STREAM, uri);
+        intentShareFile.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-            startActivity(Intent.createChooser(intentShareFile, fileName));
-        }else{
-            Toast.makeText(this, getResources().getString(R.string.notification_share_error), Toast.LENGTH_SHORT).show();
+        Intent chooser = Intent.createChooser(intentShareFile, fileName);
+
+        List<ResolveInfo> resInfoList = this.getPackageManager().queryIntentActivities(chooser, PackageManager.MATCH_DEFAULT_ONLY);
+
+        for (ResolveInfo resolveInfo : resInfoList) {
+            String packageName = resolveInfo.activityInfo.packageName;
+            this.grantUriPermission(packageName, uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
         }
+
+        startActivity(chooser);
     }
 
     public void setButtonEnabled(boolean enabled) {
