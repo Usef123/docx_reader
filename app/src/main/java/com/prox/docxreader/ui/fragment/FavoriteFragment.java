@@ -1,8 +1,8 @@
 package com.prox.docxreader.ui.fragment;
 
-import static com.prox.docxreader.DocumentViewModel.SORT_NAME;
-import static com.prox.docxreader.DocumentViewModel.SORT_TIME_ACCESS;
-import static com.prox.docxreader.DocumentViewModel.SORT_TIME_CREATE;
+import static com.prox.docxreader.viewmodel.DocumentViewModel.SORT_NAME;
+import static com.prox.docxreader.viewmodel.DocumentViewModel.SORT_TIME_ACCESS;
+import static com.prox.docxreader.viewmodel.DocumentViewModel.SORT_TIME_CREATE;
 import static com.prox.docxreader.ui.activity.ReaderActivity.ACTION_FRAGMENT;
 import static com.prox.docxreader.ui.activity.ReaderActivity.FILE_PATH;
 
@@ -37,7 +37,7 @@ import android.widget.Toast;
 
 import com.prox.docxreader.R;
 import com.prox.docxreader.adapter.DocumentFavoriteAdapter;
-import com.prox.docxreader.DocumentViewModel;
+import com.prox.docxreader.viewmodel.DocumentViewModel;
 import com.prox.docxreader.databinding.DialogSortBinding;
 import com.prox.docxreader.databinding.FragmentFavoriteBinding;
 import com.prox.docxreader.modul.Document;

@@ -94,8 +94,10 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
             if (action.equals(Intent.ACTION_VIEW)){
                 Uri data = intent.getData();
                 filePath = FileUtils.getFilePathForN(data, this);
+                realPath = FileUtils.getRealPath(this, data);
             }else if(action.equals(ACTION_FRAGMENT)){
                 filePath = intent.getStringExtra(FILE_PATH);
+                realPath = filePath;
             }
             if (filePath != null) {
                 fileName = filePath.substring(filePath.lastIndexOf('/')+1);
@@ -123,7 +125,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
         return super.onOptionsItemSelected(item);
     }
     private void shareToOther() {
-        File file = new File(filePath);
+        File file = new File(realPath);
         Uri uri = FileProvider.getUriForFile(this, "com.prox.docxreader.fileprovider", file);
 
         Intent intentShareFile = new Intent(Intent.ACTION_SEND);
@@ -1161,7 +1163,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
     //
     private String fileName;
     //
-    private String filePath;
+    private String filePath, realPath;
     // application activity control
     private MainControl control;
     //

@@ -31,12 +31,11 @@ import android.widget.Toast;
 import com.prox.docxreader.BuildConfig;
 import com.prox.docxreader.LocaleHelper;
 import com.prox.docxreader.R;
-import com.prox.docxreader.DocumentViewModel;
+import com.prox.docxreader.viewmodel.DocumentViewModel;
 import com.prox.docxreader.database.DocumentDatabase;
 import com.prox.docxreader.databinding.ActivityMainBinding;
 import com.prox.docxreader.modul.Document;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,6 +49,8 @@ public class MainActivity extends AppCompatActivity{
 
     private NavController navController;
     private AppBarConfiguration appBarConfiguration;
+
+    private AlertDialog dialogRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,10 +80,19 @@ public class MainActivity extends AppCompatActivity{
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        if (dialogRequest != null && dialogRequest.isShowing()){
+            dialogRequest.cancel();
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         appBarConfiguration = null;
         navController = null;
         binding = null;
+        dialogRequest = null;
         super.onDestroy();
     }
 
@@ -119,8 +129,8 @@ public class MainActivity extends AppCompatActivity{
         builder.setPositiveButton(R.string.txt_ok, (dialog, id) -> requestAccessAllFile());
         builder.setNegativeButton(R.string.txt_cancel, (dialog, id) -> finish());
 
-        AlertDialog dialog = builder.create();
-        dialog.show();
+        dialogRequest = builder.create();
+        dialogRequest.show();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.R)

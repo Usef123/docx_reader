@@ -1,14 +1,13 @@
 package com.prox.docxreader.repository;
 
-import static com.prox.docxreader.DocumentViewModel.SORT_NAME;
-import static com.prox.docxreader.DocumentViewModel.SORT_TIME_ACCESS;
-import static com.prox.docxreader.DocumentViewModel.SORT_TIME_CREATE;
+import static com.prox.docxreader.viewmodel.DocumentViewModel.SORT_NAME;
+import static com.prox.docxreader.viewmodel.DocumentViewModel.SORT_TIME_ACCESS;
+import static com.prox.docxreader.viewmodel.DocumentViewModel.SORT_TIME_CREATE;
 
 import android.app.Application;
 import android.os.AsyncTask;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
 import com.prox.docxreader.database.DocumentDAO;
 import com.prox.docxreader.database.DocumentDatabase;

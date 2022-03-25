@@ -9,8 +9,7 @@ android {
     defaultConfig {
         applicationId "com.prox.docxreader"
         minSdkVersion 21
-        //noinspection ExpiredTargetSdkVersion
-        targetSdkVersion 27
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0.0"
         setProperty("archivesBaseName", "v$versionName($versionCode)-DocxReader")

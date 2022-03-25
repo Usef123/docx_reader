@@ -1,4 +1,4 @@
-package com.prox.docxreader;
+package com.prox.docxreader.viewmodel;
 
 import android.app.Application;
 import android.util.Log;
