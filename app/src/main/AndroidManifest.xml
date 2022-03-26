@@ -53,8 +53,8 @@
                 <!-- .xltx -->
                 <data android:mimeType="application/vnd.openxmlformats-officedocument.spreadsheetml.template" />
 
-<!--                &lt;!&ndash; .ppt &ndash;&gt;-->
-<!--                <data android:mimeType="application/vnd.ms-powerpoint" />-->
+                <!-- .ppt -->
+                <data android:mimeType="application/vnd.ms-powerpoint" />
                 <!-- .pptx -->
                 <data android:mimeType="application/vnd.openxmlformats-officedocument.presentationml.presentation" />
 

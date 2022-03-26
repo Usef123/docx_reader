@@ -256,17 +256,17 @@ public class ErrorUtil
                             err = control.getActivity().getString(R.string.dialog_parse_error);
                             errorCode = PARSE_ERROR;
                         }
-                        else if (ex instanceof NullPointerException
-                            || ex instanceof IllegalArgumentException
-                            || ex instanceof ClassCastException)
-                        {
-                            err = control.getActivity().getString(R.string.dialog_system_crash_error);
-                            errorCode = SYSTEM_CRASH;
-                        }
-                        else if (sysKit.isDebug())
-                        {
-                            err = control.getActivity().getString(R.string.dialog_system_crash_error);
-                        }
+//                        else if (ex instanceof NullPointerException
+//                            || ex instanceof IllegalArgumentException
+//                            || ex instanceof ClassCastException)
+//                        {
+//                            err = control.getActivity().getString(R.string.dialog_system_crash_error);
+//                            errorCode = SYSTEM_CRASH;
+//                        }
+//                        else if (sysKit.isDebug())
+//                        {
+//                            err = control.getActivity().getString(R.string.dialog_system_crash_error);
+//                        }
                         if (err.length() > 0)
                         {
                             // dispatch error code to Application

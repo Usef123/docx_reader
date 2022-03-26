@@ -94,10 +94,10 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
             if (action.equals(Intent.ACTION_VIEW)){
                 Uri data = intent.getData();
                 filePath = FileUtils.getFilePathForN(data, this);
-                realPath = FileUtils.getRealPath(this, data);
+//                realPath = FileUtils.getRealPath(this, data);
             }else if(action.equals(ACTION_FRAGMENT)){
                 filePath = intent.getStringExtra(FILE_PATH);
-                realPath = filePath;
+//                realPath = filePath;
             }
             if (filePath != null) {
                 fileName = filePath.substring(filePath.lastIndexOf('/')+1);
@@ -106,11 +106,11 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
         });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_app_act,menu);
-        return super.onCreateOptionsMenu(menu);
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.menu_app_act,menu);
+//        return super.onCreateOptionsMenu(menu);
+//    }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -118,36 +118,36 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
         if (itemId == android.R.id.home) {
             finish();
             return true;
-        } else if (itemId == R.id.share) {
-            shareToOther();
-            return true;
+//        } else if (itemId == R.id.share) {
+//            shareToOther();
+//            return true;
         }
         return super.onOptionsItemSelected(item);
     }
-    private void shareToOther() {
-        File file = new File(realPath);
-        Uri uri = FileProvider.getUriForFile(this, "com.prox.docxreader.fileprovider", file);
-
-        Intent intentShareFile = new Intent(Intent.ACTION_SEND);
-
-        int dot = fileName.lastIndexOf('.');       //Vị trí dấu . cuối cùng
-        String type = fileName.substring(dot+1);         //Đuôi file (docx hoặc doc)
-
-        intentShareFile.setType(MimeTypeMap.getSingleton().getMimeTypeFromExtension(type));
-        intentShareFile.putExtra(Intent.EXTRA_STREAM, uri);
-        intentShareFile.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-        Intent chooser = Intent.createChooser(intentShareFile, fileName);
-
-        List<ResolveInfo> resInfoList = this.getPackageManager().queryIntentActivities(chooser, PackageManager.MATCH_DEFAULT_ONLY);
-
-        for (ResolveInfo resolveInfo : resInfoList) {
-            String packageName = resolveInfo.activityInfo.packageName;
-            this.grantUriPermission(packageName, uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        }
-
-        startActivity(chooser);
-    }
+//    private void shareToOther() {
+//        File file = new File(realPath);
+//        Uri uri = FileProvider.getUriForFile(this, "com.prox.docxreader.fileprovider", file);
+//
+//        Intent intentShareFile = new Intent(Intent.ACTION_SEND);
+//
+//        int dot = fileName.lastIndexOf('.');       //Vị trí dấu . cuối cùng
+//        String type = fileName.substring(dot+1);         //Đuôi file (docx hoặc doc)
+//
+//        intentShareFile.setType(MimeTypeMap.getSingleton().getMimeTypeFromExtension(type));
+//        intentShareFile.putExtra(Intent.EXTRA_STREAM, uri);
+//        intentShareFile.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+//
+//        Intent chooser = Intent.createChooser(intentShareFile, fileName);
+//
+//        List<ResolveInfo> resInfoList = this.getPackageManager().queryIntentActivities(chooser, PackageManager.MATCH_DEFAULT_ONLY);
+//
+//        for (ResolveInfo resolveInfo : resInfoList) {
+//            String packageName = resolveInfo.activityInfo.packageName;
+//            this.grantUriPermission(packageName, uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+//        }
+//
+//        startActivity(chooser);
+//    }
 
     public void setButtonEnabled(boolean enabled) {
         if (fullscreen) {
