@@ -1,3 +1,4 @@
 rootProject.name = "Docx Reader"
 include ':app'
 include ':office'
+include ':proxads'
