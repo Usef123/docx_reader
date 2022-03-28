@@ -68,4 +68,7 @@
     <string name="notification_file_not_found">Tệp không tìm thấy</string>
 
     <string name="hint_rename">Nhập tên mới của tệp</string>
+
+    <string name="splash_screen">Hành động này có thể chứa quảng cáo...</string>
+    <string name="load_ads">Đang tải quảng cáo...</string>
 </resources>

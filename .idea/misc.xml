@@ -3,9 +3,15 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_infor_app.xml" value="0.118" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/splash_background.xml" value="0.169" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/splashbackground.xml" value="0.169" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/activity_load.xml" value="0.21965579710144928" />
+        <entry key="..\:/docx-reader/app/src/main/res/layout/activity_main.xml" value="0.21965579710144928" />
+        <entry key="..\:/docx-reader/app/src/main/res/layout/activity_office_detail.xml" value="0.21965579710144928" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/activity_open.xml" value="0.21965579710144928" />
+        <entry key="..\:/docx-reader/app/src/main/res/layout/activity_splash.xml" value="0.17291666666666666" />
+        <entry key="..\:/docx-reader/app/src/main/res/layout/screen_while.xml" value="0.21965579710144928" />
         <entry key="..\:/docx-reader/app/src/main/res/menu/menu_app_act.xml" value="0.25" />
         <entry key="..\:/docx-reader/office/src/main/res/layout/activity_office_detail.xml" value="0.10729166666666666" />
       </map>

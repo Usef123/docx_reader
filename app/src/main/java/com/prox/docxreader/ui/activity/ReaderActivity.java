@@ -1,5 +1,7 @@
 package com.prox.docxreader.ui.activity;
 
+import static com.prox.docxreader.ui.activity.LoadActivity.CLOSE_LOAD;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -7,8 +9,6 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
@@ -16,26 +16,24 @@ import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.webkit.MimeTypeMap;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.FileProvider;
 
 import com.prox.docxreader.FileUtils;
+import com.prox.docxreader.MyAds;
 import com.prox.docxreader.R;
+import com.prox.docxreader.databinding.ActivityOfficeDetailBinding;
+import com.proxglobal.proxads.ads.callback.AdCallback;
 import com.wxiwei.office.constant.EventConstant;
 import com.wxiwei.office.constant.MainConstant;
 import com.wxiwei.office.constant.wp.WPViewConstant;
@@ -66,29 +64,34 @@ import java.util.List;
 public class ReaderActivity extends AppCompatActivity implements IMainFrame {
     public static final String FILE_PATH = "FILE_PATH";
     public static final String ACTION_FRAGMENT = "ACTION_FRAGMENT";
+    private static final int REQUEST_LOAD = 13;
 
-    FrameLayout frameLayout;
-    Toolbar toolbar;
+    private ActivityOfficeDetailBinding binding;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        startActivityForResult(new Intent(this, LoadActivity.class), REQUEST_LOAD);
+
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
         control = new MainControl(this);
         appFrame = new AppFrame(getApplicationContext());
 
-        setContentView(R.layout.activity_office_detail);
-        toolbar = findViewById(R.id.toolbar_office);
-        frameLayout = findViewById(R.id.viewer_office);
+        binding = ActivityOfficeDetailBinding.inflate(getLayoutInflater());
 
-        toolbar.setNavigationIcon(R.drawable.ic_back_24);
-        toolbar.setTitleTextAppearance(this, R.style.TitleToolBar);
-        setSupportActionBar(toolbar);
+        setContentView(binding.getRoot());
+
+        binding.adView.loadAd(MyAds.getAdRequest());
+
+        binding.toolbarOffice.setNavigationIcon(R.drawable.ic_back_24);
+        binding.toolbarOffice.setTitleTextAppearance(this, R.style.TitleToolBar);
+        setSupportActionBar(binding.toolbarOffice);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        frameLayout.removeAllViews();
-        frameLayout.addView(appFrame);
-        frameLayout.post(() -> {
+        binding.viewerOffice.removeAllViews();
+        binding.viewerOffice.addView(appFrame);
+        binding.viewerOffice.post(() -> {
             Intent intent = getIntent();
             String action = intent.getAction();
             if (action.equals(Intent.ACTION_VIEW)){
@@ -113,10 +116,32 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
 //    }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_LOAD
+                && resultCode == RESULT_OK){
+            if (data.getBooleanExtra(CLOSE_LOAD, false)){
+                binding.screenWhile.getRoot().setVisibility(View.GONE);
+            }
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
         if (itemId == android.R.id.home) {
-            finish();
+            if (MyAds.numberBack == 3){
+                MyAds.numberBack = 1;
+                MyAds.getInter(this).loadSplash(10000, new AdCallback() {
+                    @Override
+                    public void onAdClose() {
+                        finish();
+                    }
+                });
+            }else{
+                MyAds.numberBack += 1;
+                finish();
+            }
             return true;
 //        } else if (itemId == R.id.share) {
 //            shareToOther();

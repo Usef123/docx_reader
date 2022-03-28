@@ -52,7 +52,7 @@
     <string name="btn_share_app">Share</string>
     <string name="btn_language">Language</string>
 
-    <string name="subject_email">Feedback Docx Reader</string>
+    <string name="subject_email">Docx Reader Feedback</string>
     <string name="notification_send_mail">Send mail...</string>
 
     <string name="notification_share_to">Share to...</string>
@@ -67,4 +67,7 @@
     <string name="notification_file_not_found">File not found</string>
 
     <string name="hint_rename">Enter file\'s new name</string>
+
+    <string name="splash_screen">This action can contain ads...</string>
+    <string name="load_ads">Loading ads...</string>
 </resources>

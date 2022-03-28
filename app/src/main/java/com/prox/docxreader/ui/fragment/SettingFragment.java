@@ -3,19 +3,18 @@ package com.prox.docxreader.ui.fragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import com.prox.docxreader.R;
 import com.prox.docxreader.databinding.FragmentSettingBinding;
 
 public class SettingFragment extends Fragment {
-    public static final String EMAIL_FEEDBACK = "duclet2k@outlook.com";
+    public static final String EMAIL_FEEDBACK = "elaineeyui@gmail.com";
     private static final String URI_PACKAGE = "https://play.google.com/store/apps/developer?id=Andromeda+App";
 
     @Override

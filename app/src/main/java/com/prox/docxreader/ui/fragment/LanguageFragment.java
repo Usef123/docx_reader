@@ -2,22 +2,19 @@ package com.prox.docxreader.ui.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.prox.docxreader.LocaleHelper;
 import com.prox.docxreader.R;
 import com.prox.docxreader.adapter.LangugeAdapter;
 import com.prox.docxreader.databinding.FragmentLanguageBinding;
 import com.prox.docxreader.ui.activity.MainActivity;
-
-import java.util.Objects;
 
 public class LanguageFragment extends Fragment {
 
@@ -27,6 +24,7 @@ public class LanguageFragment extends Fragment {
         FragmentLanguageBinding binding = FragmentLanguageBinding.inflate(inflater, container, false);
 
         LangugeAdapter langugeAdapter = new LangugeAdapter(
+                requireContext(),
                 getResources().getStringArray(R.array.language),
                 getResources().getStringArray(R.array.type_language),
                 typeLanguage -> {

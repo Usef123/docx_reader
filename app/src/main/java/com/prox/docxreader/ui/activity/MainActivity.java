@@ -1,16 +1,6 @@
 package com.prox.docxreader.ui.activity;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.fragment.NavHostFragment;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
+import static com.prox.docxreader.ui.activity.SplashActivity.CLOSE_SPLASH;
 
 import android.Manifest;
 import android.content.Context;
@@ -28,20 +18,34 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
+
 import com.prox.docxreader.BuildConfig;
 import com.prox.docxreader.LocaleHelper;
+import com.prox.docxreader.MyAds;
 import com.prox.docxreader.R;
-import com.prox.docxreader.viewmodel.DocumentViewModel;
 import com.prox.docxreader.database.DocumentDatabase;
 import com.prox.docxreader.databinding.ActivityMainBinding;
 import com.prox.docxreader.modul.Document;
+import com.prox.docxreader.viewmodel.DocumentViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity{
-    private static final int REQUEST_PERMISSION_MANAGE = 123;
-    private static final int REQUEST_PERMISSION_READ_WRITE = 456;
+    private static final int REQUEST_PERMISSION_MANAGE = 10;
+    private static final int REQUEST_PERMISSION_READ_WRITE = 11;
+    private static final int REQUEST_SPLASH = 12;
 
     private ActivityMainBinding binding;
 
@@ -56,16 +60,20 @@ public class MainActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-
         //Load ngôn ngữ
         LocaleHelper.loadLanguage(this);
+
+        startActivityForResult(new Intent(this, SplashActivity.class), REQUEST_SPLASH);
+
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         //Tạo UI
         init();
 
         viewModel = new ViewModelProvider(this).get(DocumentViewModel.class);
+
+        binding.adView.loadAd(MyAds.getAdRequest());
     }
 
     @Override
@@ -167,6 +175,11 @@ public class MainActivity extends AppCompatActivity{
                 if (Environment.isExternalStorageManager()) {
                     new InsertDBAsyncTask(this).execute();
                 }
+            }
+        }else if (requestCode == REQUEST_SPLASH
+                && resultCode == RESULT_OK){
+            if (data.getBooleanExtra(CLOSE_SPLASH, false)){
+                binding.screenWhile.getRoot().setVisibility(View.GONE);
             }
         }
     }
