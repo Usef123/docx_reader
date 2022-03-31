@@ -3,7 +3,30 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/bg_corner_bottom.xml" value="0.118" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/bg_corner_left.xml" value="0.118" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/bg_corner_left_top.xml" value="0.118" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/bg_corner_right.xml" value="0.118" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_button_more.xml" value="0.118" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_diamond.xml" value="0.118" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_infor_app.xml" value="0.118" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_more_app.xml" value="0.118" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_premium.xml" value="0.118" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_user_fill.xml" value="0.118" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/image_premium.xml" value="0.118" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/img_button_blue_enabled.xml" value="0.118" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/img_button_blue_selector.xml" value="0.118" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/img_button_blue_while_enabled.xml" value="0.118" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/img_button_blue_while_pressed.xml" value="0.1105" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/img_button_blue_while_selector.xml" value="0.118" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/img_button_close_selector.xml" value="0.118" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/img_button_pressed.xml" value="0.118" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/img_button_while_blue_enabled.xml" value="0.1105" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/img_button_while_blue_selector.xml" value="0.1105" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/img_button_while_enabled.xml" value="0.118" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/img_button_while_selector.xml" value="0.118" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/img_close_enabled.xml" value="0.118" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/img_close_pressed.xml" value="0.118" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/splash_background.xml" value="0.169" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/splashbackground.xml" value="0.169" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/activity_load.xml" value="0.21965579710144928" />
@@ -11,9 +34,13 @@
         <entry key="..\:/docx-reader/app/src/main/res/layout/activity_office_detail.xml" value="0.21965579710144928" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/activity_open.xml" value="0.21965579710144928" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/activity_splash.xml" value="0.17291666666666666" />
+        <entry key="..\:/docx-reader/app/src/main/res/layout/fragment_premium.xml" value="0.264" />
+        <entry key="..\:/docx-reader/app/src/main/res/layout/fragment_setting.xml" value="0.24909420289855072" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/screen_while.xml" value="0.21965579710144928" />
+        <entry key="..\:/docx-reader/app/src/main/res/layout/title_home.xml" value="0.24909420289855072" />
         <entry key="..\:/docx-reader/app/src/main/res/menu/menu_app_act.xml" value="0.25" />
         <entry key="..\:/docx-reader/office/src/main/res/layout/activity_office_detail.xml" value="0.10729166666666666" />
+        <entry key="..\:/docx-reader/proxads/src/main/res/layout/dialog_rating.xml" value="0.1" />
       </map>
     </option>
   </component>

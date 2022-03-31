@@ -17,6 +17,7 @@ import com.prox.docxreader.databinding.FragmentLanguageBinding;
 import com.prox.docxreader.ui.activity.MainActivity;
 
 public class LanguageFragment extends Fragment {
+    public static final String ACTION_CHANGE_LANGUAGE = "ACTION_CHANGE_LANGUAGE";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -30,6 +31,7 @@ public class LanguageFragment extends Fragment {
                 typeLanguage -> {
                     LocaleHelper.setLocale(getContext(), typeLanguage);
                     Intent intent = new Intent(requireActivity(), MainActivity.class);
+                    intent.setAction(ACTION_CHANGE_LANGUAGE);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                 });

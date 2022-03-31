@@ -1,73 +1,57 @@
 <resources>
     <string name="app_name">Docx Reader</string>
-
     <string name="language">Language</string>
-
     <string name="notification_permission_error">Please allow permission first</string>
-
     <string name="botton_nav_home">Home</string>
     <string name="botton_nav_favorite">Favorite</string>
     <string name="botton_nav_setting">Setting</string>
-
     <string name="title_home">Explore</string>
     <string name="title_favorite">Bookmark</string>
     <string name="hint_search">Find the document</string>
-
     <string name="btn_sort_name">Sort by File Name</string>
     <string name="btn_sort_created_time">Sort by Created Time</string>
     <string name="btn_sort_access_time">Sort by Access Time</string>
-
     <string name="btn_delete">Delete</string>
     <string name="btn_rename">Rename</string>
     <string name="btn_share">Share</string>
     <string name="btn_favorite">Favorite</string>
-
     <string name="title_delete">Are you sure delete this document?</string>
     <string name="txt_yes">Yes</string>
     <string name="txt_no">No</string>
-
     <string name="title_rename">Change file name</string>
     <string name="txt_ok">OK</string>
     <string name="txt_cancel">Cancel</string>
-
     <string name="notification_file_error">File error</string>
-
     <string name="notification_delete_success">Delete successful</string>
     <string name="notification_delete_error">Delete error</string>
-
     <string name="notification_rename_empty">Name cannot be empty</string>
     <string name="notification_file_duplicate">Name already exists</string>
     <string name="notification_rename_success">Rename successful</string>
     <string name="notification_rename_error">Rename error</string>
     <string name="notification_not_rename">Name unchanged</string>
-
     <string name="notification_share_error">Share error</string>
-
     <string name="notification_add_favorite">Favorite</string>
     <string name="notification_remove_favorite">Remove favorite</string>
-
     <string name="btn_privacy_policy">Privacy Policy</string>
     <string name="btn_more_app">More App</string>
     <string name="btn_feedback">Feedback</string>
     <string name="btn_share_app">Share</string>
     <string name="btn_language">Language</string>
-
     <string name="subject_email">Docx Reader Feedback</string>
     <string name="notification_send_mail">Send mail...</string>
-
     <string name="notification_share_to">Share to...</string>
-
     <string name="privacy_policy">Privacy Policy</string>
-
     <string name="list_empty">No Item</string>
-
     <string name="dialog_message">Access to read all file Docx in your device</string>
     <string name="dialog_title">DocxReader</string>
-
     <string name="notification_file_not_found">File not found</string>
-
     <string name="hint_rename">Enter file\'s new name</string>
-
     <string name="splash_screen">This action can contain ads...</string>
     <string name="load_ads">Loading ads...</string>
+    <string name="btn_premium">Get Premium</string>
+    <string name="title_premium">Premium Version</string>
+    <string name="content_premium">Enjoy all the function of the app without being bothered by ads</string>
+    <string name="old_price"> <strike>Old Price: 5$</strike> </string>
+    <string name="best_price">Best Price: </string>
+    <string name="btn_continue">Continue</string>
 </resources>

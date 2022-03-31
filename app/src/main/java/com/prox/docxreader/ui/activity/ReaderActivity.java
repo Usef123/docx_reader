@@ -1,7 +1,5 @@
 package com.prox.docxreader.ui.activity;
 
-import static com.prox.docxreader.ui.activity.LoadActivity.CLOSE_LOAD;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -16,6 +14,7 @@ import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -29,11 +28,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.prox.docxreader.BuildConfig;
 import com.prox.docxreader.FileUtils;
 import com.prox.docxreader.MyAds;
 import com.prox.docxreader.R;
 import com.prox.docxreader.databinding.ActivityOfficeDetailBinding;
-import com.proxglobal.proxads.ads.callback.AdCallback;
+import com.proxglobal.proxads.adsv2.ads.ProxAds;
+import com.proxglobal.proxads.adsv2.callback.AdsCallback;
 import com.wxiwei.office.constant.EventConstant;
 import com.wxiwei.office.constant.MainConstant;
 import com.wxiwei.office.constant.wp.WPViewConstant;
@@ -64,6 +65,8 @@ import java.util.List;
 public class ReaderActivity extends AppCompatActivity implements IMainFrame {
     public static final String FILE_PATH = "FILE_PATH";
     public static final String ACTION_FRAGMENT = "ACTION_FRAGMENT";
+    public static final String ACTION_OPEN_OUTSITE = "ACTION_OPEN_OUTSITE";
+    public static final String ACTION_OPEN_INSITE = "ACTION_OPEN_INSITE";
     private static final int REQUEST_LOAD = 13;
 
     private ActivityOfficeDetailBinding binding;
@@ -71,7 +74,27 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        startActivityForResult(new Intent(this, LoadActivity.class), REQUEST_LOAD);
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        if (action.equals(Intent.ACTION_VIEW)){
+            Intent loadIntent = new Intent(this, LoadActivity.class);
+            loadIntent.setAction(ACTION_OPEN_OUTSITE);
+            startActivityForResult(loadIntent, REQUEST_LOAD);
+
+            Uri data = intent.getData();
+            filePath = FileUtils.getFilePathForN(data, this);
+//                realPath = FileUtils.getRealPath(this, data);
+        }else if(action.equals(ACTION_FRAGMENT)){
+            Intent loadIntent = new Intent(this, LoadActivity.class);
+            loadIntent.setAction(ACTION_OPEN_INSITE);
+            startActivityForResult(loadIntent, REQUEST_LOAD);
+
+            filePath = intent.getStringExtra(FILE_PATH);
+            //realPath = filePath;
+        }
+        if (filePath != null) {
+            fileName = filePath.substring(filePath.lastIndexOf('/')+1);
+        }
 
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
@@ -82,7 +105,26 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
 
         setContentView(binding.getRoot());
 
-        binding.adView.loadAd(MyAds.getAdRequest());
+        ProxAds.getInstance().showBanner(this, binding.bannerAds, BuildConfig.banner, new AdsCallback() {
+                    @Override
+                    public void onShow() {
+                        super.onShow();
+                        Log.d("showBanner", "onShow");
+                    }
+
+                    @Override
+                    public void onClosed() {
+                        super.onClosed();
+                        Log.d("showBanner", "onClosed");
+                    }
+
+                    @Override
+                    public void onError() {
+                        super.onError();
+                        Log.d("showBanner", "onError");
+                    }
+                }
+        );
 
         binding.toolbarOffice.setNavigationIcon(R.drawable.ic_back_24);
         binding.toolbarOffice.setTitleTextAppearance(this, R.style.TitleToolBar);
@@ -92,19 +134,6 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
         binding.viewerOffice.removeAllViews();
         binding.viewerOffice.addView(appFrame);
         binding.viewerOffice.post(() -> {
-            Intent intent = getIntent();
-            String action = intent.getAction();
-            if (action.equals(Intent.ACTION_VIEW)){
-                Uri data = intent.getData();
-                filePath = FileUtils.getFilePathForN(data, this);
-//                realPath = FileUtils.getRealPath(this, data);
-            }else if(action.equals(ACTION_FRAGMENT)){
-                filePath = intent.getStringExtra(FILE_PATH);
-//                realPath = filePath;
-            }
-            if (filePath != null) {
-                fileName = filePath.substring(filePath.lastIndexOf('/')+1);
-            }
             init();
         });
     }
@@ -120,9 +149,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_LOAD
                 && resultCode == RESULT_OK){
-            if (data.getBooleanExtra(CLOSE_LOAD, false)){
-                binding.screenWhile.getRoot().setVisibility(View.GONE);
-            }
+            binding.screenWhile.getRoot().setVisibility(View.GONE);
         }
     }
 
@@ -132,12 +159,24 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
         if (itemId == android.R.id.home) {
             if (MyAds.numberBack == 3){
                 MyAds.numberBack = 1;
-                MyAds.getInter(this).loadSplash(10000, new AdCallback() {
+                ProxAds.getInstance().showSplash(this, new AdsCallback() {
                     @Override
-                    public void onAdClose() {
+                    public void onShow() {
+                        Log.d("showSplash", "onShow");
+                    }
+
+                    @Override
+                    public void onClosed() {
+                        Log.d("showSplash", "onClosed");
                         finish();
                     }
-                });
+
+                    @Override
+                    public void onError() {
+                        Log.d("showSplash", "onError");
+                        finish();
+                    }
+                }, BuildConfig.interstitial_global, "vz3ebfacd56a34480da8", 12000);
             }else{
                 MyAds.numberBack += 1;
                 finish();
@@ -228,34 +267,36 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
     /**
      *
      */
-//    public void onBackPressed() {
-//        if (isSearchbarActive()) {
-//            showSearchBar(false);
-//            updateToolsbarStatus();
-//        } else {
-//            Object obj = control.getActionValue(EventConstant.PG_SLIDESHOW, null);
-//            if (obj != null && (Boolean) obj) {
-//                fullScreen(false);
-//                //
-//                this.control.actionEvent(EventConstant.PG_SLIDESHOW_END, null);
-//            } else {
-//                if (control.getReader() != null) {
-//                    control.getReader().abortReader();
-//                }
-//                if (marked != dbService.queryItem(MainConstant.TABLE_STAR, filePath)) {
-//                    if (!marked) {
-//                        dbService.deleteItem(MainConstant.TABLE_STAR, filePath);
-//                    } else {
-//                        dbService.insertStarFiles(MainConstant.TABLE_STAR, filePath);
-//                    }
-//
-//                    Intent intent = new Intent();
-//                    intent.putExtra(MainConstant.INTENT_FILED_MARK_STATUS, marked);
-//                    setResult(RESULT_OK, intent);
-//                }
-//            }
-//        }
-//    }
+    public void onBackPressed() {
+        if (isSearchbarActive()) {
+            showSearchBar(false);
+            updateToolsbarStatus();
+        } else {
+            Object obj = control.getActionValue(EventConstant.PG_SLIDESHOW, null);
+            if (obj != null && (Boolean) obj) {
+                fullScreen(false);
+                //
+                this.control.actionEvent(EventConstant.PG_SLIDESHOW_END, null);
+            } else {
+                if (control.getReader() != null) {
+                    control.getReader().abortReader();
+                }
+                if (dbService != null){
+                    if (marked != dbService.queryItem(MainConstant.TABLE_STAR, filePath)) {
+                        if (!marked) {
+                            dbService.deleteItem(MainConstant.TABLE_STAR, filePath);
+                        } else {
+                            dbService.insertStarFiles(MainConstant.TABLE_STAR, filePath);
+                        }
+
+                        Intent intent = new Intent();
+                        intent.putExtra(MainConstant.INTENT_FILED_MARK_STATUS, marked);
+                        setResult(RESULT_OK, intent);
+                    }
+                }
+            }
+        }
+    }
 
     /**
      *

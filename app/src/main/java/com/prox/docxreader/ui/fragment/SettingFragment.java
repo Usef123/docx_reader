@@ -35,6 +35,8 @@ public class SettingFragment extends Fragment {
         binding.btnPrivacyPolicy.setOnClickListener(v ->
             Navigation.findNavController(binding.getRoot()).navigate(R.id.action_settingFragment_to_policyFragment)
         );
+
+        binding.btnPremium.setOnClickListener(v -> Navigation.findNavController(binding.getRoot()).navigate(R.id.action_settingFragment_to_premiumFragment));
         return binding.getRoot();
     }
 

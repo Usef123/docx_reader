@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "982736240960",
+    "project_id": "docx-reader-prox-ducnt",
+    "storage_bucket": "docx-reader-prox-ducnt.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:982736240960:android:ec00d827d616dbaf5b3aa5",
+        "android_client_info": {
+          "package_name": "com.prox.docxreader"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "982736240960-f4r57ndu85bd0781gp0c1c9osvg950h0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.prox.docxreader",
+            "certificate_hash": "9ba2dbcc9864a1e10b39053d7beaea45a1dc0548"
+          }
+        },
+        {
+          "client_id": "982736240960-ii9behnv88s3amj8itsmam2oag1ga7q2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQ1t6V1hJjMM6QKHTZiTAVFCMZ3us6Fsg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "982736240960-ii9behnv88s3amj8itsmam2oag1ga7q2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

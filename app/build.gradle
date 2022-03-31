@@ -1,5 +1,9 @@
 plugins {
     id 'com.android.application'
+    id 'com.google.gms.google-services' // Google services Gradle plugin
+
+    // Apply the Crashlytics Gradle plugin
+    id 'com.google.firebase.crashlytics'
 }
 
 android {
@@ -10,14 +14,35 @@ android {
         applicationId "com.prox.docxreader"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 2
-        versionName "1.0.1"
+        versionCode 3
+        versionName "1.0.2"
         setProperty("archivesBaseName", "v$versionName($versionCode)-DocxReader")
     }
     buildTypes {
+        debug {
+            buildConfigField "String", "appId", "\"ca-app-pub-3617606523175567~4893768251\""
+            buildConfigField "String", "purchase", "\"remove_all_ads\""
+            buildConfigField "String", "interstitial_splash", "\"ca-app-pub-3617606523175567/8230378030\""
+            buildConfigField "String", "interstitial_global", "\"ca-app-pub-3617606523175567/8202457877\""
+            buildConfigField "String", "interstitial_open_outside", "\"ca-app-pub-3617606523175567/5440563163\""
+            buildConfigField "String", "banner", "\"ca-app-pub-3617606523175567/1253906148\""
+
+            buildConfigField "String", "id_test2_subs", "\"id_test2_subs\""
+            buildConfigField "String", "id_test3_subs", "\"id_test3_subs\""
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            buildConfigField "String", "appId", "\"ca-app-pub-3617606523175567~4893768251\""
+            buildConfigField "String", "purchase", "\"remove_all_ads\""
+            buildConfigField "String", "interstitial_splash", "\"ca-app-pub-3617606523175567/8230378030\""
+            buildConfigField "String", "interstitial_global", "\"ca-app-pub-3617606523175567/8202457877\""
+            buildConfigField "String", "interstitial_open_outside", "\"ca-app-pub-3617606523175567/5440563163\""
+            buildConfigField "String", "banner", "\"ca-app-pub-3617606523175567/1253906148\""
+
+            buildConfigField "String", "id_test2_subs", "\"id_test2_subs\""
+            buildConfigField "String", "id_test3_subs", "\"id_test3_subs\""
         }
     }
     compileOptions {
@@ -39,7 +64,6 @@ dependencies {
     implementation "androidx.navigation:navigation-ui:2.4.1"
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation "androidx.room:room-runtime:2.4.2"
-    implementation project(path: ':proxads')
     annotationProcessor "androidx.room:room-compiler:2.4.2"
 
     implementation 'com.chauthai.swipereveallayout:swipe-reveal-layout:1.4.1'
@@ -49,5 +73,42 @@ dependencies {
     // LiveData
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.5.0-alpha05"
 
-    implementation 'com.google.android.gms:play-services-ads:20.6.0'
+    // Import the BoM for the Firebase platform
+    implementation platform('com.google.firebase:firebase-bom:29.3.0')
+
+    // Declare the dependencies for the Crashlytics and Analytics libraries
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation 'com.google.firebase:firebase-crashlytics'
+    implementation 'com.google.firebase:firebase-analytics'
+
+    implementation 'com.github.hellowordapp:prox-utils:1.1.6'
+
+    // g son
+    implementation 'com.google.code.gson:gson:2.8.6'
+
+    //bottom sheet
+    implementation 'com.afollestad.material-dialogs:bottomsheets:3.2.1'
+
+    // Ad mob
+    implementation 'com.google.android.gms:play-services-ads:20.4.0'
+    implementation 'com.google.android.play:core:1.10.0'
+
+    // Ad colony
+    implementation 'com.adcolony:sdk:4.6.5'
+    implementation 'com.google.android.gms:play-services-ads-identifier:17.0.0'
+
+    // lifecycle
+    def lifecycle_version = "2.0.0"
+    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-runtime:$lifecycle_version"
+    annotationProcessor "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
+
+    // Shimmer
+    implementation 'com.facebook.shimmer:shimmer:0.5.0@aar'
+
+    // Purchase
+    implementation("com.android.billingclient:billing-ktx:4.0.0")
+
+    //loading dialog
+    implementation 'com.kaopiz:kprogresshud:1.2.0'
 }

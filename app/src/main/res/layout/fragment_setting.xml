@@ -21,6 +21,24 @@
             android:src="@drawable/ic_infor_app" />
 
         <Button
+            android:id="@+id/btn_premium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:drawableStart="@drawable/ic_premium"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:paddingEnd="40dp"
+            android:paddingStart="20dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="32dp"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:theme="@style/ThemeImgButtonBlueWhite"
+            android:text="@string/btn_premium" />
+
+        <Button
             android:id="@+id/btn_language"
             android:layout_width="match_parent"
             android:layout_height="80dp"

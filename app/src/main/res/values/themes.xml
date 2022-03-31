@@ -22,4 +22,10 @@
     <style name="ThemeImgButtonBlue" parent="android:style/Theme.NoTitleBar">
         <item name="android:buttonStyle">@style/img_button_blue</item>
     </style>
+    <style name="ThemeImgButtonWhiteBlue" parent="android:style/Theme.NoTitleBar">
+        <item name="android:buttonStyle">@style/img_button_white_blue</item>
+    </style>
+    <style name="ThemeImgButtonBlueWhite" parent="android:style/Theme.NoTitleBar">
+        <item name="android:buttonStyle">@style/img_button_blue_white</item>
+    </style>
 </resources>

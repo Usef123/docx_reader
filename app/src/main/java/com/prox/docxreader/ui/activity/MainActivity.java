@@ -1,10 +1,9 @@
 package com.prox.docxreader.ui.activity;
 
-import static com.prox.docxreader.ui.activity.SplashActivity.CLOSE_SPLASH;
-
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
@@ -12,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
@@ -30,14 +30,18 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.prox.docxreader.BuildConfig;
 import com.prox.docxreader.LocaleHelper;
-import com.prox.docxreader.MyAds;
 import com.prox.docxreader.R;
 import com.prox.docxreader.database.DocumentDatabase;
 import com.prox.docxreader.databinding.ActivityMainBinding;
 import com.prox.docxreader.modul.Document;
 import com.prox.docxreader.viewmodel.DocumentViewModel;
+import com.proxglobal.proxads.adsv2.ads.ProxAds;
+import com.proxglobal.proxads.adsv2.callback.AdsCallback;
+import com.proxglobal.rate.ProxRateDialog;
+import com.proxglobal.rate.RatingDialogListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,17 +59,23 @@ public class MainActivity extends AppCompatActivity{
     private AppBarConfiguration appBarConfiguration;
 
     private AlertDialog dialogRequest;
+    private boolean isBackPress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         //Load ngôn ngữ
         LocaleHelper.loadLanguage(this);
 
-        startActivityForResult(new Intent(this, SplashActivity.class), REQUEST_SPLASH);
-
         binding = ActivityMainBinding.inflate(getLayoutInflater());
+
+        Intent intent = getIntent();
+        if (intent.getAction().contains(Intent.ACTION_MAIN)){
+            startActivityForResult(new Intent(this, SplashActivity.class), REQUEST_SPLASH);
+        }else{
+            binding.screenWhile.getRoot().setVisibility(View.GONE);
+        }
+
         setContentView(binding.getRoot());
 
         //Tạo UI
@@ -73,7 +83,70 @@ public class MainActivity extends AppCompatActivity{
 
         viewModel = new ViewModelProvider(this).get(DocumentViewModel.class);
 
-        binding.adView.loadAd(MyAds.getAdRequest());
+        ProxAds.getInstance().showBanner(this, binding.bannerAds, BuildConfig.banner, new AdsCallback() {
+                    @Override
+                    public void onShow() {
+                        super.onShow();
+                        Log.d("showBanner", "onShow");
+                    }
+
+                    @Override
+                    public void onClosed() {
+                        super.onClosed();
+                        Log.d("showBanner", "onClosed");
+                    }
+
+                    @Override
+                    public void onError() {
+                        super.onError();
+                        Log.d("showBanner", "onError");
+                    }
+                }
+        );
+
+        ProxRateDialog.Config config = new ProxRateDialog.Config();
+        config.setListener(new RatingDialogListener() {
+            @Override
+            public void onSubmitButtonClicked(int rate, String comment) {
+                Log.d("config", "onSubmitButtonClicked " + rate + comment);
+                Bundle bundle = new Bundle();
+                bundle.putString("event_type", "rated");
+                bundle.putString("comment", comment);
+                bundle.putString("star", rate + " star");
+                FirebaseAnalytics.getInstance(MainActivity.this).logEvent("prox_rating_layout", bundle);
+            }
+
+            @Override
+            public void onLaterButtonClicked() {
+                Log.d("config", "onLaterButtonClicked");
+                Bundle bundle = new Bundle();
+                bundle.putString("event_type", "cancel");
+                FirebaseAnalytics.getInstance(MainActivity.this).logEvent("prox_rating_layout", bundle);
+                if (isBackPress) {
+                    finish();
+                }
+            }
+
+            @Override
+            public void onChangeStar(int rate) {
+                Log.d("config", "onChangeStar " + rate);
+                if (rate >= 4) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("event_type", "rated");
+                    bundle.putString("star", rate + " star");
+                    FirebaseAnalytics.getInstance(MainActivity.this).logEvent("prox_rating_layout", bundle);
+                }
+            }
+
+            @Override
+            public void onDone() {
+                Log.d("config", "onDone");
+                if(isBackPress){
+                    finish();
+                }
+            }
+        });
+        ProxRateDialog.init(config);
     }
 
     @Override
@@ -178,9 +251,29 @@ public class MainActivity extends AppCompatActivity{
             }
         }else if (requestCode == REQUEST_SPLASH
                 && resultCode == RESULT_OK){
-            if (data.getBooleanExtra(CLOSE_SPLASH, false)){
-                binding.screenWhile.getRoot().setVisibility(View.GONE);
+            binding.screenWhile.getRoot().setVisibility(View.GONE);
+
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+            int openApp = preferences.getInt("open_app", 1);
+            Log.d("openApp", openApp+"");
+            if (openApp == 1){
+                preferences.edit().putInt("open_app", openApp+1).apply();
+            }else
+                ProxRateDialog.showIfNeed(this, getSupportFragmentManager());
             }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(this.onSupportNavigateUp()){
+           return;
+        }
+        isBackPress = true;
+        ProxRateDialog.showIfNeed(this, getSupportFragmentManager());
+
+        SharedPreferences sp = this.getSharedPreferences("prox", Context.MODE_PRIVATE);
+        if (sp.getBoolean("isRated", false)){
+            super.onBackPressed();
         }
     }
 
@@ -213,6 +306,10 @@ public class MainActivity extends AppCompatActivity{
                 binding.bottomNav.setVisibility(View.GONE);
                 binding.toolbar.setVisibility(View.VISIBLE);
                 binding.toolbar.setTitle(getResources().getString(R.string.privacy_policy));
+            }else if (navDestination.getId()==R.id.premiumFragment){
+                binding.bottomNav.setVisibility(View.GONE);
+                binding.toolbar.setVisibility(View.GONE);
+                binding.toolbar.setTitle("");
             } else{
                 binding.bottomNav.setVisibility(View.VISIBLE);
                 binding.toolbar.setVisibility(View.GONE);
@@ -286,7 +383,7 @@ public class MainActivity extends AppCompatActivity{
                 document.setFavorite(false);
                 document.setExist(true);
 
-                if (!document.getPath().contains("Trash")){
+                if (!document.getPath().contains(".Trash")){
                     documents.add(document);
                 }
             }
