@@ -1,10 +1,10 @@
 package com.prox.docxreader.ui.fragment;
 
+import static com.prox.docxreader.ui.activity.ReaderActivity.ACTION_FRAGMENT;
+import static com.prox.docxreader.ui.activity.ReaderActivity.FILE_PATH;
 import static com.prox.docxreader.viewmodel.DocumentViewModel.SORT_NAME;
 import static com.prox.docxreader.viewmodel.DocumentViewModel.SORT_TIME_ACCESS;
 import static com.prox.docxreader.viewmodel.DocumentViewModel.SORT_TIME_CREATE;
-import static com.prox.docxreader.ui.activity.ReaderActivity.ACTION_FRAGMENT;
-import static com.prox.docxreader.ui.activity.ReaderActivity.FILE_PATH;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -14,14 +14,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.core.content.FileProvider;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -34,15 +26,24 @@ import android.view.WindowManager;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.prox.docxreader.R;
 import com.prox.docxreader.adapter.DocumentHomeAdapter;
-import com.prox.docxreader.viewmodel.DocumentViewModel;
 import com.prox.docxreader.databinding.DialogDeleteBinding;
 import com.prox.docxreader.databinding.DialogRenameBinding;
 import com.prox.docxreader.databinding.DialogSortBinding;
 import com.prox.docxreader.databinding.FragmentHomeBinding;
 import com.prox.docxreader.modul.Document;
 import com.prox.docxreader.ui.activity.ReaderActivity;
+import com.prox.docxreader.viewmodel.DocumentViewModel;
+import com.proxglobal.proxads.adsv2.ads.ProxAds;
+import com.proxglobal.proxads.adsv2.callback.AdsCallback;
 
 import java.io.File;
 import java.util.Date;
@@ -118,6 +119,24 @@ public class HomeFragment extends Fragment {
         document.setTimeAccess(new Date().getTime());
         viewModel.update(document);
 
+        ProxAds.getInstance().showInterstitial(requireActivity(), "insite", new AdsCallback() {
+            @Override
+            public void onClosed() {
+                super.onClosed();
+                Log.d("showInterstitial", "onClosed");
+                startReaderActivity(document);
+            }
+
+            @Override
+            public void onError() {
+                super.onError();
+                Log.d("showInterstitial", "onError");
+                startReaderActivity(document);
+            }
+        });
+    }
+
+    private void startReaderActivity(Document document) {
         Intent intent = new Intent(getActivity(), ReaderActivity.class);
         intent.putExtra(FILE_PATH, document.getPath());
         intent.setAction(ACTION_FRAGMENT);

@@ -1,5 +1,8 @@
 package com.prox.docxreader.ui.activity;
 
+import static com.prox.docxreader.ui.activity.MainActivity.REQUEST_SPLASH;
+import static com.prox.docxreader.ui.activity.SplashActivity.VIEW_TO_SPLASH;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -66,36 +69,11 @@ import java.util.List;
 public class ReaderActivity extends AppCompatActivity implements IMainFrame {
     public static final String FILE_PATH = "FILE_PATH";
     public static final String ACTION_FRAGMENT = "ACTION_FRAGMENT";
-    public static final String ACTION_OPEN_OUTSITE = "ACTION_OPEN_OUTSITE";
-    public static final String ACTION_OPEN_INSITE = "ACTION_OPEN_INSITE";
-    private static final int REQUEST_LOAD = 13;
 
     private ActivityOfficeDetailBinding binding;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        Intent intent = getIntent();
-        String action = intent.getAction();
-        if (action.equals(Intent.ACTION_VIEW)){
-            Intent loadIntent = new Intent(this, LoadActivity.class);
-            loadIntent.setAction(ACTION_OPEN_OUTSITE);
-            startActivityForResult(loadIntent, REQUEST_LOAD);
-
-            Uri data = intent.getData();
-            filePath = FileUtils.getFilePathForN(data, this);
-//                realPath = FileUtils.getRealPath(this, data);
-        }else if(action.equals(ACTION_FRAGMENT)){
-            Intent loadIntent = new Intent(this, LoadActivity.class);
-            loadIntent.setAction(ACTION_OPEN_INSITE);
-            startActivityForResult(loadIntent, REQUEST_LOAD);
-
-            filePath = intent.getStringExtra(FILE_PATH);
-            //realPath = filePath;
-        }
-        if (filePath != null) {
-            fileName = filePath.substring(filePath.lastIndexOf('/')+1);
-        }
 
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
@@ -103,6 +81,25 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
         appFrame = new AppFrame(getApplicationContext());
 
         binding = ActivityOfficeDetailBinding.inflate(getLayoutInflater());
+
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        if (action.equals(Intent.ACTION_VIEW)){
+            Intent splashIntent = new Intent(this, SplashActivity.class);
+            splashIntent.setAction(VIEW_TO_SPLASH);
+            startActivityForResult(splashIntent, REQUEST_SPLASH);
+
+            Uri data = intent.getData();
+            filePath = FileUtils.getFilePathForN(data, this);
+//                realPath = FileUtils.getRealPath(this, data);
+        }else if(action.equals(ACTION_FRAGMENT)){
+            filePath = intent.getStringExtra(FILE_PATH);
+            binding.screenWhile.getRoot().setVisibility(View.GONE);
+            //realPath = filePath;
+        }
+        if (filePath != null) {
+            fileName = filePath.substring(filePath.lastIndexOf('/')+1);
+        }
 
         if (ProxPurchase.getInstance().checkPurchased()){
             binding.bannerAds.setVisibility(View.GONE);
@@ -138,9 +135,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         binding.viewerOffice.removeAllViews();
         binding.viewerOffice.addView(appFrame);
-        binding.viewerOffice.post(() -> {
-            init();
-        });
+        binding.viewerOffice.post(this::init);
     }
 
 //    @Override
@@ -152,7 +147,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_LOAD
+        if (requestCode == REQUEST_SPLASH
                 && resultCode == RESULT_OK){
             binding.screenWhile.getRoot().setVisibility(View.GONE);
         }

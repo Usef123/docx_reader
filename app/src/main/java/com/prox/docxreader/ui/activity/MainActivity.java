@@ -1,5 +1,7 @@
 package com.prox.docxreader.ui.activity;
 
+import static com.prox.docxreader.ui.activity.SplashActivity.MAIN_TO_SPLASH;
+
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
@@ -50,7 +52,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity{
     private static final int REQUEST_PERMISSION_MANAGE = 10;
     private static final int REQUEST_PERMISSION_READ_WRITE = 11;
-    private static final int REQUEST_SPLASH = 12;
+    public static final int REQUEST_SPLASH = 12;
 
     private ActivityMainBinding binding;
 
@@ -72,9 +74,9 @@ public class MainActivity extends AppCompatActivity{
 
         Intent intent = getIntent();
         if (intent.getAction().contains(Intent.ACTION_MAIN)){
-            startActivityForResult(new Intent(this, SplashActivity.class), REQUEST_SPLASH);
-        }else{
-            binding.screenWhile.getRoot().setVisibility(View.GONE);
+            Intent splashIntent = new Intent(this, SplashActivity.class);
+            splashIntent.setAction(MAIN_TO_SPLASH);
+            startActivityForResult(splashIntent, REQUEST_SPLASH);
         }
 
         viewModel = new ViewModelProvider(this).get(DocumentViewModel.class);
