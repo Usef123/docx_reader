@@ -40,6 +40,7 @@ import com.prox.docxreader.modul.Document;
 import com.prox.docxreader.viewmodel.DocumentViewModel;
 import com.proxglobal.proxads.adsv2.ads.ProxAds;
 import com.proxglobal.proxads.adsv2.callback.AdsCallback;
+import com.proxglobal.purchase.ProxPurchase;
 import com.proxglobal.rate.ProxRateDialog;
 import com.proxglobal.rate.RatingDialogListener;
 
@@ -76,12 +77,16 @@ public class MainActivity extends AppCompatActivity{
             binding.screenWhile.getRoot().setVisibility(View.GONE);
         }
 
+        viewModel = new ViewModelProvider(this).get(DocumentViewModel.class);
+
+        if (ProxPurchase.getInstance().checkPurchased()){
+            binding.bannerAds.setVisibility(View.GONE);
+        }
+
         setContentView(binding.getRoot());
 
         //Tạo UI
         init();
-
-        viewModel = new ViewModelProvider(this).get(DocumentViewModel.class);
 
         ProxAds.getInstance().showBanner(this, binding.bannerAds, BuildConfig.banner, new AdsCallback() {
                     @Override

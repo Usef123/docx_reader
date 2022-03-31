@@ -4,7 +4,7 @@
     <string name="language">Ngôn ngữ</string>
     <string name="notification_permission_error">Vui lòng cho phép quyền trước</string>
     <string name="botton_nav_home">Trang chủ</string>
-    <string name="botton_nav_favorite">Yêu thích</string>
+    <string name="botton_nav_favorite">Dấu trang</string>
     <string name="botton_nav_setting">Cài đặt</string>
     <string name="title_home">Khám phá</string>
     <string name="title_favorite">Dấu trang</string>
@@ -15,7 +15,7 @@
     <string name="btn_delete">Xoá</string>
     <string name="btn_rename">Đổi tên</string>
     <string name="btn_share">Chia sẻ</string>
-    <string name="btn_favorite">Yêu thích</string>
+    <string name="btn_favorite">Dấu trang</string>
     <string name="title_delete">Bạn có chắc muốn xoá tệp này không?</string>
     <string name="txt_yes">Xoá bỏ</string>
     <string name="txt_no">Huỷ bỏ</string>
@@ -31,8 +31,8 @@
     <string name="notification_rename_error">Đổi tên tệp thất bại</string>
     <string name="notification_not_rename">Tên tệp không thay đổi</string>
     <string name="notification_share_error">Chia sẻ thất bại</string>
-    <string name="notification_add_favorite">Đã thêm vào yêu thích</string>
-    <string name="notification_remove_favorite">Đã xoá khỏi yêu thích</string>
+    <string name="notification_add_favorite">Đã thêm vào dấu trang</string>
+    <string name="notification_remove_favorite">Đã xoá khỏi dấu trang</string>
     <string name="btn_privacy_policy">Chính sách bảo mật</string>
     <string name="btn_more_app">Nhiều ứng dụng hơn</string>
     <string name="btn_feedback">Phản hồi</string>

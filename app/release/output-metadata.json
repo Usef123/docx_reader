@@ -10,9 +10,9 @@
     {
       "type": "SINGLE",
       "filters": [],
-      "versionCode": 3,
-      "versionName": "1.0.2",
-      "outputFile": "v1.0.2(3)-DocxReader-release.apk"
+      "versionCode": 4,
+      "versionName": "1.0.3",
+      "outputFile": "v1.0.3(4)-DocxReader-release.apk"
     }
   ]
 }

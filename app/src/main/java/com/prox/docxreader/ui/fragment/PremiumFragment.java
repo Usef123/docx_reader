@@ -19,7 +19,7 @@ public class PremiumFragment extends Fragment {
         FragmentPremiumBinding binding = FragmentPremiumBinding.inflate(inflater, container, false);
 
         binding.btnClose.setOnClickListener(v -> requireActivity().onBackPressed());
-        String bestPrice = getResources().getString(R.string.best_price) + ProxPurchase.getInstance().getPrice(BuildConfig.purchase);
+        String bestPrice = getResources().getString(R.string.best_price) + " " + ProxPurchase.getInstance().getPrice(BuildConfig.purchase);
         binding.txtBestPrice.setText(bestPrice);
         binding.btnContinue.setOnClickListener(v -> ProxPurchase.getInstance().purchase(requireActivity(), BuildConfig.purchase));
         return binding.getRoot();

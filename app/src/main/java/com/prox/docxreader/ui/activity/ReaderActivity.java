@@ -35,6 +35,7 @@ import com.prox.docxreader.R;
 import com.prox.docxreader.databinding.ActivityOfficeDetailBinding;
 import com.proxglobal.proxads.adsv2.ads.ProxAds;
 import com.proxglobal.proxads.adsv2.callback.AdsCallback;
+import com.proxglobal.purchase.ProxPurchase;
 import com.wxiwei.office.constant.EventConstant;
 import com.wxiwei.office.constant.MainConstant;
 import com.wxiwei.office.constant.wp.WPViewConstant;
@@ -102,6 +103,10 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
         appFrame = new AppFrame(getApplicationContext());
 
         binding = ActivityOfficeDetailBinding.inflate(getLayoutInflater());
+
+        if (ProxPurchase.getInstance().checkPurchased()){
+            binding.bannerAds.setVisibility(View.GONE);
+        }
 
         setContentView(binding.getRoot());
 

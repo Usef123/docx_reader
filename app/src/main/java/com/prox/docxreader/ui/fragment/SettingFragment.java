@@ -12,6 +12,7 @@ import androidx.navigation.Navigation;
 
 import com.prox.docxreader.R;
 import com.prox.docxreader.databinding.FragmentSettingBinding;
+import com.proxglobal.purchase.ProxPurchase;
 
 public class SettingFragment extends Fragment {
     public static final String EMAIL_FEEDBACK = "elaineeyui@gmail.com";
@@ -36,6 +37,9 @@ public class SettingFragment extends Fragment {
             Navigation.findNavController(binding.getRoot()).navigate(R.id.action_settingFragment_to_policyFragment)
         );
 
+        if (ProxPurchase.getInstance().checkPurchased()){
+            binding.btnPremium.setVisibility(View.GONE);
+        }
         binding.btnPremium.setOnClickListener(v -> Navigation.findNavController(binding.getRoot()).navigate(R.id.action_settingFragment_to_premiumFragment));
         return binding.getRoot();
     }

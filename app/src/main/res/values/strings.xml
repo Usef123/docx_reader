@@ -3,7 +3,7 @@
     <string name="language">Language</string>
     <string name="notification_permission_error">Please allow permission first</string>
     <string name="botton_nav_home">Home</string>
-    <string name="botton_nav_favorite">Favorite</string>
+    <string name="botton_nav_favorite">Bookmark</string>
     <string name="botton_nav_setting">Setting</string>
     <string name="title_home">Explore</string>
     <string name="title_favorite">Bookmark</string>
@@ -14,7 +14,7 @@
     <string name="btn_delete">Delete</string>
     <string name="btn_rename">Rename</string>
     <string name="btn_share">Share</string>
-    <string name="btn_favorite">Favorite</string>
+    <string name="btn_favorite">Bookmark</string>
     <string name="title_delete">Are you sure delete this document?</string>
     <string name="txt_yes">Yes</string>
     <string name="txt_no">No</string>
@@ -30,8 +30,8 @@
     <string name="notification_rename_error">Rename error</string>
     <string name="notification_not_rename">Name unchanged</string>
     <string name="notification_share_error">Share error</string>
-    <string name="notification_add_favorite">Favorite</string>
-    <string name="notification_remove_favorite">Remove favorite</string>
+    <string name="notification_add_favorite">Bookmark</string>
+    <string name="notification_remove_favorite">Remove bookmark</string>
     <string name="btn_privacy_policy">Privacy Policy</string>
     <string name="btn_more_app">More App</string>
     <string name="btn_feedback">Feedback</string>
