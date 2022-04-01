@@ -51,7 +51,7 @@
     <string name="btn_premium">Get Premium</string>
     <string name="title_premium">Premium Version</string>
     <string name="content_premium">Enjoy all the function of the app without being bothered by ads</string>
-    <string name="old_price"> <strike>Old Price: 5$</strike> </string>
+    <string name="old_price"> <strike>Old Price: 46.000 đ</strike> </string>
     <string name="best_price">Best Price: </string>
     <string name="btn_continue">Continue</string>
 </resources>

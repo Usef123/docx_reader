@@ -1,8 +1,9 @@
 package com.prox.docxreader.ui.activity;
 
-import static com.prox.docxreader.ui.activity.SplashActivity.MAIN_TO_SPLASH;
+import static com.prox.docxreader.ui.activity.SplashActivity.SPLASH_TO_MAIN;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -52,7 +53,6 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity{
     private static final int REQUEST_PERMISSION_MANAGE = 10;
     private static final int REQUEST_PERMISSION_READ_WRITE = 11;
-    public static final int REQUEST_SPLASH = 12;
 
     private ActivityMainBinding binding;
 
@@ -67,93 +67,30 @@ public class MainActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
         //Load ngôn ngữ
         LocaleHelper.loadLanguage(this);
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-
-        Intent intent = getIntent();
-        if (intent.getAction().contains(Intent.ACTION_MAIN)){
-            Intent splashIntent = new Intent(this, SplashActivity.class);
-            splashIntent.setAction(MAIN_TO_SPLASH);
-            startActivityForResult(splashIntent, REQUEST_SPLASH);
-        }
-
         viewModel = new ViewModelProvider(this).get(DocumentViewModel.class);
-
-        if (ProxPurchase.getInstance().checkPurchased()){
-            binding.bannerAds.setVisibility(View.GONE);
-        }
-
-        setContentView(binding.getRoot());
 
         //Tạo UI
         init();
 
-        ProxAds.getInstance().showBanner(this, binding.bannerAds, BuildConfig.banner, new AdsCallback() {
-                    @Override
-                    public void onShow() {
-                        super.onShow();
-                        Log.d("showBanner", "onShow");
-                    }
-
-                    @Override
-                    public void onClosed() {
-                        super.onClosed();
-                        Log.d("showBanner", "onClosed");
-                    }
-
-                    @Override
-                    public void onError() {
-                        super.onError();
-                        Log.d("showBanner", "onError");
-                    }
-                }
-        );
-
-        ProxRateDialog.Config config = new ProxRateDialog.Config();
-        config.setListener(new RatingDialogListener() {
-            @Override
-            public void onSubmitButtonClicked(int rate, String comment) {
-                Log.d("config", "onSubmitButtonClicked " + rate + comment);
-                Bundle bundle = new Bundle();
-                bundle.putString("event_type", "rated");
-                bundle.putString("comment", comment);
-                bundle.putString("star", rate + " star");
-                FirebaseAnalytics.getInstance(MainActivity.this).logEvent("prox_rating_layout", bundle);
+        String action = getIntent().getAction();
+        if (action.equals(SPLASH_TO_MAIN)){
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+            int openApp = preferences.getInt("open_app", 1);
+            Log.d("openApp", String.valueOf(openApp));
+            if (openApp == 1){
+                preferences.edit().putInt("open_app", openApp+1).apply();
+            }else{
+                ProxRateDialog.showIfNeed(this, getSupportFragmentManager());
             }
+        }
 
-            @Override
-            public void onLaterButtonClicked() {
-                Log.d("config", "onLaterButtonClicked");
-                Bundle bundle = new Bundle();
-                bundle.putString("event_type", "cancel");
-                FirebaseAnalytics.getInstance(MainActivity.this).logEvent("prox_rating_layout", bundle);
-                if (isBackPress) {
-                    finish();
-                }
-            }
-
-            @Override
-            public void onChangeStar(int rate) {
-                Log.d("config", "onChangeStar " + rate);
-                if (rate >= 4) {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("event_type", "rated");
-                    bundle.putString("star", rate + " star");
-                    FirebaseAnalytics.getInstance(MainActivity.this).logEvent("prox_rating_layout", bundle);
-                }
-            }
-
-            @Override
-            public void onDone() {
-                Log.d("config", "onDone");
-                if(isBackPress){
-                    finish();
-                }
-            }
-        });
-        ProxRateDialog.init(config);
+        ProxAds.getInstance().initInterstitial(this, BuildConfig.interstitial_global, null, "insite");
     }
 
     @Override
@@ -256,23 +193,12 @@ public class MainActivity extends AppCompatActivity{
                     new InsertDBAsyncTask(this).execute();
                 }
             }
-        }else if (requestCode == REQUEST_SPLASH
-                && resultCode == RESULT_OK){
-            binding.screenWhile.getRoot().setVisibility(View.GONE);
-
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-            int openApp = preferences.getInt("open_app", 1);
-            Log.d("openApp", openApp+"");
-            if (openApp == 1){
-                preferences.edit().putInt("open_app", openApp+1).apply();
-            }else
-                ProxRateDialog.showIfNeed(this, getSupportFragmentManager());
-            }
+        }
     }
 
     @Override
     public void onBackPressed() {
-        if(this.onSupportNavigateUp()){
+        if(onSupportNavigateUp()){
            return;
         }
         isBackPress = true;
@@ -314,6 +240,7 @@ public class MainActivity extends AppCompatActivity{
                 binding.toolbar.setVisibility(View.VISIBLE);
                 binding.toolbar.setTitle(getResources().getString(R.string.privacy_policy));
             }else if (navDestination.getId()==R.id.premiumFragment){
+                binding.bannerAds.setVisibility(View.GONE);
                 binding.bottomNav.setVisibility(View.GONE);
                 binding.toolbar.setVisibility(View.GONE);
                 binding.toolbar.setTitle("");
@@ -323,6 +250,75 @@ public class MainActivity extends AppCompatActivity{
                 binding.toolbar.setTitle("");
             }
         });
+
+        if (ProxPurchase.getInstance().checkPurchased()){
+            binding.bannerAds.setVisibility(View.GONE);
+        }
+
+        ProxAds.getInstance().showBanner(this, binding.bannerAds, BuildConfig.banner, new AdsCallback() {
+                    @Override
+                    public void onShow() {
+                        super.onShow();
+                        Log.d("bannerAds", "onShow");
+                    }
+
+                    @Override
+                    public void onClosed() {
+                        super.onClosed();
+                        Log.d("bannerAds", "onClosed");
+                    }
+
+                    @Override
+                    public void onError() {
+                        super.onError();
+                        Log.d("bannerAds", "onError");
+                    }
+                }
+        );
+
+        ProxRateDialog.Config config = new ProxRateDialog.Config();
+        config.setListener(new RatingDialogListener() {
+            @Override
+            public void onSubmitButtonClicked(int rate, String comment) {
+                Log.d("rate_app", "onSubmitButtonClicked " + rate + comment);
+                Bundle bundle = new Bundle();
+                bundle.putString("event_type", "rated");
+                bundle.putString("comment", comment);
+                bundle.putString("star", rate + " star");
+                FirebaseAnalytics.getInstance(MainActivity.this).logEvent("prox_rating_layout", bundle);
+            }
+
+            @Override
+            public void onLaterButtonClicked() {
+                Log.d("rate_app", "onLaterButtonClicked");
+                Bundle bundle = new Bundle();
+                bundle.putString("event_type", "cancel");
+                FirebaseAnalytics.getInstance(MainActivity.this).logEvent("prox_rating_layout", bundle);
+                if (isBackPress) {
+                    finish();
+                }
+            }
+
+            @Override
+            public void onChangeStar(int rate) {
+                Log.d("rate_app", "onChangeStar " + rate);
+                if (rate >= 4) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("event_type", "rated");
+                    bundle.putString("star", rate + " star");
+                    FirebaseAnalytics.getInstance(MainActivity.this).logEvent("prox_rating_layout", bundle);
+                }
+            }
+
+            @Override
+            public void onDone() {
+                Log.d("rate_app", "onDone");
+                if(isBackPress){
+                    finish();
+                }
+            }
+        });
+        ProxRateDialog.init(config);
     }
 
     @Override
@@ -331,6 +327,7 @@ public class MainActivity extends AppCompatActivity{
                 ||super.onSupportNavigateUp();
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class InsertDBAsyncTask extends AsyncTask<Void, Void, Void> {
         private final Context context;
 

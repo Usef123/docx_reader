@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -17,10 +18,10 @@ import com.prox.docxreader.databinding.FragmentLanguageBinding;
 import com.prox.docxreader.ui.activity.MainActivity;
 
 public class LanguageFragment extends Fragment {
-    public static final String ACTION_CHANGE_LANGUAGE = "ACTION_CHANGE_LANGUAGE";
+    public static final String CHANGE_LANGUAGE = "CHANGE_LANGUAGE";
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         FragmentLanguageBinding binding = FragmentLanguageBinding.inflate(inflater, container, false);
 
@@ -31,7 +32,7 @@ public class LanguageFragment extends Fragment {
                 typeLanguage -> {
                     LocaleHelper.setLocale(getContext(), typeLanguage);
                     Intent intent = new Intent(requireActivity(), MainActivity.class);
-                    intent.setAction(ACTION_CHANGE_LANGUAGE);
+                    intent.setAction(CHANGE_LANGUAGE);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                 });

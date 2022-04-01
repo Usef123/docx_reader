@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
@@ -19,7 +20,7 @@ public class SettingFragment extends Fragment {
     private static final String URI_PACKAGE = "https://play.google.com/store/apps/developer?id=Andromeda+App";
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         FragmentSettingBinding binding = FragmentSettingBinding.inflate(inflater, container, false);
 

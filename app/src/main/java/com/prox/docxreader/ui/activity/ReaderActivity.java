@@ -1,14 +1,12 @@
 package com.prox.docxreader.ui.activity;
 
-import static com.prox.docxreader.ui.activity.MainActivity.REQUEST_SPLASH;
-import static com.prox.docxreader.ui.activity.SplashActivity.VIEW_TO_SPLASH;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -17,6 +15,7 @@ import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -28,12 +27,9 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.prox.docxreader.BuildConfig;
-import com.prox.docxreader.FileUtils;
-import com.prox.docxreader.MyAds;
 import com.prox.docxreader.R;
 import com.prox.docxreader.databinding.ActivityOfficeDetailBinding;
 import com.proxglobal.proxads.adsv2.ads.ProxAds;
@@ -68,7 +64,6 @@ import java.util.List;
 
 public class ReaderActivity extends AppCompatActivity implements IMainFrame {
     public static final String FILE_PATH = "FILE_PATH";
-    public static final String ACTION_FRAGMENT = "ACTION_FRAGMENT";
 
     private ActivityOfficeDetailBinding binding;
 
@@ -81,49 +76,36 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
         appFrame = new AppFrame(getApplicationContext());
 
         binding = ActivityOfficeDetailBinding.inflate(getLayoutInflater());
-
-        Intent intent = getIntent();
-        String action = intent.getAction();
-        if (action.equals(Intent.ACTION_VIEW)){
-            Intent splashIntent = new Intent(this, SplashActivity.class);
-            splashIntent.setAction(VIEW_TO_SPLASH);
-            startActivityForResult(splashIntent, REQUEST_SPLASH);
-
-            Uri data = intent.getData();
-            filePath = FileUtils.getFilePathForN(data, this);
-//                realPath = FileUtils.getRealPath(this, data);
-        }else if(action.equals(ACTION_FRAGMENT)){
-            filePath = intent.getStringExtra(FILE_PATH);
-            binding.screenWhile.getRoot().setVisibility(View.GONE);
-            //realPath = filePath;
-        }
-        if (filePath != null) {
-            fileName = filePath.substring(filePath.lastIndexOf('/')+1);
-        }
+        setContentView(binding.getRoot());
 
         if (ProxPurchase.getInstance().checkPurchased()){
             binding.bannerAds.setVisibility(View.GONE);
         }
 
-        setContentView(binding.getRoot());
+        filePath = getIntent().getStringExtra(FILE_PATH);
+        //realPath = filePath;
 
+        if (filePath != null) {
+            fileName = filePath.substring(filePath.lastIndexOf('/')+1);
+        }
+        ProxAds.getInstance().initInterstitial(this, BuildConfig.interstitial_global, null, "close");
         ProxAds.getInstance().showBanner(this, binding.bannerAds, BuildConfig.banner, new AdsCallback() {
                     @Override
                     public void onShow() {
                         super.onShow();
-                        Log.d("showBanner", "onShow");
+                        Log.d("banner_ads", "onShow");
                     }
 
                     @Override
                     public void onClosed() {
                         super.onClosed();
-                        Log.d("showBanner", "onClosed");
+                        Log.d("banner_ads", "onClosed");
                     }
 
                     @Override
                     public void onError() {
                         super.onError();
-                        Log.d("showBanner", "onError");
+                        Log.d("banner_ads", "onError");
                     }
                 }
         );
@@ -145,41 +127,32 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
 //    }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_SPLASH
-                && resultCode == RESULT_OK){
-            binding.screenWhile.getRoot().setVisibility(View.GONE);
-        }
-    }
-
-    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
         if (itemId == android.R.id.home) {
-            if (MyAds.numberBack == 3){
-                MyAds.numberBack = 1;
-                ProxAds.getInstance().showSplash(this, new AdsCallback() {
-                    @Override
-                    public void onShow() {
-                        Log.d("showSplash", "onShow");
-                    }
-
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+            int closeReader = preferences.getInt("close_reader", 1);
+            Log.d("close_reader", String.valueOf(closeReader));
+            if (closeReader != 3){
+                preferences.edit().putInt("close_reader", closeReader+1).apply();
+                finish();
+            }else{
+                preferences.edit().putInt("close_reader", 1).apply();
+                ProxAds.getInstance().showInterstitial(this, "close", new AdsCallback() {
                     @Override
                     public void onClosed() {
-                        Log.d("showSplash", "onClosed");
+                        super.onClosed();
+                        Log.d("interstitial_global", "onClosed");
                         finish();
                     }
 
                     @Override
                     public void onError() {
-                        Log.d("showSplash", "onError");
+                        super.onError();
+                        Log.d("interstitial_global", "onError");
                         finish();
                     }
-                }, BuildConfig.interstitial_global, "vz3ebfacd56a34480da8", 12000);
-            }else{
-                MyAds.numberBack += 1;
-                finish();
+                });
             }
             return true;
 //        } else if (itemId == R.id.share) {

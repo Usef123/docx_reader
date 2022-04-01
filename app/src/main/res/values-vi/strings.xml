@@ -52,7 +52,7 @@
     <string name="btn_premium">Nhận Premium</string>
     <string name="title_premium">Phiên bản Premium</string>
     <string name="content_premium">Tận hưởng tất cả các chức năng của ứng dụng mà không bị làm phiền bởi quảng cáo</string>
-    <string name="old_price"> <strike>Giá cũ: 5$ </strike> </string>
+    <string name="old_price"> <strike>Giá cũ: 46.000 đ</strike> </string>
     <string name="best_price">Giá tốt nhất: </string>
     <string name="btn_continue">Tiếp tục</string>
 </resources>

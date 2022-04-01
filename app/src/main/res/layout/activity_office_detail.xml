@@ -31,12 +31,4 @@
         app:layout_constraintBottom_toBottomOf="parent">
     </FrameLayout>
 
-    <include
-        android:id="@+id/screen_while"
-        layout="@layout/screen_while"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

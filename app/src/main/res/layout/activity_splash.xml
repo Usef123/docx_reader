@@ -19,6 +19,7 @@
         app:srcCompat="@drawable/ic_app" />
 
     <TextView
+        android:id="@+id/tittle_splash"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"

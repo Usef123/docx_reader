@@ -1,6 +1,5 @@
 package com.prox.docxreader.ui.fragment;
 
-import static com.prox.docxreader.ui.activity.ReaderActivity.ACTION_FRAGMENT;
 import static com.prox.docxreader.ui.activity.ReaderActivity.FILE_PATH;
 import static com.prox.docxreader.viewmodel.DocumentViewModel.SORT_NAME;
 import static com.prox.docxreader.viewmodel.DocumentViewModel.SORT_TIME_ACCESS;
@@ -91,6 +90,7 @@ public class FavoriteFragment extends Fragment {
         favoriteBinding = null;
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private void setupRecyclerView() {
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         favoriteBinding.recyclerViewFavorite.setLayoutManager(manager);
@@ -136,9 +136,8 @@ public class FavoriteFragment extends Fragment {
     }
 
     private void startReaderActivity(Document document) {
-        Intent intent = new Intent(getActivity(), ReaderActivity.class);
+        Intent intent = new Intent(requireActivity(), ReaderActivity.class);
         intent.putExtra(FILE_PATH, document.getPath());
-        intent.setAction(ACTION_FRAGMENT);
         startActivity(intent);
     }
 

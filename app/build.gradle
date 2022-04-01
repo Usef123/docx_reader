@@ -14,8 +14,8 @@ android {
         applicationId "com.prox.docxreader"
         minSdkVersion 21
         targetSdkVersion 32
-        versionCode 4
-        versionName "1.0.3"
+        versionCode 5
+        versionName "1.0.4"
         setProperty("archivesBaseName", "v$versionName($versionCode)-DocxReader")
     }
     buildTypes {
@@ -27,7 +27,7 @@ android {
             buildConfigField "String", "interstitial_open_outside", "\"ca-app-pub-3940256099942544/1033173712\""
             buildConfigField "String", "banner", "\"ca-app-pub-3940256099942544/6300978111\""
 
-            buildConfigField "String", "id_test2_subs", "\"id_test2_subs\""
+            buildConfigField "String", "id_subs", "\"remove_ads_monthly\""
             buildConfigField "String", "id_test3_subs", "\"id_test3_subs\""
         }
         release {
@@ -41,7 +41,7 @@ android {
             buildConfigField "String", "interstitial_open_outside", "\"ca-app-pub-3617606523175567/5440563163\""
             buildConfigField "String", "banner", "\"ca-app-pub-3617606523175567/1253906148\""
 
-            buildConfigField "String", "id_test2_subs", "\"id_test2_subs\""
+            buildConfigField "String", "id_subs", "\"remove_ads_monthly\""
             buildConfigField "String", "id_test3_subs", "\"id_test3_subs\""
         }
     }

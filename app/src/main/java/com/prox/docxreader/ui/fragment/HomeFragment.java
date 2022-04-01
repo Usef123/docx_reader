@@ -1,11 +1,11 @@
 package com.prox.docxreader.ui.fragment;
 
-import static com.prox.docxreader.ui.activity.ReaderActivity.ACTION_FRAGMENT;
 import static com.prox.docxreader.ui.activity.ReaderActivity.FILE_PATH;
 import static com.prox.docxreader.viewmodel.DocumentViewModel.SORT_NAME;
 import static com.prox.docxreader.viewmodel.DocumentViewModel.SORT_TIME_ACCESS;
 import static com.prox.docxreader.viewmodel.DocumentViewModel.SORT_TIME_CREATE;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -90,6 +90,7 @@ public class HomeFragment extends Fragment {
         homeBinding = null;
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private void setupRecyclerView() {
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         homeBinding.recyclerViewHome.setLayoutManager(manager);
@@ -123,23 +124,22 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClosed() {
                 super.onClosed();
-                Log.d("showInterstitial", "onClosed");
+                Log.d("interstitial_global", "onClosed");
                 startReaderActivity(document);
             }
 
             @Override
             public void onError() {
                 super.onError();
-                Log.d("showInterstitial", "onError");
+                Log.d("interstitial_global", "onError");
                 startReaderActivity(document);
             }
         });
     }
 
     private void startReaderActivity(Document document) {
-        Intent intent = new Intent(getActivity(), ReaderActivity.class);
+        Intent intent = new Intent(requireActivity(), ReaderActivity.class);
         intent.putExtra(FILE_PATH, document.getPath());
-        intent.setAction(ACTION_FRAGMENT);
         startActivity(intent);
     }
 
