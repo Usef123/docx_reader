@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -89,7 +91,6 @@ public class MainActivity extends AppCompatActivity{
                 ProxRateDialog.showIfNeed(this, getSupportFragmentManager());
             }
         }
-
         ProxAds.getInstance().initInterstitial(this, BuildConfig.interstitial_global, null, "insite");
     }
 
@@ -232,12 +233,20 @@ public class MainActivity extends AppCompatActivity{
 
         navController.addOnDestinationChangedListener((navController, navDestination, bundle) -> {
             if (navDestination.getId()==R.id.languageFragment) {
-                binding.bannerAds.setVisibility(View.VISIBLE);
+                if (ProxPurchase.getInstance().checkPurchased() || !isNetworkAvailable()){
+                    binding.bannerAds.setVisibility(View.GONE);
+                }else{
+                    binding.bannerAds.setVisibility(View.VISIBLE);
+                }
                 binding.bottomNav.setVisibility(View.GONE);
                 binding.toolbar.setVisibility(View.VISIBLE);
                 binding.toolbar.setTitle(getResources().getString(R.string.language));
             }else if (navDestination.getId()==R.id.policyFragment){
-                binding.bannerAds.setVisibility(View.VISIBLE);
+                if (ProxPurchase.getInstance().checkPurchased() || !isNetworkAvailable()){
+                    binding.bannerAds.setVisibility(View.GONE);
+                }else{
+                    binding.bannerAds.setVisibility(View.VISIBLE);
+                }
                 binding.bottomNav.setVisibility(View.GONE);
                 binding.toolbar.setVisibility(View.VISIBLE);
                 binding.toolbar.setTitle(getResources().getString(R.string.privacy_policy));
@@ -247,14 +256,18 @@ public class MainActivity extends AppCompatActivity{
                 binding.toolbar.setVisibility(View.GONE);
                 binding.toolbar.setTitle("");
             } else{
-                binding.bannerAds.setVisibility(View.VISIBLE);
+                if (ProxPurchase.getInstance().checkPurchased() || !isNetworkAvailable()){
+                    binding.bannerAds.setVisibility(View.GONE);
+                }else{
+                    binding.bannerAds.setVisibility(View.VISIBLE);
+                }
                 binding.bottomNav.setVisibility(View.VISIBLE);
                 binding.toolbar.setVisibility(View.GONE);
                 binding.toolbar.setTitle("");
             }
         });
 
-        if (ProxPurchase.getInstance().checkPurchased()){
+        if (ProxPurchase.getInstance().checkPurchased() || !isNetworkAvailable()){
             binding.bannerAds.setVisibility(View.GONE);
         }
 
@@ -262,19 +275,19 @@ public class MainActivity extends AppCompatActivity{
                     @Override
                     public void onShow() {
                         super.onShow();
-                        Log.d("bannerAds", "onShow");
+                        Log.d("banner_ads", "onShow");
                     }
 
                     @Override
                     public void onClosed() {
                         super.onClosed();
-                        Log.d("bannerAds", "onClosed");
+                        Log.d("banner_ads", "onClosed");
                     }
 
                     @Override
                     public void onError() {
                         super.onError();
-                        Log.d("bannerAds", "onError");
+                        Log.d("banner_ads", "onError");
                     }
                 }
         );
@@ -322,6 +335,13 @@ public class MainActivity extends AppCompatActivity{
             }
         });
         ProxRateDialog.init(config);
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     @Override

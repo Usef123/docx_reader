@@ -13,6 +13,8 @@ import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -78,7 +80,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
         binding = ActivityOfficeDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        if (ProxPurchase.getInstance().checkPurchased()){
+        if (ProxPurchase.getInstance().checkPurchased() || !isNetworkAvailable()){
             binding.bannerAds.setVisibility(View.GONE);
         }
 
@@ -118,6 +120,13 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
         binding.viewerOffice.removeAllViews();
         binding.viewerOffice.addView(appFrame);
         binding.viewerOffice.post(this::init);
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
 //    @Override

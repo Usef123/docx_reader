@@ -254,13 +254,11 @@ public class HomeFragment extends Fragment {
                     return;
                 }
 
-                //Update tên và path document
-                document.setTitle(rename.concat(type));
-                String newPath = document.getPath().substring(0, document.getPath().length()-titleFull.length()).concat(document.getTitle());
-                document.setPath(newPath);
+                String newName = rename.concat(type);
+                String newPath = document.getPath().substring(0, document.getPath().length()-titleFull.length()).concat(newName);
 
                 //Tên đã tồn tại
-                File fileNew = new File(document.getPath());
+                File fileNew = new File(newPath);
                 if (fileNew.exists()){
                     Toast.makeText(getContext(), R.string.notification_file_duplicate, Toast.LENGTH_SHORT).show();
                     return;
@@ -270,6 +268,8 @@ public class HomeFragment extends Fragment {
                 if(fileOld.renameTo(new File(newPath))){
                     broadcastScanFile(fileNew.getPath());
                     broadcastScanFile(fileOld.getPath());
+                    document.setTitle(newName);
+                    document.setPath(newPath);
                     viewModel.update(document);
                     Toast.makeText(getContext(), R.string.notification_rename_success, Toast.LENGTH_SHORT).show();
                 }else{ //Đổi tên thất bại
