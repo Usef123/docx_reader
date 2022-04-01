@@ -232,10 +232,12 @@ public class MainActivity extends AppCompatActivity{
 
         navController.addOnDestinationChangedListener((navController, navDestination, bundle) -> {
             if (navDestination.getId()==R.id.languageFragment) {
+                binding.bannerAds.setVisibility(View.VISIBLE);
                 binding.bottomNav.setVisibility(View.GONE);
                 binding.toolbar.setVisibility(View.VISIBLE);
                 binding.toolbar.setTitle(getResources().getString(R.string.language));
             }else if (navDestination.getId()==R.id.policyFragment){
+                binding.bannerAds.setVisibility(View.VISIBLE);
                 binding.bottomNav.setVisibility(View.GONE);
                 binding.toolbar.setVisibility(View.VISIBLE);
                 binding.toolbar.setTitle(getResources().getString(R.string.privacy_policy));
@@ -245,6 +247,7 @@ public class MainActivity extends AppCompatActivity{
                 binding.toolbar.setVisibility(View.GONE);
                 binding.toolbar.setTitle("");
             } else{
+                binding.bannerAds.setVisibility(View.VISIBLE);
                 binding.bottomNav.setVisibility(View.VISIBLE);
                 binding.toolbar.setVisibility(View.GONE);
                 binding.toolbar.setTitle("");
