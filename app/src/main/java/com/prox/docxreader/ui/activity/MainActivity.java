@@ -2,6 +2,8 @@ package com.prox.docxreader.ui.activity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -51,6 +53,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity{
     private static final int REQUEST_PERMISSION_MANAGE = 10;
     private static final int REQUEST_PERMISSION_READ_WRITE = 11;
+    public static final String CHANNEL_ID = "message_from_firebase";
 
     private ActivityMainBinding binding;
 
@@ -193,20 +196,20 @@ public class MainActivity extends AppCompatActivity{
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        onSupportNavigateUp();
-//        if(onSupportNavigateUp()){
-//           return;
-//        }
-//        isBackPress = true;
-//        ProxRateDialog.showIfNeed(this, getSupportFragmentManager());
-//
-//        SharedPreferences sp = this.getSharedPreferences("prox", Context.MODE_PRIVATE);
-//        if (sp.getBoolean("isRated", false)){
-//            super.onBackPressed();
-//        }
-    }
+//    @Override
+//    public void onBackPressed() {
+//        onSupportNavigateUp();
+////        if(onSupportNavigateUp()){
+////           return;
+////        }
+////        isBackPress = true;
+////        ProxRateDialog.showIfNeed(this, getSupportFragmentManager());
+////
+////        SharedPreferences sp = this.getSharedPreferences("prox", Context.MODE_PRIVATE);
+////        if (sp.getBoolean("isRated", false)){
+////            super.onBackPressed();
+////        }
+//    }
 
     //Tạo UI
     private void init() {
@@ -324,6 +327,16 @@ public class MainActivity extends AppCompatActivity{
             }
         });
         ProxRateDialog.init(config);
+
+        createNotificationChannel();
+    }
+
+    private void createNotificationChannel() {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Message from Firebase", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel);
+        }
     }
 
     private boolean isNetworkAvailable() {
