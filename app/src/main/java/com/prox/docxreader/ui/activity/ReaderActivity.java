@@ -31,12 +31,15 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.prox.docxreader.BuildConfig;
 import com.prox.docxreader.R;
 import com.prox.docxreader.databinding.ActivityOfficeDetailBinding;
 import com.proxglobal.proxads.adsv2.ads.ProxAds;
 import com.proxglobal.proxads.adsv2.callback.AdsCallback;
 import com.proxglobal.purchase.ProxPurchase;
+import com.proxglobal.rate.ProxRateDialog;
+import com.proxglobal.rate.RatingDialogListener;
 import com.wxiwei.office.constant.EventConstant;
 import com.wxiwei.office.constant.MainConstant;
 import com.wxiwei.office.constant.wp.WPViewConstant;
@@ -80,7 +83,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
         binding = ActivityOfficeDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        if (ProxPurchase.getInstance().checkPurchased() || !isNetworkAvailable()){
+        if (ProxPurchase.getInstance().checkPurchased() || !isNetworkAvailable()) {
             binding.bannerAds.setVisibility(View.GONE);
         }
 
@@ -88,7 +91,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
         //realPath = filePath;
 
         if (filePath != null) {
-            fileName = filePath.substring(filePath.lastIndexOf('/')+1);
+            fileName = filePath.substring(filePath.lastIndexOf('/') + 1);
         }
         ProxAds.getInstance().initInterstitial(this, BuildConfig.interstitial_global, null, "close");
         ProxAds.getInstance().showBanner(this, binding.bannerAds, BuildConfig.banner, new AdsCallback() {
@@ -111,6 +114,47 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                     }
                 }
         );
+
+        ProxRateDialog.Config config = new ProxRateDialog.Config();
+        config.setListener(new RatingDialogListener() {
+            @Override
+            public void onSubmitButtonClicked(int rate, String comment) {
+                Log.d("rate_app", "onSubmitButtonClicked " + rate + comment);
+                Bundle bundle = new Bundle();
+                bundle.putString("event_type", "rated");
+                bundle.putString("comment", comment);
+                bundle.putString("star", rate + " star");
+                FirebaseAnalytics.getInstance(ReaderActivity.this).logEvent("prox_rating_layout", bundle);
+            }
+
+            @Override
+            public void onLaterButtonClicked() {
+                Log.d("rate_app", "onLaterButtonClicked");
+                Bundle bundle = new Bundle();
+                bundle.putString("event_type", "cancel");
+                FirebaseAnalytics.getInstance(ReaderActivity.this).logEvent("prox_rating_layout", bundle);
+                finish();
+            }
+
+            @Override
+            public void onChangeStar(int rate) {
+                Log.d("rate_app", "onChangeStar " + rate);
+                if (rate >= 4) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("event_type", "rated");
+                    bundle.putString("star", rate + " star");
+                    FirebaseAnalytics.getInstance(ReaderActivity.this).logEvent("prox_rating_layout", bundle);
+                    finish();
+                }
+            }
+
+            @Override
+            public void onDone() {
+                Log.d("rate_app", "onDone");
+                finish();
+            }
+        });
+        ProxRateDialog.init(config);
 
         binding.toolbarOffice.setNavigationIcon(R.drawable.ic_back_24);
         binding.toolbarOffice.setTitleTextAppearance(this, R.style.TitleToolBar);
@@ -142,11 +186,28 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
             int closeReader = preferences.getInt("close_reader", 1);
             Log.d("close_reader", String.valueOf(closeReader));
-            if (closeReader != 3){
-                preferences.edit().putInt("close_reader", closeReader+1).apply();
-                finish();
-            }else{
-                preferences.edit().putInt("close_reader", 1).apply();
+            if (closeReader % 2 == 0 && closeReader % 3 == 0) {
+                preferences.edit().putInt("close_reader", closeReader + 1).apply();
+                ProxAds.getInstance().showInterstitial(this, "close", new AdsCallback() {
+                    @Override
+                    public void onClosed() {
+                        super.onClosed();
+                        Log.d("interstitial_global", "onClosed");
+                        ProxRateDialog.showIfNeed(ReaderActivity.this, getSupportFragmentManager());
+                    }
+
+                    @Override
+                    public void onError() {
+                        super.onError();
+                        Log.d("interstitial_global", "onError");
+                        ProxRateDialog.showIfNeed(ReaderActivity.this, getSupportFragmentManager());
+                    }
+                });
+            } else if (closeReader % 2 == 0) {
+                preferences.edit().putInt("close_reader", closeReader + 1).apply();
+                ProxRateDialog.showIfNeed(this, getSupportFragmentManager());
+            } else if (closeReader % 3 == 0) {
+                preferences.edit().putInt("close_reader", closeReader + 1).apply();
                 ProxAds.getInstance().showInterstitial(this, "close", new AdsCallback() {
                     @Override
                     public void onClosed() {
@@ -162,6 +223,9 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                         finish();
                     }
                 });
+            }else {
+                preferences.edit().putInt("close_reader", closeReader + 1).apply();
+                finish();
             }
             return true;
 //        } else if (itemId == R.id.share) {
@@ -263,7 +327,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                 if (control.getReader() != null) {
                     control.getReader().abortReader();
                 }
-                if (dbService != null){
+                if (dbService != null) {
                     if (marked != dbService.queryItem(MainConstant.TABLE_STAR, filePath)) {
                         if (!marked) {
                             dbService.deleteItem(MainConstant.TABLE_STAR, filePath);
@@ -796,15 +860,15 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
     /**
      * event method, office engine dispatch
      *
-     * @param v               event source
-     * @param e1              MotionEvent instance
-     * @param e2              MotionEvent instance
-     * @param xValue          eventNethodType is ON_SCROLL, this is value distanceX
-     *                        eventNethodType is ON_FLING, this is value velocityY
-     *                        eventNethodType is other type, this is value -1
-     * @param yValue          eventNethodType is ON_SCROLL, this is value distanceY
-     *                        eventNethodType is ON_FLING, this is value velocityY
-     *                        eventNethodType is other type, this is value -1
+     * @param v      event source
+     * @param e1     MotionEvent instance
+     * @param e2     MotionEvent instance
+     * @param xValue eventNethodType is ON_SCROLL, this is value distanceX
+     *               eventNethodType is ON_FLING, this is value velocityY
+     *               eventNethodType is other type, this is value -1
+     * @param yValue eventNethodType is ON_SCROLL, this is value distanceY
+     *               eventNethodType is ON_FLING, this is value velocityY
+     *               eventNethodType is other type, this is value -1
      * @see IMainFrame#ON_CLICK
      * @see IMainFrame#ON_DOUBLE_TAP
      * @see IMainFrame#ON_DOUBLE_TAP_EVENT
@@ -1066,8 +1130,6 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
 //    public DialogListener getDialogListener() {
 //        return null;
 //    }
-
-
     @Override
     public void completeLayout() {
         // TODO Auto-generated method stub

@@ -1,12 +1,9 @@
 package com.prox.docxreader.ui.activity;
 
-import static com.prox.docxreader.ui.activity.SplashActivity.SPLASH_TO_MAIN;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
@@ -16,7 +13,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
@@ -64,7 +60,7 @@ public class MainActivity extends AppCompatActivity{
     private AppBarConfiguration appBarConfiguration;
 
     private AlertDialog dialogRequest;
-    private boolean isBackPress;
+//    private boolean isBackPress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,17 +76,17 @@ public class MainActivity extends AppCompatActivity{
         //Tạo UI
         init();
 
-        String action = getIntent().getAction();
-        if (action.equals(SPLASH_TO_MAIN)){
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-            int openApp = preferences.getInt("open_app", 1);
-            Log.d("openApp", String.valueOf(openApp));
-            if (openApp == 1){
-                preferences.edit().putInt("open_app", openApp+1).apply();
-            }else{
-                ProxRateDialog.showIfNeed(this, getSupportFragmentManager());
-            }
-        }
+//        String action = getIntent().getAction();
+//        if (action.equals(SPLASH_TO_MAIN)){
+//            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+//            int openApp = preferences.getInt("open_app", 1);
+//            Log.d("openApp", String.valueOf(openApp));
+//            if (openApp == 1){
+//                preferences.edit().putInt("open_app", openApp+1).apply();
+//            }else{
+//                ProxRateDialog.showIfNeed(this, getSupportFragmentManager());
+//            }
+//        }
         ProxAds.getInstance().initInterstitial(this, BuildConfig.interstitial_global, null, "insite");
     }
 
@@ -199,16 +195,17 @@ public class MainActivity extends AppCompatActivity{
 
     @Override
     public void onBackPressed() {
-        if(onSupportNavigateUp()){
-           return;
-        }
-        isBackPress = true;
-        ProxRateDialog.showIfNeed(this, getSupportFragmentManager());
-
-        SharedPreferences sp = this.getSharedPreferences("prox", Context.MODE_PRIVATE);
-        if (sp.getBoolean("isRated", false)){
-            super.onBackPressed();
-        }
+        onSupportNavigateUp();
+//        if(onSupportNavigateUp()){
+//           return;
+//        }
+//        isBackPress = true;
+//        ProxRateDialog.showIfNeed(this, getSupportFragmentManager());
+//
+//        SharedPreferences sp = this.getSharedPreferences("prox", Context.MODE_PRIVATE);
+//        if (sp.getBoolean("isRated", false)){
+//            super.onBackPressed();
+//        }
     }
 
     //Tạo UI
@@ -302,9 +299,9 @@ public class MainActivity extends AppCompatActivity{
                 Bundle bundle = new Bundle();
                 bundle.putString("event_type", "cancel");
                 FirebaseAnalytics.getInstance(MainActivity.this).logEvent("prox_rating_layout", bundle);
-                if (isBackPress) {
-                    finish();
-                }
+//                if (isBackPress) {
+//                    finish();
+//                }
             }
 
             @Override
@@ -321,9 +318,9 @@ public class MainActivity extends AppCompatActivity{
             @Override
             public void onDone() {
                 Log.d("rate_app", "onDone");
-                if(isBackPress){
-                    finish();
-                }
+//                if(isBackPress){
+//                    finish();
+//                }
             }
         });
         ProxRateDialog.init(config);
