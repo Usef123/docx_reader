@@ -3,13 +3,22 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/docx-reader/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.1105" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/bg_corner_bottom.xml" value="0.118" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/bg_corner_left.xml" value="0.118" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/bg_corner_left_top.xml" value="0.118" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/bg_corner_right.xml" value="0.118" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/button_pressed.xml" value="0.1105" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/home_selector.xml" value="0.1105" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_app.xml" value="0.1105" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_back_24.xml" value="0.1105" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_baseline_close_24.xml" value="0.1105" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_button_more.xml" value="0.118" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_checked.xml" value="0.1105" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_close_premium.xml" value="0.1105" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_diamond.xml" value="0.118" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_infor_app.xml" value="0.118" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1105" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_more_app.xml" value="0.118" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_premium.xml" value="0.118" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_user_fill.xml" value="0.118" />
@@ -34,8 +43,14 @@
         <entry key="..\:/docx-reader/app/src/main/res/layout/activity_office_detail.xml" value="0.21965579710144928" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/activity_open.xml" value="0.21965579710144928" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/activity_splash.xml" value="0.17291666666666666" />
+        <entry key="..\:/docx-reader/app/src/main/res/layout/dialog_delete.xml" value="0.25" />
+        <entry key="..\:/docx-reader/app/src/main/res/layout/dialog_rename.xml" value="0.25" />
+        <entry key="..\:/docx-reader/app/src/main/res/layout/fragment_home.xml" value="0.25" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/fragment_premium.xml" value="0.264" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/fragment_setting.xml" value="0.2" />
+        <entry key="..\:/docx-reader/app/src/main/res/layout/item_docx.xml" value="0.25" />
+        <entry key="..\:/docx-reader/app/src/main/res/layout/item_docx_favorite.xml" value="0.21927083333333333" />
+        <entry key="..\:/docx-reader/app/src/main/res/layout/item_docx_home.xml" value="0.21927083333333333" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/screen_while.xml" value="0.21965579710144928" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/title_home.xml" value="0.24909420289855072" />
         <entry key="..\:/docx-reader/app/src/main/res/menu/menu_app_act.xml" value="0.25" />
