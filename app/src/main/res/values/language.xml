@@ -12,7 +12,6 @@
         <item>Spanish</item>
         <item>Ukrainian</item>
         <item>Vietnamese</item>
-        <item>Zulu</item>
     </string-array>
     <string-array name="type_language">
         <item>af</item> <!--Afrikaans-->
@@ -26,6 +25,5 @@
         <item>es</item> <!--Spanish-->
         <item>uk</item> <!--Ukrainian-->
         <item>vi</item> <!--Vietnamese-->
-        <item>zu</item> <!--Zulu-->
     </string-array>
 </resources>
