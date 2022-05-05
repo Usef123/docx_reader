@@ -39,9 +39,11 @@ public class SplashActivity extends AppCompatActivity {
 
         String action = getIntent().getAction();
         new Handler().postDelayed(() -> {
-            if(action.equals(Intent.ACTION_MAIN)){
+            if (action==null){
+                goToMainActivity();
+            }else if(action.equals(Intent.ACTION_MAIN)){
                 showInterSplash();
-            }else if(getIntent().getAction().equals(Intent.ACTION_VIEW)){
+            }else if(action.equals(Intent.ACTION_VIEW)){
                 showInterOutside();
             }
         }, 1000);
