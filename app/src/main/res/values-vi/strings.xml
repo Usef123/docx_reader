@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Docx Reader</string>
+    <string name="app_name">Trình đọc Docx</string>
     <string name="language">Ngôn ngữ</string>
     <string name="notification_permission_error">Vui lòng cho phép quyền trước</string>
     <string name="botton_nav_home">Trang chủ</string>

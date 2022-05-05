@@ -1,11 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="language">
+        <item>Afrikaans</item>
         <item>English</item>
+        <item>French</item>
+        <item>Hindi</item>
+        <item>Indonesian</item>
+        <item>Japanese</item>
+        <item>Korean</item>
+        <item>Russian</item>
+        <item>Spanish</item>
+        <item>Ukrainian</item>
         <item>Vietnamese</item>
+        <item>Zulu</item>
     </string-array>
     <string-array name="type_language">
+        <item>af</item> <!--Afrikaans-->
         <item>en</item> <!--English-->
+        <item>fr</item> <!--French-->
+        <item>hi</item> <!--Hindi-->
+        <item>in</item> <!--Indonesian-->
+        <item>ja</item> <!--Japanese-->
+        <item>ko</item> <!--Korean-->
+        <item>ru</item> <!--Russian-->
+        <item>es</item> <!--Spanish-->
+        <item>uk</item> <!--Ukrainian-->
         <item>vi</item> <!--Vietnamese-->
+        <item>zu</item> <!--Zulu-->
     </string-array>
 </resources>
