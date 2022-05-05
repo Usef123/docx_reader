@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.prox.docxreader.LocaleHelper;
 import com.prox.docxreader.R;
-import com.prox.docxreader.adapter.LangugeAdapter;
+import com.prox.docxreader.adapter.LanguageAdapter;
 import com.prox.docxreader.databinding.FragmentLanguageBinding;
 import com.prox.docxreader.ui.activity.MainActivity;
 
@@ -25,7 +25,7 @@ public class LanguageFragment extends Fragment {
                              Bundle savedInstanceState) {
         FragmentLanguageBinding binding = FragmentLanguageBinding.inflate(inflater, container, false);
 
-        LangugeAdapter langugeAdapter = new LangugeAdapter(
+        LanguageAdapter languageAdapter = new LanguageAdapter(
                 requireContext(),
                 getResources().getStringArray(R.array.language),
                 getResources().getStringArray(R.array.type_language),
@@ -39,7 +39,7 @@ public class LanguageFragment extends Fragment {
 
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         binding.recyclerViewLanguage.setLayoutManager(manager);
-        binding.recyclerViewLanguage.setAdapter(langugeAdapter);
+        binding.recyclerViewLanguage.setAdapter(languageAdapter);
 
         DividerItemDecoration dividerHorizontal = new DividerItemDecoration(requireContext(),
                 DividerItemDecoration.VERTICAL);

@@ -13,16 +13,14 @@ import com.prox.docxreader.LocaleHelper;
 import com.prox.docxreader.OnClickLanguageListener;
 import com.prox.docxreader.databinding.ItemLanguageBinding;
 
-import java.util.Locale;
-
-public class LangugeAdapter extends RecyclerView.Adapter<LangugeAdapter.LanguageViewHolder> {
+public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.LanguageViewHolder> {
     private Context context;
     private final String[] languages;
     private final String[] typeLanguages;
     private ImageView imgChecked;
     private final OnClickLanguageListener onClickLanguageListener;
 
-    public LangugeAdapter(Context context, String[] languages, String[] typeLanguages, OnClickLanguageListener onClickLanguageListener){
+    public LanguageAdapter(Context context, String[] languages, String[] typeLanguages, OnClickLanguageListener onClickLanguageListener){
         this.context = context;
         this.languages = languages;
         this.typeLanguages = typeLanguages;
