@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.prox.docxreader.BuildConfig;
 import com.prox.docxreader.FileUtils;
+import com.prox.docxreader.LocaleHelper;
 import com.prox.docxreader.databinding.ActivitySplashBinding;
 import com.proxglobal.proxads.adsv2.ads.ProxAds;
 import com.proxglobal.proxads.adsv2.callback.AdsCallback;
@@ -26,6 +27,9 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Load ngôn ngữ
+        LocaleHelper.loadLanguage(this);
 
         ActivitySplashBinding binding = ActivitySplashBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());

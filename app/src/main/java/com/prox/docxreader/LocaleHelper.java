@@ -39,7 +39,7 @@ public class LocaleHelper {
 
     public static String getLanguage(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getString(SELECTED_LANGUAGE, Locale.getDefault().getLanguage());
+        return preferences.getString(SELECTED_LANGUAGE, "en");
     }
 }
 

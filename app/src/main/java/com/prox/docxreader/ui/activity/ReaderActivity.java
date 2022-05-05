@@ -33,6 +33,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.prox.docxreader.BuildConfig;
+import com.prox.docxreader.LocaleHelper;
 import com.prox.docxreader.R;
 import com.prox.docxreader.databinding.ActivityOfficeDetailBinding;
 import com.proxglobal.proxads.adsv2.ads.ProxAds;
@@ -74,6 +75,9 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Load ngôn ngữ
+        LocaleHelper.loadLanguage(this);
 
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
