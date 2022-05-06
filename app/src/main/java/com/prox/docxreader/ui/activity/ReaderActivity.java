@@ -92,7 +92,6 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
         }
 
         filePath = getIntent().getStringExtra(FILE_PATH);
-        Log.d("123456", filePath);
         //realPath = filePath;
 
         if (filePath != null) {
