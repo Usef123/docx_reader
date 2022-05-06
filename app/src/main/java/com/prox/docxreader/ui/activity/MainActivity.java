@@ -33,7 +33,6 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.prox.docxreader.BuildConfig;
 import com.prox.docxreader.LocaleHelper;
 import com.prox.docxreader.R;
@@ -44,8 +43,6 @@ import com.prox.docxreader.viewmodel.DocumentViewModel;
 import com.proxglobal.proxads.adsv2.ads.ProxAds;
 import com.proxglobal.proxads.adsv2.callback.AdsCallback;
 import com.proxglobal.purchase.ProxPurchase;
-import com.proxglobal.rate.ProxRateDialog;
-import com.proxglobal.rate.RatingDialogListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -162,7 +159,7 @@ public class MainActivity extends AppCompatActivity{
     private void requestAccessAllFile() {
         try {
             Uri uri = Uri.parse("package:" + BuildConfig.APPLICATION_ID);
-            Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION, uri);
+            Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri);
             startActivityForResult(intent, REQUEST_PERMISSION_MANAGE);
         } catch (Exception e) {
             Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
@@ -284,49 +281,49 @@ public class MainActivity extends AppCompatActivity{
                 }
         );
 
-        ProxRateDialog.Config config = new ProxRateDialog.Config();
-        config.setListener(new RatingDialogListener() {
-            @Override
-            public void onSubmitButtonClicked(int rate, String comment) {
-                Log.d("rate_app", "onSubmitButtonClicked " + rate + comment);
-                Bundle bundle = new Bundle();
-                bundle.putString("event_type", "rated");
-                bundle.putString("comment", comment);
-                bundle.putString("star", rate + " star");
-                FirebaseAnalytics.getInstance(MainActivity.this).logEvent("prox_rating_layout", bundle);
-            }
-
-            @Override
-            public void onLaterButtonClicked() {
-                Log.d("rate_app", "onLaterButtonClicked");
-                Bundle bundle = new Bundle();
-                bundle.putString("event_type", "cancel");
-                FirebaseAnalytics.getInstance(MainActivity.this).logEvent("prox_rating_layout", bundle);
-//                if (isBackPress) {
-//                    finish();
+//        ProxRateDialog.Config config = new ProxRateDialog.Config();
+//        config.setListener(new RatingDialogListener() {
+//            @Override
+//            public void onSubmitButtonClicked(int rate, String comment) {
+//                Log.d("rate_app", "onSubmitButtonClicked " + rate + comment);
+//                Bundle bundle = new Bundle();
+//                bundle.putString("event_type", "rated");
+//                bundle.putString("comment", comment);
+//                bundle.putString("star", rate + " star");
+//                FirebaseAnalytics.getInstance(MainActivity.this).logEvent("prox_rating_layout", bundle);
+//            }
+//
+//            @Override
+//            public void onLaterButtonClicked() {
+//                Log.d("rate_app", "onLaterButtonClicked");
+//                Bundle bundle = new Bundle();
+//                bundle.putString("event_type", "cancel");
+//                FirebaseAnalytics.getInstance(MainActivity.this).logEvent("prox_rating_layout", bundle);
+////                if (isBackPress) {
+////                    finish();
+////                }
+//            }
+//
+//            @Override
+//            public void onChangeStar(int rate) {
+//                Log.d("rate_app", "onChangeStar " + rate);
+//                if (rate >= 4) {
+//                    Bundle bundle = new Bundle();
+//                    bundle.putString("event_type", "rated");
+//                    bundle.putString("star", rate + " star");
+//                    FirebaseAnalytics.getInstance(MainActivity.this).logEvent("prox_rating_layout", bundle);
 //                }
-            }
-
-            @Override
-            public void onChangeStar(int rate) {
-                Log.d("rate_app", "onChangeStar " + rate);
-                if (rate >= 4) {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("event_type", "rated");
-                    bundle.putString("star", rate + " star");
-                    FirebaseAnalytics.getInstance(MainActivity.this).logEvent("prox_rating_layout", bundle);
-                }
-            }
-
-            @Override
-            public void onDone() {
-                Log.d("rate_app", "onDone");
-//                if(isBackPress){
-//                    finish();
-//                }
-            }
-        });
-        ProxRateDialog.init(config);
+//            }
+//
+//            @Override
+//            public void onDone() {
+//                Log.d("rate_app", "onDone");
+////                if(isBackPress){
+////                    finish();
+////                }
+//            }
+//        });
+//        ProxRateDialog.init(config);
 
         createNotificationChannel();
     }

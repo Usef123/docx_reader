@@ -15,7 +15,6 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.prox.docxreader.R;
 import com.prox.docxreader.ui.activity.MainActivity;
-import com.prox.docxreader.ui.activity.SplashActivity;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
@@ -37,14 +36,15 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void sendNotification(String title, String message, Uri image) {
-        Intent intent = new Intent(this, SplashActivity.class);
-        intent.setAction(Intent.ACTION_MAIN);
+        Intent intent = new Intent();
+//        intent.setAction(Intent.ACTION_MAIN);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Notification notification = new NotificationCompat.Builder(this, MainActivity.CHANNEL_ID)
                 .setContentTitle(title)
                 .setContentText(message)
                 .setSmallIcon(R.drawable.ic_notification)
+                .setColor(getResources().getColor(R.color.blue))
                 .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText(message))
                 .setContentIntent(pendingIntent)

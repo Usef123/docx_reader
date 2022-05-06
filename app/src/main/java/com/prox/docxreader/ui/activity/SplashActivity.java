@@ -105,6 +105,7 @@ public class SplashActivity extends AppCompatActivity {
 
         Intent intent = new Intent(this, ReaderActivity.class);
         intent.putExtra(FILE_PATH, filePath);
+        Log.d("123456789", filePath);
         startActivity(intent);
         finish();
     }

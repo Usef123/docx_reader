@@ -92,6 +92,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
         }
 
         filePath = getIntent().getStringExtra(FILE_PATH);
+        Log.d("123456", filePath);
         //realPath = filePath;
 
         if (filePath != null) {
@@ -187,50 +188,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
         if (itemId == android.R.id.home) {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-            int closeReader = preferences.getInt("close_reader", 1);
-            Log.d("close_reader", String.valueOf(closeReader));
-            if (closeReader % 2 == 0 && closeReader % 3 == 0) {
-                preferences.edit().putInt("close_reader", closeReader + 1).apply();
-                ProxAds.getInstance().showInterstitial(this, "close", new AdsCallback() {
-                    @Override
-                    public void onClosed() {
-                        super.onClosed();
-                        Log.d("interstitial_global", "onClosed");
-                        ProxRateDialog.showIfNeed(ReaderActivity.this, getSupportFragmentManager());
-                    }
-
-                    @Override
-                    public void onError() {
-                        super.onError();
-                        Log.d("interstitial_global", "onError");
-                        ProxRateDialog.showIfNeed(ReaderActivity.this, getSupportFragmentManager());
-                    }
-                });
-            } else if (closeReader % 2 == 0) {
-                preferences.edit().putInt("close_reader", closeReader + 1).apply();
-                ProxRateDialog.showIfNeed(this, getSupportFragmentManager());
-            } else if (closeReader % 3 == 0) {
-                preferences.edit().putInt("close_reader", closeReader + 1).apply();
-                ProxAds.getInstance().showInterstitial(this, "close", new AdsCallback() {
-                    @Override
-                    public void onClosed() {
-                        super.onClosed();
-                        Log.d("interstitial_global", "onClosed");
-                        finish();
-                    }
-
-                    @Override
-                    public void onError() {
-                        super.onError();
-                        Log.d("interstitial_global", "onError");
-                        finish();
-                    }
-                });
-            }else {
-                preferences.edit().putInt("close_reader", closeReader + 1).apply();
-                finish();
-            }
+            onBackPressed();
             return true;
 //        } else if (itemId == R.id.share) {
 //            shareToOther();
@@ -317,36 +275,101 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
     /**
      *
      */
-    public void onBackPressed() {
-        if (isSearchbarActive()) {
-            showSearchBar(false);
-            updateToolsbarStatus();
-        } else {
-            Object obj = control.getActionValue(EventConstant.PG_SLIDESHOW, null);
-            if (obj != null && (Boolean) obj) {
-                fullScreen(false);
-                //
-                this.control.actionEvent(EventConstant.PG_SLIDESHOW_END, null);
-            } else {
-                if (control.getReader() != null) {
-                    control.getReader().abortReader();
-                }
-                if (dbService != null) {
-                    if (marked != dbService.queryItem(MainConstant.TABLE_STAR, filePath)) {
-                        if (!marked) {
-                            dbService.deleteItem(MainConstant.TABLE_STAR, filePath);
-                        } else {
-                            dbService.insertStarFiles(MainConstant.TABLE_STAR, filePath);
-                        }
 
-                        Intent intent = new Intent();
-                        intent.putExtra(MainConstant.INTENT_FILED_MARK_STATUS, marked);
-                        setResult(RESULT_OK, intent);
+    @Override
+    public void onBackPressed() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        int closeReader = preferences.getInt("close_reader", 1);
+        Log.d("close_reader", String.valueOf(closeReader));
+        if (closeReader % 2 == 0 && closeReader % 3 == 0) {
+            preferences.edit().putInt("close_reader", closeReader + 1).apply();
+            ProxAds.getInstance().showInterstitial(this, "close", new AdsCallback() {
+                @Override
+                public void onClosed() {
+                    super.onClosed();
+                    Log.d("interstitial_global", "onClosed");
+                    SharedPreferences sp = getSharedPreferences("prox", Context.MODE_PRIVATE);
+                    if (sp.getBoolean("isRated", false)){
+                        finish();
+                    }else {
+                        ProxRateDialog.showIfNeed(ReaderActivity.this, getSupportFragmentManager());
                     }
                 }
+
+                @Override
+                public void onError() {
+                    super.onError();
+                    Log.d("interstitial_global", "onError");
+                    SharedPreferences sp = getSharedPreferences("prox", Context.MODE_PRIVATE);
+                    if (sp.getBoolean("isRated", false)){
+                        finish();
+                    }else {
+                        ProxRateDialog.showIfNeed(ReaderActivity.this, getSupportFragmentManager());
+                    }
+
+                }
+            });
+        } else if (closeReader % 2 == 0) {
+            preferences.edit().putInt("close_reader", closeReader + 1).apply();
+            SharedPreferences sp = getSharedPreferences("prox", Context.MODE_PRIVATE);
+            if (sp.getBoolean("isRated", false)){
+                finish();
+            }else {
+                ProxRateDialog.showIfNeed(ReaderActivity.this, getSupportFragmentManager());
             }
+        } else if (closeReader % 3 == 0) {
+            preferences.edit().putInt("close_reader", closeReader + 1).apply();
+            ProxAds.getInstance().showInterstitial(this, "close", new AdsCallback() {
+                @Override
+                public void onClosed() {
+                    super.onClosed();
+                    Log.d("interstitial_global", "onClosed");
+                    finish();
+                }
+
+                @Override
+                public void onError() {
+                    super.onError();
+                    Log.d("interstitial_global", "onError");
+                    finish();
+                }
+            });
+        }else {
+            preferences.edit().putInt("close_reader", closeReader + 1).apply();
+            finish();
         }
     }
+
+//    public void onBackPressed() {
+//        if (isSearchbarActive()) {
+//            showSearchBar(false);
+//            updateToolsbarStatus();
+//        } else {
+//            Object obj = control.getActionValue(EventConstant.PG_SLIDESHOW, null);
+//            if (obj != null && (Boolean) obj) {
+//                fullScreen(false);
+//                //
+//                this.control.actionEvent(EventConstant.PG_SLIDESHOW_END, null);
+//            } else {
+//                if (control.getReader() != null) {
+//                    control.getReader().abortReader();
+//                }
+//                if (dbService != null) {
+//                    if (marked != dbService.queryItem(MainConstant.TABLE_STAR, filePath)) {
+//                        if (!marked) {
+//                            dbService.deleteItem(MainConstant.TABLE_STAR, filePath);
+//                        } else {
+//                            dbService.insertStarFiles(MainConstant.TABLE_STAR, filePath);
+//                        }
+//
+//                        Intent intent = new Intent();
+//                        intent.putExtra(MainConstant.INTENT_FILED_MARK_STATUS, marked);
+//                        setResult(RESULT_OK, intent);
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     /**
      *
