@@ -13,12 +13,14 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.prox.docxreader.BuildConfig;
-import com.prox.docxreader.FileUtils;
 import com.prox.docxreader.LocaleHelper;
 import com.prox.docxreader.databinding.ActivitySplashBinding;
+import com.prox.docxreader.utils.FileUtils;
 import com.proxglobal.proxads.adsv2.ads.ProxAds;
 import com.proxglobal.proxads.adsv2.callback.AdsCallback;
 import com.proxglobal.purchase.ProxPurchase;
+
+import java.io.File;
 
 @SuppressLint("CustomSplashScreen")
 public class SplashActivity extends AppCompatActivity {
@@ -33,17 +35,17 @@ public class SplashActivity extends AppCompatActivity {
 
         ActivitySplashBinding binding = ActivitySplashBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        if (ProxPurchase.getInstance().checkPurchased()){
+        if (ProxPurchase.getInstance().checkPurchased()) {
             binding.tittleSplash.setVisibility(View.GONE);
         }
 
         String action = getIntent().getAction();
         new Handler().postDelayed(() -> {
-            if (action==null){
+            if (action == null) {
                 goToMainActivity();
-            }else if(action.equals(Intent.ACTION_MAIN)){
+            } else if (action.equals(Intent.ACTION_MAIN)) {
                 showInterSplash();
-            }else if(action.equals(Intent.ACTION_VIEW)){
+            } else if (action.equals(Intent.ACTION_VIEW)) {
                 showInterOutside();
             }
         }, 1000);
@@ -101,12 +103,18 @@ public class SplashActivity extends AppCompatActivity {
 
     private void goToReaderActivity() {
         Uri data = getIntent().getData();
-        String filePath = FileUtils.getFilePathForN(data, this);
+        String path = FileUtils.getPath(data, this);
 
-        Intent intent = new Intent(this, ReaderActivity.class);
-        intent.putExtra(FILE_PATH, filePath);
-        startActivity(intent);
-        finish();
+        if (new File(path).exists()){
+            Intent intent = new Intent(this, ReaderActivity.class);
+            intent.putExtra(FILE_PATH, path);
+            startActivity(intent);
+            finish();
+        }else {
+            goToMainActivity();
+        }
+
+
     }
 
     @Override

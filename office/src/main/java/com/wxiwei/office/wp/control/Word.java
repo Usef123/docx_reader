@@ -7,6 +7,19 @@
 
 package com.wxiwei.office.wp.control;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
+import android.util.AttributeSet;
+import android.view.View;
+import android.widget.LinearLayout;
+
 import com.wxiwei.office.common.IOfficeToPicture;
 import com.wxiwei.office.common.picture.PictureKit;
 import com.wxiwei.office.common.shape.IShape;
@@ -31,19 +44,6 @@ import com.wxiwei.office.wp.view.NormalRoot;
 import com.wxiwei.office.wp.view.PageRoot;
 import com.wxiwei.office.wp.view.PageView;
 import com.wxiwei.office.wp.view.WPViewKit;
-
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
-import android.util.AttributeSet;
-import android.view.View;
-import android.widget.LinearLayout;
 
 /**
  * word应用组件
@@ -1356,7 +1356,7 @@ public class Word extends LinearLayout implements IWord
     //
     protected int mHeight;
     //
-    protected float zoom = 1.f;
+    protected float zoom = 0.9f;
     //
     private float normalZoom = 1.f;
     //

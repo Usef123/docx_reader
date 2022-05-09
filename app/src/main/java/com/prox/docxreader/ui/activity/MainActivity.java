@@ -48,8 +48,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity{
-    private static final int REQUEST_PERMISSION_MANAGE = 10;
-    private static final int REQUEST_PERMISSION_READ_WRITE = 11;
+    public static final int REQUEST_PERMISSION_MANAGE = 10;
+    public static final int REQUEST_PERMISSION_READ_WRITE = 11;
     public static final String CHANNEL_ID = "message_from_firebase";
 
     private ActivityMainBinding binding;

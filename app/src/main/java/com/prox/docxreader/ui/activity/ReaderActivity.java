@@ -1,5 +1,9 @@
 package com.prox.docxreader.ui.activity;
 
+import static com.prox.docxreader.ui.activity.MainActivity.REQUEST_PERMISSION_MANAGE;
+import static com.prox.docxreader.ui.activity.MainActivity.REQUEST_PERMISSION_READ_WRITE;
+
+import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -8,6 +12,7 @@ import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
@@ -16,8 +21,11 @@ import android.graphics.PixelFormat;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -29,7 +37,11 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.prox.docxreader.BuildConfig;
@@ -137,6 +149,10 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                 Bundle bundle = new Bundle();
                 bundle.putString("event_type", "cancel");
                 FirebaseAnalytics.getInstance(ReaderActivity.this).logEvent("prox_rating_layout", bundle);
+
+                Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
                 finish();
             }
 
@@ -148,6 +164,10 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                     bundle.putString("event_type", "rated");
                     bundle.putString("star", rate + " star");
                     FirebaseAnalytics.getInstance(ReaderActivity.this).logEvent("prox_rating_layout", bundle);
+
+                    Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
                     finish();
                 }
             }
@@ -155,6 +175,10 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
             @Override
             public void onDone() {
                 Log.d("rate_app", "onDone");
+
+                Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
                 finish();
             }
         });
@@ -167,7 +191,13 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         binding.viewerOffice.removeAllViews();
         binding.viewerOffice.addView(appFrame);
-        binding.viewerOffice.post(this::init);
+
+        if(permission()){
+            binding.viewerOffice.post(this::init);
+        }else {
+            requestPermissions();
+        }
+
     }
 
     private boolean isNetworkAvailable() {
@@ -175,6 +205,81 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    //Kiểm tra quyền
+    private boolean permission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+            return Environment.isExternalStorageManager();
+        }else{
+            int write = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            int read = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
+            return (write == PackageManager.PERMISSION_GRANTED && read == PackageManager.PERMISSION_GRANTED);
+        }
+    }
+
+    //Cấp quyền
+    private void requestPermissions() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M){
+            return;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            openDialogAccessAllFile();
+        } else {
+            String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE};
+            requestPermissions(permissions, REQUEST_PERMISSION_READ_WRITE);
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.R)
+    private void openDialogAccessAllFile() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.dialog_message)
+                .setTitle(R.string.dialog_title);
+
+        builder.setPositiveButton(R.string.txt_ok, (dialog, id) -> requestAccessAllFile());
+        builder.setNegativeButton(R.string.txt_cancel, (dialog, id) -> finish());
+
+        AlertDialog dialogRequest = builder.create();
+        dialogRequest.show();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.R)
+    private void requestAccessAllFile() {
+        try {
+            Uri uri = Uri.parse("package:" + BuildConfig.APPLICATION_ID);
+            Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri);
+            startActivityForResult(intent, REQUEST_PERMISSION_MANAGE);
+        } catch (Exception e) {
+            Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+            startActivityForResult(intent, REQUEST_PERMISSION_MANAGE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_PERMISSION_READ_WRITE) {
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                    && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                binding.viewerOffice.post(this::init);
+            } else {
+                Toast.makeText(this, R.string.notification_permission_error, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_PERMISSION_MANAGE) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                if (Environment.isExternalStorageManager()) {
+                    binding.viewerOffice.post(this::init);
+                }
+            }
+        }
     }
 
 //    @Override
@@ -289,6 +394,9 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                     Log.d("interstitial_global", "onClosed");
                     SharedPreferences sp = getSharedPreferences("prox", Context.MODE_PRIVATE);
                     if (sp.getBoolean("isRated", false)){
+                        Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
                         finish();
                     }else {
                         ProxRateDialog.showIfNeed(ReaderActivity.this, getSupportFragmentManager());
@@ -301,6 +409,9 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                     Log.d("interstitial_global", "onError");
                     SharedPreferences sp = getSharedPreferences("prox", Context.MODE_PRIVATE);
                     if (sp.getBoolean("isRated", false)){
+                        Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
                         finish();
                     }else {
                         ProxRateDialog.showIfNeed(ReaderActivity.this, getSupportFragmentManager());
@@ -312,6 +423,9 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
             preferences.edit().putInt("close_reader", closeReader + 1).apply();
             SharedPreferences sp = getSharedPreferences("prox", Context.MODE_PRIVATE);
             if (sp.getBoolean("isRated", false)){
+                Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
                 finish();
             }else {
                 ProxRateDialog.showIfNeed(ReaderActivity.this, getSupportFragmentManager());
@@ -323,6 +437,9 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                 public void onClosed() {
                     super.onClosed();
                     Log.d("interstitial_global", "onClosed");
+                    Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
                     finish();
                 }
 
@@ -330,11 +447,17 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                 public void onError() {
                     super.onError();
                     Log.d("interstitial_global", "onError");
+                    Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
                     finish();
                 }
             });
         }else {
             preferences.edit().putInt("close_reader", closeReader + 1).apply();
+            Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
             finish();
         }
     }
