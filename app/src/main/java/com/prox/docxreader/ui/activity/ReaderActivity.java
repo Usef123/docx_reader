@@ -231,7 +231,6 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.R)
     private void openDialogAccessAllFile() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.dialog_message)
@@ -244,18 +243,28 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
         dialogRequest.show();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.R)
     private void requestAccessAllFile() {
-        try {
-            Uri uri = Uri.parse("package:" + BuildConfig.APPLICATION_ID);
-            Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri);
-            startActivityForResult(intent, REQUEST_PERMISSION_MANAGE);
-        } catch (Exception e) {
-            Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
-            startActivityForResult(intent, REQUEST_PERMISSION_MANAGE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            try {
+                Uri uri = Uri.parse("package:" + BuildConfig.APPLICATION_ID);
+                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri);
+                startActivityForResult(intent, REQUEST_PERMISSION_MANAGE);
+            } catch (Exception e) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                startActivityForResult(intent, REQUEST_PERMISSION_MANAGE);
+            }
+        } else {
+            try {
+                Uri uri = Uri.parse("package:" + BuildConfig.APPLICATION_ID);
+                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, uri);
+                startActivityForResult(intent, REQUEST_PERMISSION_READ_WRITE);
+            } catch (Exception e) {
+
+            }
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -265,7 +274,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                     && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                 binding.viewerOffice.post(this::init);
             } else {
-                Toast.makeText(this, R.string.notification_permission_error, Toast.LENGTH_SHORT).show();
+                openDialogAccessAllFile();
             }
         }
     }
@@ -278,6 +287,13 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                 if (Environment.isExternalStorageManager()) {
                     binding.viewerOffice.post(this::init);
                 }
+            }
+        } else if (requestCode == REQUEST_PERMISSION_READ_WRITE) {
+            int write = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            int read = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
+            if (write == PackageManager.PERMISSION_GRANTED
+                    && read == PackageManager.PERMISSION_GRANTED) {
+                binding.viewerOffice.post(this::init);
             }
         }
     }

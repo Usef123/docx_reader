@@ -19,7 +19,6 @@ import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -47,7 +46,7 @@ import com.proxglobal.purchase.ProxPurchase;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
     public static final int REQUEST_PERMISSION_MANAGE = 10;
     public static final int REQUEST_PERMISSION_READ_WRITE = 11;
     public static final String CHANNEL_ID = "message_from_firebase";
@@ -94,9 +93,9 @@ public class MainActivity extends AppCompatActivity{
     protected void onStart() {
         super.onStart();
         //Cấp quyền
-        if(permission()){
+        if (permission()) {
             new InsertDBAsyncTask(this).execute();
-        }else {
+        } else {
             requestPermissions();
         }
     }
@@ -104,7 +103,7 @@ public class MainActivity extends AppCompatActivity{
     @Override
     protected void onStop() {
         super.onStop();
-        if (dialogRequest != null && dialogRequest.isShowing()){
+        if (dialogRequest != null && dialogRequest.isShowing()) {
             dialogRequest.cancel();
         }
     }
@@ -120,9 +119,9 @@ public class MainActivity extends AppCompatActivity{
 
     //Kiểm tra quyền
     private boolean permission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             return Environment.isExternalStorageManager();
-        }else{
+        } else {
             int write = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
             int read = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
             return (write == PackageManager.PERMISSION_GRANTED && read == PackageManager.PERMISSION_GRANTED);
@@ -131,18 +130,17 @@ public class MainActivity extends AppCompatActivity{
 
     //Cấp quyền
     private void requestPermissions() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M){
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return;
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             openDialogAccessAllFile();
         } else {
-            String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE};
+            String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
             requestPermissions(permissions, REQUEST_PERMISSION_READ_WRITE);
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.R)
     private void openDialogAccessAllFile() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.dialog_message)
@@ -155,18 +153,28 @@ public class MainActivity extends AppCompatActivity{
         dialogRequest.show();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.R)
     private void requestAccessAllFile() {
-        try {
-            Uri uri = Uri.parse("package:" + BuildConfig.APPLICATION_ID);
-            Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri);
-            startActivityForResult(intent, REQUEST_PERMISSION_MANAGE);
-        } catch (Exception e) {
-            Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
-            startActivityForResult(intent, REQUEST_PERMISSION_MANAGE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            try {
+                Uri uri = Uri.parse("package:" + BuildConfig.APPLICATION_ID);
+                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri);
+                startActivityForResult(intent, REQUEST_PERMISSION_MANAGE);
+            } catch (Exception e) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                startActivityForResult(intent, REQUEST_PERMISSION_MANAGE);
+            }
+        } else {
+            try {
+                Uri uri = Uri.parse("package:" + BuildConfig.APPLICATION_ID);
+                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, uri);
+                startActivityForResult(intent, REQUEST_PERMISSION_READ_WRITE);
+            } catch (Exception e) {
+
+            }
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -176,7 +184,7 @@ public class MainActivity extends AppCompatActivity{
                     && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                 new InsertDBAsyncTask(this).execute();
             } else {
-                Toast.makeText(this, R.string.notification_permission_error, Toast.LENGTH_SHORT).show();
+                openDialogAccessAllFile();
             }
         }
     }
@@ -189,6 +197,13 @@ public class MainActivity extends AppCompatActivity{
                 if (Environment.isExternalStorageManager()) {
                     new InsertDBAsyncTask(this).execute();
                 }
+            }
+        } else if (requestCode == REQUEST_PERMISSION_READ_WRITE) {
+            int write = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            int read = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
+            if (write == PackageManager.PERMISSION_GRANTED
+                    && read == PackageManager.PERMISSION_GRANTED) {
+                new InsertDBAsyncTask(this).execute();
             }
         }
     }
@@ -213,7 +228,7 @@ public class MainActivity extends AppCompatActivity{
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host_fragment);
 
-        if (navHostFragment == null){
+        if (navHostFragment == null) {
             return;
         }
         navController = navHostFragment.getNavController();
@@ -229,25 +244,25 @@ public class MainActivity extends AppCompatActivity{
         NavigationUI.setupWithNavController(binding.toolbar, navController, appBarConfiguration);
 
         navController.addOnDestinationChangedListener((navController, navDestination, bundle) -> {
-            if (navDestination.getId()==R.id.languageFragment) {
+            if (navDestination.getId() == R.id.languageFragment) {
                 binding.bannerAds.setVisibility(View.GONE);
                 binding.bottomNav.setVisibility(View.GONE);
                 binding.toolbar.setVisibility(View.VISIBLE);
                 binding.toolbar.setTitle(getResources().getString(R.string.language));
-            }else if (navDestination.getId()==R.id.policyFragment){
+            } else if (navDestination.getId() == R.id.policyFragment) {
                 binding.bannerAds.setVisibility(View.GONE);
                 binding.bottomNav.setVisibility(View.GONE);
                 binding.toolbar.setVisibility(View.VISIBLE);
                 binding.toolbar.setTitle(getResources().getString(R.string.privacy_policy));
-            }else if (navDestination.getId()==R.id.premiumFragment){
+            } else if (navDestination.getId() == R.id.premiumFragment) {
                 binding.bannerAds.setVisibility(View.GONE);
                 binding.bottomNav.setVisibility(View.GONE);
                 binding.toolbar.setVisibility(View.GONE);
                 binding.toolbar.setTitle("");
-            } else{
-                if (ProxPurchase.getInstance().checkPurchased() || !isNetworkAvailable()){
+            } else {
+                if (ProxPurchase.getInstance().checkPurchased() || !isNetworkAvailable()) {
                     binding.bannerAds.setVisibility(View.GONE);
-                }else{
+                } else {
                     binding.bannerAds.setVisibility(View.VISIBLE);
                 }
                 binding.bottomNav.setVisibility(View.VISIBLE);
@@ -256,7 +271,7 @@ public class MainActivity extends AppCompatActivity{
             }
         });
 
-        if (ProxPurchase.getInstance().checkPurchased() || !isNetworkAvailable()){
+        if (ProxPurchase.getInstance().checkPurchased() || !isNetworkAvailable()) {
             binding.bannerAds.setVisibility(View.GONE);
         }
 
@@ -329,7 +344,7 @@ public class MainActivity extends AppCompatActivity{
     }
 
     private void createNotificationChannel() {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Message from Firebase", NotificationManager.IMPORTANCE_DEFAULT);
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(channel);
@@ -346,7 +361,7 @@ public class MainActivity extends AppCompatActivity{
     @Override
     public boolean onSupportNavigateUp() {
         return NavigationUI.navigateUp(navController, appBarConfiguration)
-                ||super.onSupportNavigateUp();
+                || super.onSupportNavigateUp();
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -361,13 +376,13 @@ public class MainActivity extends AppCompatActivity{
         protected Void doInBackground(Void... voids) {
             List<Document> documents = getDocuments();
             List<Document> documentCheck;
-            for (Document document : documents){
-                Log.d("viewmodel", "check: "+document.getPath());
+            for (Document document : documents) {
+                Log.d("viewmodel", "check: " + document.getPath());
                 documentCheck = DocumentDatabase.getInstance(context).documentDAO().check(document.getPath());
-                if (!documentCheck.isEmpty()){
+                if (!documentCheck.isEmpty()) {
                     documentCheck.get(0).setExist(true);
                     viewModel.update(documentCheck.get(0));
-                }else {
+                } else {
                     viewModel.insert(document);
                 }
             }
@@ -409,7 +424,7 @@ public class MainActivity extends AppCompatActivity{
                 document.setFavorite(false);
                 document.setExist(true);
 
-                if (!document.getPath().contains(".Trash")){
+                if (!document.getPath().contains(".Trash")) {
                     documents.add(document);
                 }
             }
