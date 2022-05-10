@@ -352,6 +352,8 @@ public class FileUtils {
                 final int index = cursor.getColumnIndexOrThrow(column);
                 return cursor.getString(index);
             }
+        }catch(Exception e){
+            return getDriveFilePath(uri, context);
         }
         finally {
             if (cursor != null)
