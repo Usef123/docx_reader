@@ -64,8 +64,8 @@
                 <!-- .pptx -->
                 <data android:mimeType="application/vnd.openxmlformats-officedocument.presentationml.presentation" />
 
-                <!-- &lt;!&ndash; .pdf &ndash;&gt; -->
-                <!-- <data android:mimeType="application/pdf" /> -->
+                 <!-- .pdf -->
+                 <data android:mimeType="application/pdf" />
             </intent-filter>
         </activity>
         <activity

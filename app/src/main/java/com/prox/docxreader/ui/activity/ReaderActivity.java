@@ -33,6 +33,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.Toast;
 
@@ -1444,6 +1445,11 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
             eraserButton = null;
             settingsButton = null;
         }
+    }
+
+    @Override
+    public FrameLayout getMainFrame() {
+        return binding.viewerOffice;
     }
 
     //
