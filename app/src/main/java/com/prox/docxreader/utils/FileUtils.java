@@ -386,4 +386,16 @@ public class FileUtils {
     private static boolean isGoogleDriveUri(Uri uri) {
         return "com.google.android.apps.docs.storage".equals(uri.getAuthority()) || "com.google.android.apps.docs.storage.legacy".equals(uri.getAuthority());
     }
+
+    public static String getRoot(String path){
+        return path.substring(0, path.lastIndexOf("/") + 1);
+    }
+
+    public static String getName(String path){
+        return path.substring(path.lastIndexOf("/") + 1, path.lastIndexOf("."));
+    }
+
+    public static String getType(String path){
+        return path.substring(path.lastIndexOf('.')+1);
+    }
 }

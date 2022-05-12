@@ -237,7 +237,12 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                 .setTitle(R.string.dialog_title);
 
         builder.setPositiveButton(R.string.txt_ok, (dialog, id) -> requestAccessAllFile());
-        builder.setNegativeButton(R.string.txt_cancel, (dialog, id) -> finish());
+        builder.setNegativeButton(R.string.txt_cancel, (dialog, id) -> {
+            Bundle bundle = new Bundle();
+            bundle.putString("event_type", "error");
+            FirebaseAnalytics.getInstance(ReaderActivity.this).logEvent("prox_permission", bundle);
+            finish();
+        });
 
         AlertDialog dialogRequest = builder.create();
         dialogRequest.show();
@@ -272,8 +277,14 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
             if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED
                     && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                Bundle bundle = new Bundle();
+                bundle.putString("event_type", "success");
+                FirebaseAnalytics.getInstance(ReaderActivity.this).logEvent("prox_permission", bundle);
                 binding.viewerOffice.post(this::init);
             } else {
+                Bundle bundle = new Bundle();
+                bundle.putString("event_type", "error");
+                FirebaseAnalytics.getInstance(ReaderActivity.this).logEvent("prox_permission", bundle);
                 openDialogAccessAllFile();
             }
         }
@@ -285,6 +296,9 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
         if (requestCode == REQUEST_PERMISSION_MANAGE) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 if (Environment.isExternalStorageManager()) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("event_type", "success");
+                    FirebaseAnalytics.getInstance(ReaderActivity.this).logEvent("prox_permission", bundle);
                     binding.viewerOffice.post(this::init);
                 }
             }
@@ -293,6 +307,9 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
             int read = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
             if (write == PackageManager.PERMISSION_GRANTED
                     && read == PackageManager.PERMISSION_GRANTED) {
+                Bundle bundle = new Bundle();
+                bundle.putString("event_type", "success");
+                FirebaseAnalytics.getInstance(ReaderActivity.this).logEvent("prox_permission", bundle);
                 binding.viewerOffice.post(this::init);
             }
         }

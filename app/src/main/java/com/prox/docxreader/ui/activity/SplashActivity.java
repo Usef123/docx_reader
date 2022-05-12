@@ -12,6 +12,7 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.prox.docxreader.BuildConfig;
 import com.prox.docxreader.LocaleHelper;
 import com.prox.docxreader.databinding.ActivitySplashBinding;
@@ -104,6 +105,13 @@ public class SplashActivity extends AppCompatActivity {
     private void goToReaderActivity() {
         Uri data = getIntent().getData();
         String path = FileUtils.getPath(data, this);
+
+        Bundle bundle = new Bundle();
+        bundle.putString("event_type", "open_file");
+        bundle.putString("source_app", data.toString());
+        bundle.putString("file_name", FileUtils.getName(path));
+        bundle.putString("source_app", FileUtils.getType(path));
+        FirebaseAnalytics.getInstance(SplashActivity.this).logEvent("prox_office_reader", bundle);
 
         if (new File(path).exists()){
             Intent intent = new Intent(this, ReaderActivity.class);
