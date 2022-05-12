@@ -12,6 +12,7 @@ import java.util.List;
 import android.app.Activity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.FrameLayout;
 
 /**
  * activity interface
@@ -338,4 +339,6 @@ public interface IMainFrame
      * 
      */
     public void dispose();
+
+    public abstract FrameLayout getMainFrame();
 }

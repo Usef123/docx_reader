@@ -18,3 +18,4 @@
 
 -keep public class com.wxiwei.office**
 -keepclassmembers class com.wxiwei.office** {*;}
+-keep class com.shockwave.**

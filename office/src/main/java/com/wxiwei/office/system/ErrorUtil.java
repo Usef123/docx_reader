@@ -7,11 +7,9 @@
 
 package com.wxiwei.office.system;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 
 import com.wxiwei.office.common.ICustomDialog;
 import com.wxiwei.office.constant.EventConstant;
@@ -19,10 +17,11 @@ import com.wxiwei.office.fc.OldFileFormatException;
 import com.wxiwei.office.fc.poifs.filesystem.OfficeXmlFileException;
 import com.wxiwei.office.officereader.R;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.os.Environment;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * error message
@@ -256,17 +255,17 @@ public class ErrorUtil
                             err = control.getActivity().getString(R.string.dialog_parse_error);
                             errorCode = PARSE_ERROR;
                         }
-//                        else if (ex instanceof NullPointerException
-//                            || ex instanceof IllegalArgumentException
-//                            || ex instanceof ClassCastException)
-//                        {
-//                            err = control.getActivity().getString(R.string.dialog_system_crash_error);
-//                            errorCode = SYSTEM_CRASH;
-//                        }
-//                        else if (sysKit.isDebug())
-//                        {
-//                            err = control.getActivity().getString(R.string.dialog_system_crash_error);
-//                        }
+                        else if (ex instanceof NullPointerException
+                            || ex instanceof IllegalArgumentException
+                            || ex instanceof ClassCastException)
+                        {
+                            err = control.getActivity().getString(R.string.dialog_system_crash_error);
+                            errorCode = SYSTEM_CRASH;
+                        }
+                        else if (sysKit.isDebug())
+                        {
+                            err = control.getActivity().getString(R.string.dialog_system_crash_error);
+                        }
                         if (err.length() > 0)
                         {
                             // dispatch error code to Application

@@ -34,6 +34,7 @@
     <string name="share_title">Share file</string>
     <string name="upload_title">Upload file</string>
     <string name="jump_title">Jump to page</string>
+    <string name="print_title">Print file</string>
     <string name="file_toolsbar_sort" translatable="false">Sort</string>
     <string name="file_toolsbar_print" translatable="false">Printer</string>
     <string name="file_toolsbar_mark_star" translatable="false">Mark</string>

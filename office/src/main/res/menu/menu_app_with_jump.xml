@@ -6,5 +6,9 @@
         android:icon="@drawable/ic_share_black"
         android:title="@string/share_title"
         app:showAsAction="ifRoom" />
-    
+    <item android:id="@+id/print"
+        android:icon="@drawable/ic_menu_print"
+        android:title="@string/print_title"
+        app:showAsAction="ifRoom"
+        android:visible="false"/>
 </menu>

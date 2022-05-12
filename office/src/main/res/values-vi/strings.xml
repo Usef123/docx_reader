@@ -16,5 +16,5 @@
     <string name="share_title">Chia sẻ tập tin</string>
     <string name="upload_title">Tải lên tập tin</string>
     <string name="jump_title">Nhảy tới trang</string>
-
+    <string name="print_title">In tập tin</string>
 </resources>

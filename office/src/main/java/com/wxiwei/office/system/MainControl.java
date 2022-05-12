@@ -6,8 +6,10 @@
  */
 package com.wxiwei.office.system;
 
+import java.io.File;
 import java.lang.reflect.Method;
 
+import com.github.barteksc.pdfviewer.PDFView;
 import com.wxiwei.office.common.ICustomDialog;
 import com.wxiwei.office.common.IOfficeToPicture;
 import com.wxiwei.office.common.ISlideShow;
@@ -26,6 +28,7 @@ import com.wxiwei.office.ss.model.baseModel.Workbook;
 import com.wxiwei.office.wp.control.WPControl;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -33,9 +36,11 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 /**
@@ -77,7 +82,7 @@ public class MainControl extends AbstractControl
         // listener
         initListener();
         //
-        toast = Toast.makeText(getActivity().getApplicationContext(), "", 0);
+        toast = Toast.makeText(getActivity().getApplicationContext(), "", Toast.LENGTH_SHORT);
         
         // 自动测试
         Intent intent = getActivity().getIntent();
@@ -161,6 +166,7 @@ public class MainControl extends AbstractControl
                             public void run()
                             {
                                 dismissProgressDialog();
+                                showFileError();
                                 if (message.obj instanceof Throwable)
                                 {
                                     sysKit.getErrorKit().writerLog((Throwable)message.obj, true);
@@ -414,23 +420,25 @@ public class MainControl extends AbstractControl
             TXTKit.instance().readText(this, handler, filePath);
         }
         else
-        {  
-            /*if (applicationType == MainConstant.APPLICATION_TYPE_PDF)
-            {
-                try                
-                {
-                    reader = new PDFReader(this, filePath);
-                    createApplication(reader.getModel());
+        {
+            if (applicationType == MainConstant.APPLICATION_TYPE_PDF) {
+                if(this.frame.getMainFrame() != null) {
+                    PDFView pdfView = new PDFView(getActivity(), null);
+
+                    this.frame.getMainFrame().addView(
+                            pdfView,
+                            new ViewGroup.LayoutParams(
+                                    ViewGroup.LayoutParams.MATCH_PARENT,
+                                    ViewGroup.LayoutParams.MATCH_PARENT)
+                    );
+
+                    pdfView.fromFile(new File(filePath))
+                            .enableSwipe(true)
+                            .enableDoubletap(true)
+                            .defaultPage(0)
+                            .load();
                 }
-                catch (Exception e)
-                {
-                    ErrorUtil.instance().writerLog(e, true);
-                }
-            }
-            else*/
-            {
-                new FileReaderThread(this, handler, filePath, null).start();
-            }
+            } else new FileReaderThread(this, handler, filePath, null).start();
         }
         return true;
     }
@@ -847,7 +855,23 @@ public class MainControl extends AbstractControl
             sysKit.dispose();
         }
     }
-    
+
+    private void showFileError() {
+        AlertDialog dialog =
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("Can not open file")
+                        .setMessage("File error")
+                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                                getActivity().finish();
+                            }
+                        })
+                        .create();
+        dialog.show();
+    }
+
     /**
      * 
      */

@@ -74,6 +74,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
+
 /**
  * 文件注释
  * <p>
@@ -102,7 +103,7 @@ public class AppActivity extends AppCompatActivity implements IMainFrame {
      */
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //requestWindowFeature(Window.FEATURE_NO_TITLE);        
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
 
@@ -121,7 +122,7 @@ public class AppActivity extends AppCompatActivity implements IMainFrame {
                         bitmap.recycle();
                     }
                     //bitmap = Bitmap.createBitmap(800, 600,  Config.ARGB_8888);
-                    //
+                    // 
                     bitmap = Bitmap.createBitmap((int) (componentWidth), (int) (componentHeight), Config.ARGB_8888);
                 }
                 return bitmap;
@@ -129,7 +130,7 @@ public class AppActivity extends AppCompatActivity implements IMainFrame {
             }
 
             public void callBack(Bitmap bitmap) {
-                saveBitmapToFile(bitmap);
+//                saveBitmapToFile(bitmap);
             }
 
             //
@@ -161,12 +162,12 @@ public class AppActivity extends AppCompatActivity implements IMainFrame {
         });
         //setTheme(control.getSysKit().isVertical(this) ? R.style.title_background_vertical   : R.style.title_background_horizontal);
         setContentView(R.layout.activity_office_detail);
-        toolbar = findViewById(R.id.toolbar_office);
-        frameLayout = findViewById(R.id.viewer_office);
+        toolbar = (Toolbar) findViewById(R.id.toolbar_office);
+        frameLayout = (FrameLayout) findViewById(R.id.viewer_office);
 
         toolbar.setNavigationIcon(R.drawable.ic_back_24);
         toolbar.setTitleTextAppearance(this,
-                R.style.TitleToolBar
+                R.style.TitleToolBar2
         );
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -347,16 +348,18 @@ public class AppActivity extends AppCompatActivity implements IMainFrame {
                 if (control.getReader() != null) {
                     control.getReader().abortReader();
                 }
-                if (marked != dbService.queryItem(MainConstant.TABLE_STAR, filePath)) {
-                    if (!marked) {
-                        dbService.deleteItem(MainConstant.TABLE_STAR, filePath);
-                    } else {
-                        dbService.insertStarFiles(MainConstant.TABLE_STAR, filePath);
-                    }
+                if(dbService != null) {
+                    if (marked != dbService.queryItem(MainConstant.TABLE_STAR, filePath)) {
+                        if (!marked) {
+                            dbService.deleteItem(MainConstant.TABLE_STAR, filePath);
+                        } else {
+                            dbService.insertStarFiles(MainConstant.TABLE_STAR, filePath);
+                        }
 
-                    Intent intent = new Intent();
-                    intent.putExtra(MainConstant.INTENT_FILED_MARK_STATUS, marked);
-                    setResult(RESULT_OK, intent);
+                        Intent intent = new Intent();
+                        intent.putExtra(MainConstant.INTENT_FILED_MARK_STATUS, marked);
+                        setResult(RESULT_OK, intent);
+                    }
                 }
 
                 if (startFromOtherApp) {
@@ -441,6 +444,8 @@ public class AppActivity extends AppCompatActivity implements IMainFrame {
         Intent intent = getIntent();
 
         filePath = intent.getStringExtra(MainConstant.INTENT_FILED_FILE_PATH);
+        Log.d("AAA", "init: file path :" + filePath);
+        // 文件关联打开文件
         if (!intent.hasExtra(MainConstant.INTENT_FILED_FILE_PATH)) {
             this.filePath = getRealPath2(intent.getData());
             int index = getFilePath().indexOf(":");
@@ -1399,6 +1404,11 @@ public class AppActivity extends AppCompatActivity implements IMainFrame {
             eraserButton = null;
             settingsButton = null;
         }
+    }
+
+    @Override
+    public FrameLayout getMainFrame() {
+        return frameLayout;
     }
 
     //

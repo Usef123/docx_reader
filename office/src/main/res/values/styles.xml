@@ -12,7 +12,7 @@
 	<style name="title_background_horizontal" parent="android:Theme">
 		<item name="android:windowTitleBackgroundStyle">@style/title_background_drawable_horizontal</item>
 	</style>
-	<style name="TitleToolBar" >
+	<style name="TitleToolBar2" >
 		<item name="android:textSize">16.5sp</item>
 		<item name="android:textColor">#000</item>
 		<item name="android:ellipsize">middle</item>

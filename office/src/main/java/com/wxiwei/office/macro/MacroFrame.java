@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.FrameLayout;
 
 /**
  *
@@ -772,7 +773,12 @@ class MacroFrame implements IMainFrame
         openFileFinishListener = null;
         txtDefalutEncode = null;
     }
-    
+
+    @Override
+    public FrameLayout getMainFrame() {
+        return null;
+    }
+
     // support touch zoom in / zoom out
     private boolean isTouchZoom = true;
     // is draw page number
