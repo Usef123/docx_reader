@@ -1,7 +1,7 @@
 package com.prox.docxreader.ui.activity;
 
-import static com.prox.docxreader.ui.activity.MainActivity.REQUEST_PERMISSION_MANAGE;
-import static com.prox.docxreader.ui.activity.MainActivity.REQUEST_PERMISSION_READ_WRITE;
+import static com.prox.docxreader.utils.PermissionUtils.REQUEST_PERMISSION_MANAGE;
+import static com.prox.docxreader.utils.PermissionUtils.REQUEST_PERMISSION_READ_WRITE;
 
 import android.Manifest;
 import android.app.Activity;
@@ -18,14 +18,11 @@ import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -40,15 +37,16 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.prox.docxreader.BuildConfig;
-import com.prox.docxreader.LocaleHelper;
 import com.prox.docxreader.R;
 import com.prox.docxreader.databinding.ActivityOfficeDetailBinding;
+import com.prox.docxreader.utils.FirebaseUtils;
+import com.prox.docxreader.utils.LanguageUtils;
+import com.prox.docxreader.utils.NetworkUtils;
+import com.prox.docxreader.utils.PermissionUtils;
 import com.proxglobal.proxads.adsv2.ads.ProxAds;
 import com.proxglobal.proxads.adsv2.callback.AdsCallback;
 import com.proxglobal.purchase.ProxPurchase;
@@ -90,7 +88,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
         super.onCreate(savedInstanceState);
 
         //Load ngôn ngữ
-        LocaleHelper.loadLanguage(this);
+        LanguageUtils.loadLanguage(this);
 
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
@@ -100,12 +98,11 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
         binding = ActivityOfficeDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        if (ProxPurchase.getInstance().checkPurchased() || !isNetworkAvailable()) {
+        if (ProxPurchase.getInstance().checkPurchased() || !NetworkUtils.isNetworkAvailable(this)) {
             binding.bannerAds.setVisibility(View.GONE);
         }
 
         filePath = getIntent().getStringExtra(FILE_PATH);
-        //realPath = filePath;
 
         if (filePath != null) {
             fileName = filePath.substring(filePath.lastIndexOf('/') + 1);
@@ -137,19 +134,13 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
             @Override
             public void onSubmitButtonClicked(int rate, String comment) {
                 Log.d("rate_app", "onSubmitButtonClicked " + rate + comment);
-                Bundle bundle = new Bundle();
-                bundle.putString("event_type", "rated");
-                bundle.putString("comment", comment);
-                bundle.putString("star", rate + " star");
-                FirebaseAnalytics.getInstance(ReaderActivity.this).logEvent("prox_rating_layout", bundle);
+                FirebaseUtils.sendEventSubmitRatePermission(ReaderActivity.this, comment, rate);
             }
 
             @Override
             public void onLaterButtonClicked() {
                 Log.d("rate_app", "onLaterButtonClicked");
-                Bundle bundle = new Bundle();
-                bundle.putString("event_type", "cancel");
-                FirebaseAnalytics.getInstance(ReaderActivity.this).logEvent("prox_rating_layout", bundle);
+                FirebaseUtils.sendEventLaterRatePermission(ReaderActivity.this);
 
                 Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -161,10 +152,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
             public void onChangeStar(int rate) {
                 Log.d("rate_app", "onChangeStar " + rate);
                 if (rate >= 4) {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("event_type", "rated");
-                    bundle.putString("star", rate + " star");
-                    FirebaseAnalytics.getInstance(ReaderActivity.this).logEvent("prox_rating_layout", bundle);
+                    FirebaseUtils.sendEventChangeRatePermission(ReaderActivity.this, rate);
 
                     Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -193,81 +181,12 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
         binding.viewerOffice.removeAllViews();
         binding.viewerOffice.addView(appFrame);
 
-        if(permission()){
+        if(PermissionUtils.permission(this)){
             binding.viewerOffice.post(this::init);
         }else {
-            requestPermissions();
+            PermissionUtils.requestPermissions(this, this);
         }
 
-    }
-
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
-
-    //Kiểm tra quyền
-    private boolean permission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
-            return Environment.isExternalStorageManager();
-        }else{
-            int write = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
-            int read = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
-            return (write == PackageManager.PERMISSION_GRANTED && read == PackageManager.PERMISSION_GRANTED);
-        }
-    }
-
-    //Cấp quyền
-    private void requestPermissions() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M){
-            return;
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            openDialogAccessAllFile();
-        } else {
-            String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE};
-            requestPermissions(permissions, REQUEST_PERMISSION_READ_WRITE);
-        }
-    }
-
-    private void openDialogAccessAllFile() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(R.string.dialog_message)
-                .setTitle(R.string.dialog_title);
-
-        builder.setPositiveButton(R.string.txt_ok, (dialog, id) -> requestAccessAllFile());
-        builder.setNegativeButton(R.string.txt_cancel, (dialog, id) -> {
-            Bundle bundle = new Bundle();
-            bundle.putString("event_type", "error");
-            FirebaseAnalytics.getInstance(ReaderActivity.this).logEvent("prox_permission", bundle);
-            finish();
-        });
-
-        AlertDialog dialogRequest = builder.create();
-        dialogRequest.show();
-    }
-
-    private void requestAccessAllFile() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            try {
-                Uri uri = Uri.parse("package:" + BuildConfig.APPLICATION_ID);
-                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri);
-                startActivityForResult(intent, REQUEST_PERMISSION_MANAGE);
-            } catch (Exception e) {
-                Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
-                startActivityForResult(intent, REQUEST_PERMISSION_MANAGE);
-            }
-        } else {
-            try {
-                Uri uri = Uri.parse("package:" + BuildConfig.APPLICATION_ID);
-                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, uri);
-                startActivityForResult(intent, REQUEST_PERMISSION_READ_WRITE);
-            } catch (Exception e) {
-
-            }
-        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -275,18 +194,14 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_PERMISSION_READ_WRITE) {
+            FirebaseUtils.sendEventRequestPermission(this);
+
             if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED
                     && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                Bundle bundle = new Bundle();
-                bundle.putString("event_type", "success");
-                FirebaseAnalytics.getInstance(ReaderActivity.this).logEvent("prox_permission", bundle);
                 binding.viewerOffice.post(this::init);
             } else {
-                Bundle bundle = new Bundle();
-                bundle.putString("event_type", "error");
-                FirebaseAnalytics.getInstance(ReaderActivity.this).logEvent("prox_permission", bundle);
-                openDialogAccessAllFile();
+                PermissionUtils.openDialogAccessAllFile(this, this);
             }
         }
     }
@@ -295,22 +210,20 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_PERMISSION_MANAGE) {
+            FirebaseUtils.sendEventRequestPermission(this);
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 if (Environment.isExternalStorageManager()) {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("event_type", "success");
-                    FirebaseAnalytics.getInstance(ReaderActivity.this).logEvent("prox_permission", bundle);
                     binding.viewerOffice.post(this::init);
                 }
             }
         } else if (requestCode == REQUEST_PERMISSION_READ_WRITE) {
+            FirebaseUtils.sendEventRequestPermission(this);
+
             int write = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
             int read = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
             if (write == PackageManager.PERMISSION_GRANTED
                     && read == PackageManager.PERMISSION_GRANTED) {
-                Bundle bundle = new Bundle();
-                bundle.putString("event_type", "success");
-                FirebaseAnalytics.getInstance(ReaderActivity.this).logEvent("prox_permission", bundle);
                 binding.viewerOffice.post(this::init);
             }
         }

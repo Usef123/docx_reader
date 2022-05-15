@@ -1,202 +1,123 @@
 package com.prox.docxreader.ui.activity;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.content.Context;
+import static com.prox.docxreader.DocxReaderApp.TAG;
+import static com.prox.docxreader.utils.PermissionUtils.REQUEST_PERMISSION_MANAGE;
+import static com.prox.docxreader.utils.PermissionUtils.REQUEST_PERMISSION_READ_WRITE;
+
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.prox.docxreader.BuildConfig;
-import com.prox.docxreader.LocaleHelper;
 import com.prox.docxreader.R;
-import com.prox.docxreader.database.DocumentDatabase;
 import com.prox.docxreader.databinding.ActivityMainBinding;
 import com.prox.docxreader.modul.Document;
+import com.prox.docxreader.utils.FileUtils;
+import com.prox.docxreader.utils.FirebaseUtils;
+import com.prox.docxreader.utils.LanguageUtils;
+import com.prox.docxreader.utils.NetworkUtils;
+import com.prox.docxreader.utils.NotificationUtils;
+import com.prox.docxreader.utils.PermissionUtils;
 import com.prox.docxreader.viewmodel.DocumentViewModel;
 import com.proxglobal.proxads.adsv2.ads.ProxAds;
 import com.proxglobal.proxads.adsv2.callback.AdsCallback;
 import com.proxglobal.purchase.ProxPurchase;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+
 public class MainActivity extends AppCompatActivity {
-    public static final int REQUEST_PERMISSION_MANAGE = 10;
-    public static final int REQUEST_PERMISSION_READ_WRITE = 11;
-    public static final String CHANNEL_ID = "message_from_firebase";
-
     private ActivityMainBinding binding;
-
-    private DocumentViewModel viewModel;
-
+    private DocumentViewModel model;
     private NavController navController;
     private AppBarConfiguration appBarConfiguration;
-
-    private AlertDialog dialogRequest;
-//    private boolean isBackPress;
+    private final CompositeDisposable disposable = new CompositeDisposable();
+    private Observer<Document> observer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "MainActivity onCreate");
+
+        LanguageUtils.loadLanguage(this);
+
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        model = new ViewModelProvider(this).get(DocumentViewModel.class);
 
-        //Load ngôn ngữ
-        LocaleHelper.loadLanguage(this);
-
-        viewModel = new ViewModelProvider(this).get(DocumentViewModel.class);
-
-        //Tạo UI
         init();
 
-//        String action = getIntent().getAction();
-//        if (action.equals(SPLASH_TO_MAIN)){
-//            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-//            int openApp = preferences.getInt("open_app", 1);
-//            Log.d("openApp", String.valueOf(openApp));
-//            if (openApp == 1){
-//                preferences.edit().putInt("open_app", openApp+1).apply();
-//            }else{
-//                ProxRateDialog.showIfNeed(this, getSupportFragmentManager());
-//            }
-//        }
         ProxAds.getInstance().initInterstitial(this, BuildConfig.interstitial_global, null, "insite");
+
+        observer = getObserver();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        //Cấp quyền
-        if (permission()) {
-            new InsertDBAsyncTask(this).execute();
+        Log.d(TAG, "MainActivity onStart");
+        if (PermissionUtils.permission(this)) {
+            getObservable().observeOn(Schedulers.io())
+                    .subscribeOn(AndroidSchedulers.mainThread())
+                    .subscribe(observer);
         } else {
-            requestPermissions();
+            PermissionUtils.requestPermissions(this, this);
         }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if (dialogRequest != null && dialogRequest.isShowing()) {
-            dialogRequest.cancel();
-        }
+        Log.d(TAG, "MainActivity onStop");
+        PermissionUtils.cancelDialogAccessAllFile();
     }
 
     @Override
     protected void onDestroy() {
+        Log.d(TAG, "MainActivity onDestroy");
         appBarConfiguration = null;
         navController = null;
         binding = null;
-        dialogRequest = null;
+        disposable.clear();
         super.onDestroy();
     }
 
-    //Kiểm tra quyền
-    private boolean permission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            return Environment.isExternalStorageManager();
-        } else {
-            int write = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
-            int read = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
-            return (write == PackageManager.PERMISSION_GRANTED && read == PackageManager.PERMISSION_GRANTED);
-        }
-    }
-
-    //Cấp quyền
-    private void requestPermissions() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            return;
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            openDialogAccessAllFile();
-        } else {
-            String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-            requestPermissions(permissions, REQUEST_PERMISSION_READ_WRITE);
-        }
-    }
-
-    private void openDialogAccessAllFile() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(R.string.dialog_message)
-                .setTitle(R.string.dialog_title);
-
-        builder.setPositiveButton(R.string.txt_ok, (dialog, id) -> requestAccessAllFile());
-        builder.setNegativeButton(R.string.txt_cancel, (dialog, id) -> {
-            Bundle bundle = new Bundle();
-            bundle.putString("event_type", "error");
-            FirebaseAnalytics.getInstance(MainActivity.this).logEvent("prox_permission", bundle);
-            finish();
-        });
-
-        dialogRequest = builder.create();
-        dialogRequest.show();
-    }
-
-    private void requestAccessAllFile() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            try {
-                Uri uri = Uri.parse("package:" + BuildConfig.APPLICATION_ID);
-                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri);
-                startActivityForResult(intent, REQUEST_PERMISSION_MANAGE);
-            } catch (Exception e) {
-                Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
-                startActivityForResult(intent, REQUEST_PERMISSION_MANAGE);
-            }
-        } else {
-            try {
-                Uri uri = Uri.parse("package:" + BuildConfig.APPLICATION_ID);
-                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, uri);
-                startActivityForResult(intent, REQUEST_PERMISSION_READ_WRITE);
-            } catch (Exception e) {
-
-            }
-        }
-    }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_PERMISSION_READ_WRITE) {
+            FirebaseUtils.sendEventRequestPermission(this);
+
             if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED
                     && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                Bundle bundle = new Bundle();
-                bundle.putString("event_type", "success");
-                FirebaseAnalytics.getInstance(MainActivity.this).logEvent("prox_permission", bundle);
-                new InsertDBAsyncTask(this).execute();
+                getObservable().observeOn(Schedulers.io())
+                        .subscribeOn(AndroidSchedulers.mainThread())
+                        .subscribe(observer);
             } else {
-                Bundle bundle = new Bundle();
-                bundle.putString("event_type", "error");
-                FirebaseAnalytics.getInstance(MainActivity.this).logEvent("prox_permission", bundle);
-                openDialogAccessAllFile();
+                PermissionUtils.openDialogAccessAllFile(this, this);
             }
         }
     }
@@ -205,44 +126,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_PERMISSION_MANAGE) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                if (Environment.isExternalStorageManager()) {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("event_type", "success");
-                    FirebaseAnalytics.getInstance(MainActivity.this).logEvent("prox_permission", bundle);
-                    new InsertDBAsyncTask(this).execute();
-                }
-            }
+            FirebaseUtils.sendEventRequestPermission(this);
         } else if (requestCode == REQUEST_PERMISSION_READ_WRITE) {
-            int write = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
-            int read = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
-            if (write == PackageManager.PERMISSION_GRANTED
-                    && read == PackageManager.PERMISSION_GRANTED) {
-                Bundle bundle = new Bundle();
-                bundle.putString("event_type", "success");
-                FirebaseAnalytics.getInstance(MainActivity.this).logEvent("prox_permission", bundle);
-                new InsertDBAsyncTask(this).execute();
-            }
+            FirebaseUtils.sendEventRequestPermission(this);
         }
     }
 
-//    @Override
-//    public void onBackPressed() {
-//        onSupportNavigateUp();
-////        if(onSupportNavigateUp()){
-////           return;
-////        }
-////        isBackPress = true;
-////        ProxRateDialog.showIfNeed(this, getSupportFragmentManager());
-////
-////        SharedPreferences sp = this.getSharedPreferences("prox", Context.MODE_PRIVATE);
-////        if (sp.getBoolean("isRated", false)){
-////            super.onBackPressed();
-////        }
-//    }
-
     //Tạo UI
     private void init() {
+        Log.d(TAG, "MainActivity init");
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host_fragment);
 
@@ -267,18 +159,13 @@ public class MainActivity extends AppCompatActivity {
                 binding.bottomNav.setVisibility(View.GONE);
                 binding.toolbar.setVisibility(View.VISIBLE);
                 binding.toolbar.setTitle(getResources().getString(R.string.language));
-            } else if (navDestination.getId() == R.id.policyFragment) {
-                binding.bannerAds.setVisibility(View.GONE);
-                binding.bottomNav.setVisibility(View.GONE);
-                binding.toolbar.setVisibility(View.VISIBLE);
-                binding.toolbar.setTitle(getResources().getString(R.string.privacy_policy));
             } else if (navDestination.getId() == R.id.premiumFragment) {
                 binding.bannerAds.setVisibility(View.GONE);
                 binding.bottomNav.setVisibility(View.GONE);
                 binding.toolbar.setVisibility(View.GONE);
                 binding.toolbar.setTitle("");
             } else {
-                if (ProxPurchase.getInstance().checkPurchased() || !isNetworkAvailable()) {
+                if (ProxPurchase.getInstance().checkPurchased() || !NetworkUtils.isNetworkAvailable(this)) {
                     binding.bannerAds.setVisibility(View.GONE);
                 } else {
                     binding.bannerAds.setVisibility(View.VISIBLE);
@@ -289,91 +176,37 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        if (ProxPurchase.getInstance().checkPurchased() || !isNetworkAvailable()) {
+        NotificationUtils.createChannelFireBase(this);
+
+        if (ProxPurchase.getInstance().checkPurchased()
+                || !NetworkUtils.isNetworkAvailable(this)) {
             binding.bannerAds.setVisibility(View.GONE);
         }
 
-        ProxAds.getInstance().showBanner(this, binding.bannerAds, BuildConfig.banner, new AdsCallback() {
+        ProxAds.getInstance().showBanner(
+                this,
+                binding.bannerAds,
+                BuildConfig.banner,
+                new AdsCallback() {
                     @Override
                     public void onShow() {
                         super.onShow();
-                        Log.d("banner_ads", "onShow");
+                        Log.d(TAG, "MainActivity Ads onShow");
                     }
 
                     @Override
                     public void onClosed() {
                         super.onClosed();
-                        Log.d("banner_ads", "onClosed");
+                        Log.d(TAG, "MainActivity Ads onClosed");
                     }
 
                     @Override
                     public void onError() {
                         super.onError();
-                        Log.d("banner_ads", "onError");
+                        Log.d(TAG, "MainActivity Ads onError");
                     }
                 }
         );
-
-//        ProxRateDialog.Config config = new ProxRateDialog.Config();
-//        config.setListener(new RatingDialogListener() {
-//            @Override
-//            public void onSubmitButtonClicked(int rate, String comment) {
-//                Log.d("rate_app", "onSubmitButtonClicked " + rate + comment);
-//                Bundle bundle = new Bundle();
-//                bundle.putString("event_type", "rated");
-//                bundle.putString("comment", comment);
-//                bundle.putString("star", rate + " star");
-//                FirebaseAnalytics.getInstance(MainActivity.this).logEvent("prox_rating_layout", bundle);
-//            }
-//
-//            @Override
-//            public void onLaterButtonClicked() {
-//                Log.d("rate_app", "onLaterButtonClicked");
-//                Bundle bundle = new Bundle();
-//                bundle.putString("event_type", "cancel");
-//                FirebaseAnalytics.getInstance(MainActivity.this).logEvent("prox_rating_layout", bundle);
-////                if (isBackPress) {
-////                    finish();
-////                }
-//            }
-//
-//            @Override
-//            public void onChangeStar(int rate) {
-//                Log.d("rate_app", "onChangeStar " + rate);
-//                if (rate >= 4) {
-//                    Bundle bundle = new Bundle();
-//                    bundle.putString("event_type", "rated");
-//                    bundle.putString("star", rate + " star");
-//                    FirebaseAnalytics.getInstance(MainActivity.this).logEvent("prox_rating_layout", bundle);
-//                }
-//            }
-//
-//            @Override
-//            public void onDone() {
-//                Log.d("rate_app", "onDone");
-////                if(isBackPress){
-////                    finish();
-////                }
-//            }
-//        });
-//        ProxRateDialog.init(config);
-
-        createNotificationChannel();
-    }
-
-    private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Message from Firebase", NotificationManager.IMPORTANCE_DEFAULT);
-            NotificationManager manager = getSystemService(NotificationManager.class);
-            manager.createNotificationChannel(channel);
-        }
-    }
-
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     @Override
@@ -382,72 +215,52 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
-    @SuppressLint("StaticFieldLeak")
-    private class InsertDBAsyncTask extends AsyncTask<Void, Void, Void> {
-        private final Context context;
+    private Observable<Document> getObservable() {
+        List<Document> documents = FileUtils.getDocuments(Environment.getExternalStorageDirectory());
+        Log.d(TAG, "MainActivity documents.size(): "+documents.size());
 
-        private InsertDBAsyncTask(Context context) {
-            this.context = context;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            List<Document> documents = getDocuments();
-            List<Document> documentCheck;
+        return Observable.create(emitter -> {
             for (Document document : documents) {
-                Log.d("viewmodel", "check: " + document.getPath());
-                documentCheck = DocumentDatabase.getInstance(context).documentDAO().check(document.getPath());
-                if (!documentCheck.isEmpty()) {
-                    documentCheck.get(0).setExist(true);
-                    viewModel.update(documentCheck.get(0));
-                } else {
-                    viewModel.insert(document);
+                if (!emitter.isDisposed()){
+                    emitter.onNext(document);
+                }
+            }
+            if (!emitter.isDisposed()){
+                emitter.onComplete();
+            }
+        });
+    }
+
+    private Observer<Document> getObserver() {
+        return new Observer<Document>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+                disposable.add(d);
+            }
+
+            @Override
+            public void onNext(@NonNull Document document) {
+                Log.d(TAG, "MainActivity onNext: " + document.getPath());
+                Document documentCheck = model.check(document.getPath());
+                if (documentCheck != null) {
+                    documentCheck.setExist(true);
+                    model.update(documentCheck);
+                }else {
+                    model.insert(document);
                 }
             }
 
-            viewModel.deleteNotExist();
-            viewModel.updateIsExist();
-            return null;
-        }
-
-        //Lấy list file
-        private List<Document> getDocuments() {
-            List<Document> documents = new ArrayList<>();
-
-            Uri uri = MediaStore.Files.getContentUri("external");
-
-            String[] columns = {
-                    MediaStore.Files.FileColumns.DISPLAY_NAME,   //tên file
-                    MediaStore.Files.FileColumns.DATE_ADDED,     //date tạo
-                    MediaStore.Files.FileColumns.DATA};          //path file
-
-            String selection = "_data LIKE '%.doc' OR _data LIKE '%.docx'";
-
-            Cursor cursor = context.getContentResolver().query(uri, columns, selection, null, null);
-
-            int title = cursor.getColumnIndex(MediaStore.Files.FileColumns.DISPLAY_NAME);
-            int date_add = cursor.getColumnIndex(MediaStore.Files.FileColumns.DATE_ADDED);
-            int path = cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA);
-
-            while (cursor.moveToNext()) {
-                String str_title = cursor.getString(title);
-                String str_path = cursor.getString(path);
-                String str_date_add = cursor.getString(date_add);
-
-                Document document = new Document();
-                document.setPath(str_path);
-                document.setTitle(str_title);
-                document.setTimeCreate(Integer.parseInt(str_date_add));
-                document.setTimeAccess(Integer.parseInt(str_date_add));
-                document.setFavorite(false);
-                document.setExist(true);
-
-                if (!document.getPath().contains(".Trash")) {
-                    documents.add(document);
-                }
+            @Override
+            public void onError(@NonNull Throwable e) {
+                Log.d(TAG, "MainActivity onError: " + e.getMessage());
             }
-            cursor.close();
-            return documents;
-        }
+
+            @Override
+            public void onComplete() {
+                Log.d(TAG, "MainActivity onComplete");
+                model.deleteNotExist();
+                model.updateIsExist();
+            }
+        };
     }
 }

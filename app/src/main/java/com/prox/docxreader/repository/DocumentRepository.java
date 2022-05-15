@@ -1,11 +1,6 @@
 package com.prox.docxreader.repository;
 
-import static com.prox.docxreader.viewmodel.DocumentViewModel.SORT_NAME;
-import static com.prox.docxreader.viewmodel.DocumentViewModel.SORT_TIME_ACCESS;
-import static com.prox.docxreader.viewmodel.DocumentViewModel.SORT_TIME_CREATE;
-
 import android.app.Application;
-import android.os.AsyncTask;
 
 import androidx.lifecycle.LiveData;
 
@@ -16,6 +11,10 @@ import com.prox.docxreader.modul.Document;
 import java.util.List;
 
 public class DocumentRepository {
+    public static final int SORT_NAME = 1;
+    public static final int SORT_TIME_CREATE = 2;
+    public static final int SORT_TIME_ACCESS = 3;
+
     private final DocumentDAO documentDAO;
     private LiveData<List<Document>> documents;
 
@@ -29,7 +28,7 @@ public class DocumentRepository {
         return documents;
     }
 
-    private void setDocuments(boolean isFavorite, int typeSort, String search) {
+    public void setDocuments(boolean isFavorite, int typeSort, String search) {
         switch (typeSort){
             case SORT_NAME:
                 documents = documentDAO.getDocumentByName(isFavorite, search);
@@ -43,93 +42,27 @@ public class DocumentRepository {
         }
     }
 
+    public Document check(String path){
+        return documentDAO.check(path);
+    }
+
     public void insert(Document document){
-        new InsertDocumentAsyncTask(documentDAO).execute(document);
+        documentDAO.insert(document);
     }
 
     public void update(Document document){
-        new UpdateDocumentAsyncTask(documentDAO).execute(document);
+        documentDAO.update(document);
     }
 
     public void updateIsExist(){
-        new UpdateIsExistDocumentAsyncTask(documentDAO).execute();
+        documentDAO.updateIsExist();
     }
 
     public void delete(Document document){
-        new DeleteDocumentAsyncTask(documentDAO).execute(document);
+        documentDAO.delete(document);
     }
 
     public void deleteNotExist(){
-        new DeleteNotExistDocumentAsyncTask(documentDAO).execute();
-    }
-
-    private static class InsertDocumentAsyncTask extends AsyncTask<Document, Void, Void>{
-        private final DocumentDAO documentDAO;
-
-        private InsertDocumentAsyncTask(DocumentDAO documentDAO) {
-            this.documentDAO = documentDAO;
-        }
-
-        @Override
-        protected Void doInBackground(Document... documents) {
-            documentDAO.insert(documents[0]);
-            return null;
-        }
-    }
-
-    private static class UpdateDocumentAsyncTask extends AsyncTask<Document, Void, Void>{
-        private final DocumentDAO documentDAO;
-
-        private UpdateDocumentAsyncTask(DocumentDAO documentDAO) {
-            this.documentDAO = documentDAO;
-        }
-
-        @Override
-        protected Void doInBackground(Document... documents) {
-            documentDAO.update(documents[0]);
-            return null;
-        }
-    }
-
-    private static class UpdateIsExistDocumentAsyncTask extends AsyncTask<Void, Void, Void>{
-        private final DocumentDAO documentDAO;
-
-        private UpdateIsExistDocumentAsyncTask(DocumentDAO documentDAO) {
-            this.documentDAO = documentDAO;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            documentDAO.updateIsExist();
-            return null;
-        }
-    }
-
-    private static class DeleteDocumentAsyncTask extends AsyncTask<Document, Void, Void>{
-        private final DocumentDAO documentDAO;
-
-        private DeleteDocumentAsyncTask(DocumentDAO documentDAO) {
-            this.documentDAO = documentDAO;
-        }
-
-        @Override
-        protected Void doInBackground(Document... documents) {
-            documentDAO.delete(documents[0]);
-            return null;
-        }
-    }
-
-    private static class DeleteNotExistDocumentAsyncTask extends AsyncTask<Void, Void, Void>{
-        private final DocumentDAO documentDAO;
-
-        private DeleteNotExistDocumentAsyncTask(DocumentDAO documentDAO) {
-            this.documentDAO = documentDAO;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            documentDAO.deleteNotExist();
-            return null;
-        }
+        documentDAO.deleteNotExist();
     }
 }

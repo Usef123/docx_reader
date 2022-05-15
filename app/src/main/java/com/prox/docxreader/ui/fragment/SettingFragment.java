@@ -18,6 +18,7 @@ import com.proxglobal.purchase.ProxPurchase;
 public class SettingFragment extends Fragment {
     public static final String EMAIL_FEEDBACK = "elaineeyui@gmail.com";
     private static final String URI_PACKAGE = "https://play.google.com/store/apps/developer?id=Andromeda+App";
+    private static final String URI_POLICY = "https://hellowordapp.github.io/policy/privacy.html";
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -35,7 +36,7 @@ public class SettingFragment extends Fragment {
         binding.btnMoreApp.setOnClickListener(v -> openCHPlay());
 
         binding.btnPrivacyPolicy.setOnClickListener(v ->
-            Navigation.findNavController(binding.getRoot()).navigate(R.id.action_settingFragment_to_policyFragment)
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(URI_POLICY)))
         );
 
         if (ProxPurchase.getInstance().checkPurchased()){

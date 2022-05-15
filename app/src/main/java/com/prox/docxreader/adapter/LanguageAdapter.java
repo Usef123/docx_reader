@@ -9,8 +9,8 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.prox.docxreader.LocaleHelper;
-import com.prox.docxreader.OnClickLanguageListener;
+import com.prox.docxreader.utils.LanguageUtils;
+import com.prox.docxreader.interfaces.OnClickLanguageListener;
 import com.prox.docxreader.databinding.ItemLanguageBinding;
 
 public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.LanguageViewHolder> {
@@ -37,7 +37,7 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.Langua
     @Override
     public void onBindViewHolder(@NonNull LanguageViewHolder holder, int position) {
         holder.binding.txtLanguage.setText(languages[position]);
-        if (LocaleHelper.getLanguage(context).contains(typeLanguages[position])){
+        if (LanguageUtils.getLanguage(context).contains(typeLanguages[position])){
             holder.binding.imgChecked.setVisibility(View.VISIBLE);
             imgChecked = holder.binding.imgChecked;
         }else{

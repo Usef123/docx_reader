@@ -1,5 +1,6 @@
 package com.prox.docxreader.ui.activity;
 
+import static com.prox.docxreader.DocxReaderApp.TAG;
 import static com.prox.docxreader.ui.activity.ReaderActivity.FILE_PATH;
 
 import android.annotation.SuppressLint;
@@ -9,14 +10,16 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.prox.docxreader.BuildConfig;
-import com.prox.docxreader.LocaleHelper;
+import com.prox.docxreader.R;
 import com.prox.docxreader.databinding.ActivitySplashBinding;
 import com.prox.docxreader.utils.FileUtils;
+import com.prox.docxreader.utils.FirebaseUtils;
+import com.prox.docxreader.utils.LanguageUtils;
 import com.proxglobal.proxads.adsv2.ads.ProxAds;
 import com.proxglobal.proxads.adsv2.callback.AdsCallback;
 import com.proxglobal.purchase.ProxPurchase;
@@ -30,24 +33,38 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "SplashActivity onCreate");
 
         //Load ngôn ngữ
-        LocaleHelper.loadLanguage(this);
+        LanguageUtils.loadLanguage(this);
 
         ActivitySplashBinding binding = ActivitySplashBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
         if (ProxPurchase.getInstance().checkPurchased()) {
             binding.tittleSplash.setVisibility(View.GONE);
+        }
+
+        Intent intent = getIntent();
+        if (intent == null) {
+            Log.d(TAG, "SplashActivity intent null");
+            goToMainActivity();
+            return;
         }
 
         String action = getIntent().getAction();
         new Handler().postDelayed(() -> {
             if (action == null) {
+                Log.d(TAG, "SplashActivity action null");
                 goToMainActivity();
             } else if (action.equals(Intent.ACTION_MAIN)) {
+                Log.d(TAG, "SplashActivity action ACTION_MAIN");
                 showInterSplash();
             } else if (action.equals(Intent.ACTION_VIEW)) {
+                Log.d(TAG, "SplashActivity action ACTION_VIEW");
                 showInterOutside();
+            } else {
+                goToMainActivity();
             }
         }, 1000);
     }
@@ -56,18 +73,18 @@ public class SplashActivity extends AppCompatActivity {
         ProxAds.getInstance().showSplash(this, new AdsCallback() {
             @Override
             public void onShow() {
-                Log.d("interstitial_splash", "onShow");
+                Log.d(TAG, "SplashActivity Ads onShow");
             }
 
             @Override
             public void onClosed() {
-                Log.d("interstitial_splash", "onClosed");
+                Log.d(TAG, "SplashActivity Ads onClosed");
                 goToMainActivity();
             }
 
             @Override
             public void onError() {
-                Log.d("interstitial_splash", "onError");
+                Log.d(TAG, "SplashActivity Ads onError");
                 goToMainActivity();
             }
         }, BuildConfig.interstitial_splash, null, 10000);
@@ -77,24 +94,25 @@ public class SplashActivity extends AppCompatActivity {
         ProxAds.getInstance().showSplash(this, new AdsCallback() {
             @Override
             public void onShow() {
-                Log.d("interstitial_outside", "onShow");
+                Log.d(TAG, "SplashActivity Ads onShow");
             }
 
             @Override
             public void onClosed() {
-                Log.d("interstitial_outside", "onClosed");
+                Log.d(TAG, "SplashActivity Ads onClosed");
                 goToReaderActivity();
             }
 
             @Override
             public void onError() {
-                Log.d("interstitial_outside", "onError");
+                Log.d(TAG, "SplashActivity Ads onError");
                 goToReaderActivity();
             }
         }, BuildConfig.interstitial_open_outside, null, 12000);
     }
 
     private void goToMainActivity() {
+        Log.d(TAG, "SplashActivity goToMainActivity");
         Intent intent = new Intent(this, MainActivity.class);
         intent.setAction(SPLASH_TO_MAIN);
         startActivity(intent);
@@ -103,26 +121,27 @@ public class SplashActivity extends AppCompatActivity {
 
 
     private void goToReaderActivity() {
+        Log.d(TAG, "SplashActivity goToReaderActivity");
         Uri data = getIntent().getData();
         String path = FileUtils.getPath(data, this);
 
-        Bundle bundle = new Bundle();
-        bundle.putString("event_type", "open_file");
-        bundle.putString("source_app", data.toString());
-        bundle.putString("file_name", FileUtils.getName(path));
-        bundle.putString("source_app", FileUtils.getType(path));
-        FirebaseAnalytics.getInstance(SplashActivity.this).logEvent("prox_office_reader", bundle);
+        FirebaseUtils.sendEventOpenFile(this, data, path);
 
-        if (new File(path).exists()){
+        if (path == null){
+            Log.d(TAG, "SplashActivity path null");
+            goToMainActivity();
+            Toast.makeText(this, R.string.notification_file_not_found, Toast.LENGTH_SHORT).show();
+        }else if (new File(path).exists()) {
+            Log.d(TAG, "SplashActivity path "+path);
             Intent intent = new Intent(this, ReaderActivity.class);
             intent.putExtra(FILE_PATH, path);
             startActivity(intent);
             finish();
-        }else {
+        } else {
+            Log.d(TAG, "SplashActivity file not exist");
             goToMainActivity();
+            Toast.makeText(this, R.string.notification_file_not_found, Toast.LENGTH_SHORT).show();
         }
-
-
     }
 
     @Override

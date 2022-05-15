@@ -1,4 +1,4 @@
-package com.prox.docxreader;
+package com.prox.docxreader.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -8,7 +8,7 @@ import android.preference.PreferenceManager;
 
 import java.util.Locale;
 
-public class LocaleHelper {
+public class LanguageUtils {
     private static final String SELECTED_LANGUAGE = "Locale.Helper.Selected.Language";
 
     public static void setLocale(Context context, String language) {

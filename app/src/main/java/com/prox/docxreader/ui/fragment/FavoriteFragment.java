@@ -1,33 +1,21 @@
 package com.prox.docxreader.ui.fragment;
 
+import static com.prox.docxreader.DocxReaderApp.TAG;
+import static com.prox.docxreader.repository.DocumentRepository.SORT_NAME;
 import static com.prox.docxreader.ui.activity.ReaderActivity.FILE_PATH;
-import static com.prox.docxreader.viewmodel.DocumentViewModel.SORT_NAME;
-import static com.prox.docxreader.viewmodel.DocumentViewModel.SORT_TIME_ACCESS;
-import static com.prox.docxreader.viewmodel.DocumentViewModel.SORT_TIME_CREATE;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
-import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -39,103 +27,113 @@ import com.prox.docxreader.databinding.DialogSortBinding;
 import com.prox.docxreader.databinding.FragmentFavoriteBinding;
 import com.prox.docxreader.modul.Document;
 import com.prox.docxreader.ui.activity.ReaderActivity;
+import com.prox.docxreader.ui.dialog.SortDialog;
+import com.prox.docxreader.utils.FileUtils;
 import com.prox.docxreader.viewmodel.DocumentViewModel;
 import com.proxglobal.proxads.adsv2.ads.ProxAds;
 import com.proxglobal.proxads.adsv2.callback.AdsCallback;
 
 import java.io.File;
 import java.util.Date;
-import java.util.List;
 
 public class FavoriteFragment extends Fragment {
-    private FragmentFavoriteBinding favoriteBinding;
+    private FragmentFavoriteBinding binding;
+    private DocumentViewModel model;
+    private DocumentFavoriteAdapter adapter;
 
-    private DocumentViewModel viewModel;
-
-    private DocumentFavoriteAdapter documentFavoriteAdapter;
-
-    private int typeSort = SORT_NAME; //Kiểu sắp xếp
+    public static int typeSort = SORT_NAME; //Kiểu sắp xếp
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        favoriteBinding = FragmentFavoriteBinding.inflate(inflater, container, false);
-
-        favoriteBinding.include.txtTitleFragment.setText(getResources().getString(R.string.title_favorite));
+        Log.d(TAG, "FavoriteFragment onCreateView");
+        binding = FragmentFavoriteBinding.inflate(inflater, container, false);
+        binding.include.txtTitleFragment.setText(getResources().getString(R.string.title_favorite));
 
         setupRecyclerView();
 
+        model = new ViewModelProvider(requireActivity()).get(DocumentViewModel.class);
+
         addSearchDocument();
 
-        favoriteBinding.include.btnSort.setOnClickListener(view -> openDialogSort());
-
-        viewModel = new ViewModelProvider(requireActivity()).get(DocumentViewModel.class);
+        binding.include.btnSort.setOnClickListener(view -> {
+            SortDialog dialog = new SortDialog(
+                    requireContext(),
+                    DialogSortBinding.inflate(getLayoutInflater()),
+                    false,
+                    FavoriteFragment.typeSort,
+                    this::showDocumentsFavorite);
+            dialog.show();
+        });
 
         showDocumentsFavorite();
 
-        return favoriteBinding.getRoot();
+        return binding.getRoot();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        favoriteBinding.include.edtSearch.setText("");
+        Log.d(TAG, "FavoriteFragment onStop");
+        binding.include.edtSearch.setText("");
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        documentFavoriteAdapter = null;
-        viewModel = null;
-        favoriteBinding = null;
+        Log.d(TAG, "FavoriteFragment onDestroyView");
+        adapter = null;
+        model = null;
+        binding = null;
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
     private void setupRecyclerView() {
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
-        favoriteBinding.recyclerViewFavorite.setLayoutManager(manager);
+        binding.recyclerViewFavorite.setLayoutManager(manager);
 
-        documentFavoriteAdapter = new DocumentFavoriteAdapter(
+        adapter = new DocumentFavoriteAdapter(
                 this::clickItemDocument,
                 this::clickShare,
                 this::clickFavorite);
 
-        favoriteBinding.recyclerViewFavorite.setAdapter(documentFavoriteAdapter);
+        binding.recyclerViewFavorite.setAdapter(adapter);
 
         DividerItemDecoration dividerHorizontal = new DividerItemDecoration(requireContext(),
                 DividerItemDecoration.VERTICAL);
         dividerHorizontal.setDrawable(getResources().getDrawable(R.drawable.line_custom));
-        favoriteBinding.recyclerViewFavorite.addItemDecoration(dividerHorizontal);
+        binding.recyclerViewFavorite.addItemDecoration(dividerHorizontal);
     }
 
     private void clickItemDocument(Document document) {
         if (!(new File(document.getPath())).exists()){
             Toast.makeText(getContext(), R.string.notification_file_not_found, Toast.LENGTH_SHORT).show();
-            viewModel.delete(document);
+            model.delete(document);
             return;
         }
         //Update Time Access
         document.setTimeAccess(new Date().getTime());
-        viewModel.update(document);
+        model.update(document);
 
         ProxAds.getInstance().showInterstitial(requireActivity(), "insite", new AdsCallback() {
             @Override
             public void onClosed() {
                 super.onClosed();
-                Log.d("showInterstitial", "onClosed");
+                Log.d(TAG, "FavoriteFragment Ads onClosed");
                 startReaderActivity(document);
             }
 
             @Override
             public void onError() {
                 super.onError();
-                Log.d("showInterstitial", "onError");
+                Log.d(TAG, "FavoriteFragment Ads onError");
                 startReaderActivity(document);
             }
         });
     }
 
     private void startReaderActivity(Document document) {
+        Log.d(TAG, "FavoriteFragment startReaderActivity part: "+document.getPath());
         Intent intent = new Intent(requireActivity(), ReaderActivity.class);
         intent.putExtra(FILE_PATH, document.getPath());
         startActivity(intent);
@@ -144,74 +142,50 @@ public class FavoriteFragment extends Fragment {
     private void clickShare(Document document) {
         if (!(new File(document.getPath())).exists()){
             Toast.makeText(getContext(), R.string.notification_file_not_found, Toast.LENGTH_SHORT).show();
-            viewModel.delete(document);
+            model.delete(document);
             return;
         }
-        shareDocument(document);
+        FileUtils.shareFile(requireContext(), document.getPath());
     }
 
     private void clickFavorite(Document document) {
         if (!(new File(document.getPath())).exists()){
             Toast.makeText(getContext(), R.string.notification_file_not_found, Toast.LENGTH_SHORT).show();
-            viewModel.delete(document);
+            model.delete(document);
             return;
         }
         removeFavorite(document);
     }
 
     private void showDocumentsFavorite() {
-        String search = favoriteBinding.include.edtSearch.getText().toString().trim();
+        String search = binding.include.edtSearch.getText().toString().trim();
         if (search.isEmpty()){
-            favoriteBinding.include.btnClear.setVisibility(View.GONE);
+            binding.include.btnClear.setVisibility(View.GONE);
         }else{
-            favoriteBinding.include.btnClear.setVisibility(View.VISIBLE);
+            binding.include.btnClear.setVisibility(View.VISIBLE);
         }
-        viewModel.getDocuments(true, typeSort, search).observe(getViewLifecycleOwner(), documents -> {
-            Log.d("viewmodel", "onChange");
-            documentFavoriteAdapter.setDocuments(documents);
+
+        model.getDocuments(true, typeSort, search).observe(getViewLifecycleOwner(), documents -> {
+            Log.d(TAG, "FavoriteFragment document.size()="+documents.size());
+            adapter.setDocuments(documents);
             if (documents.size()==0){
-                favoriteBinding.notiList.setVisibility(View.VISIBLE);
+                binding.notiList.setVisibility(View.VISIBLE);
             }else{
-                favoriteBinding.notiList.setVisibility(View.GONE);
+                binding.notiList.setVisibility(View.GONE);
             }
         });
-    }
 
-    private void shareDocument(Document document) {
-        File file = new File(document.getPath());
-        Uri uri = FileProvider.getUriForFile(requireContext(), "com.prox.docxreader.fileprovider", file);
-
-        Intent intentShareFile = new Intent(Intent.ACTION_SEND);
-
-        String titleFull = document.getTitle();         //Tên file có đuôi (.docx hoặc .doc)
-        int dot = titleFull.lastIndexOf('.');       //Vị trí dấu . cuối cùng
-        String type = titleFull.substring(dot+1);         //Đuôi file (docx hoặc doc)
-
-        intentShareFile.setType(MimeTypeMap.getSingleton().getMimeTypeFromExtension(type));
-        intentShareFile.putExtra(Intent.EXTRA_STREAM, uri);
-        intentShareFile.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-        Intent chooser = Intent.createChooser(intentShareFile, titleFull);
-
-        List<ResolveInfo> resInfoList = requireContext().getPackageManager().queryIntentActivities(chooser, PackageManager.MATCH_DEFAULT_ONLY);
-
-        for (ResolveInfo resolveInfo : resInfoList) {
-            String packageName = resolveInfo.activityInfo.packageName;
-            requireContext().grantUriPermission(packageName, uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        }
-
-        startActivity(chooser);
     }
 
     @SuppressLint("NotifyDataSetChanged")
     private void removeFavorite(Document document) {
         document.setFavorite(false);
-        viewModel.update(document);
+        model.update(document);
         Toast.makeText(getContext(), R.string.notification_remove_favorite, Toast.LENGTH_SHORT).show();
     }
 
     private void addSearchDocument() {
-        favoriteBinding.include.edtSearch.addTextChangedListener(new TextWatcher() {
+        binding.include.edtSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -228,62 +202,6 @@ public class FavoriteFragment extends Fragment {
             }
         });
 
-        favoriteBinding.include.btnClear.setOnClickListener(v -> favoriteBinding.include.edtSearch.setText(""));
-    }
-
-    private void openDialogSort() {
-        DialogSortBinding dialogSortBinding = DialogSortBinding.inflate(getLayoutInflater());
-        Dialog dialogSort = createCustomDialog(dialogSortBinding.getRoot());
-        dialogSort.show();
-
-        switch (typeSort){
-            case SORT_NAME:
-                dialogSortBinding.nameChecked.setVisibility(View.VISIBLE);
-                dialogSortBinding.timeCreateChecked.setVisibility(View.INVISIBLE);
-                dialogSortBinding.timeAccessChecked.setVisibility(View.INVISIBLE);
-                break;
-            case SORT_TIME_CREATE:
-                dialogSortBinding.nameChecked.setVisibility(View.INVISIBLE);
-                dialogSortBinding.timeCreateChecked.setVisibility(View.VISIBLE);
-                dialogSortBinding.timeAccessChecked.setVisibility(View.INVISIBLE);
-                break;
-            case SORT_TIME_ACCESS:
-                dialogSortBinding.nameChecked.setVisibility(View.INVISIBLE);
-                dialogSortBinding.timeCreateChecked.setVisibility(View.INVISIBLE);
-                dialogSortBinding.timeAccessChecked.setVisibility(View.VISIBLE);
-                break;
-        }
-
-        dialogSortBinding.sortName.setOnClickListener(v -> {
-            typeSort = SORT_NAME;
-            showDocumentsFavorite();
-            dialogSort.cancel();
-        });
-        dialogSortBinding.sortTimeCreate.setOnClickListener(v -> {
-            typeSort = SORT_TIME_CREATE;
-            showDocumentsFavorite();
-            dialogSort.cancel();
-        });
-        dialogSortBinding.sortTimeAccess.setOnClickListener(v -> {
-            typeSort = SORT_TIME_ACCESS;
-            showDocumentsFavorite();
-            dialogSort.cancel();
-        });
-    }
-
-    private Dialog createCustomDialog(View layout) {
-        Dialog dialog = new Dialog(getContext());
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(layout);
-        dialog.setCancelable(true);
-
-        Window window = dialog.getWindow();
-        window.setLayout(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
-        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        WindowManager.LayoutParams layoutParams = window.getAttributes();
-        layoutParams.gravity = Gravity.CENTER;
-        window.setAttributes(layoutParams);
-
-        return dialog;
+        binding.include.btnClear.setOnClickListener(v -> binding.include.edtSearch.setText(""));
     }
 }

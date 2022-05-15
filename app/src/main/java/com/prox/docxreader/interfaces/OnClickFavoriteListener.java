@@ -1,4 +1,4 @@
-package com.prox.docxreader;
+package com.prox.docxreader.interfaces;
 
 import com.prox.docxreader.modul.Document;
 

@@ -18,7 +18,7 @@ public interface DocumentDAO {
     void insert(Document document);
 
     @Query("SELECT * FROM document WHERE path= :path")
-    List<Document> check(String path);
+    Document check(String path);
 
     @Update
     void update(Document document);

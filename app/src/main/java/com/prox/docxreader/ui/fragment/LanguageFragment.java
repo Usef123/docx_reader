@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.prox.docxreader.LocaleHelper;
+import com.prox.docxreader.utils.LanguageUtils;
 import com.prox.docxreader.R;
 import com.prox.docxreader.adapter.LanguageAdapter;
 import com.prox.docxreader.databinding.FragmentLanguageBinding;
@@ -30,7 +30,7 @@ public class LanguageFragment extends Fragment {
                 getResources().getStringArray(R.array.language),
                 getResources().getStringArray(R.array.type_language),
                 typeLanguage -> {
-                    LocaleHelper.setLocale(getContext(), typeLanguage);
+                    LanguageUtils.setLocale(getContext(), typeLanguage);
                     Intent intent = new Intent(requireActivity(), MainActivity.class);
                     intent.setAction(CHANGE_LANGUAGE);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

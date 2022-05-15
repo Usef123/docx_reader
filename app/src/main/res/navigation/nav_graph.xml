@@ -24,9 +24,6 @@
             android:id="@+id/action_settingFragment_to_languageFragment"
             app:destination="@id/languageFragment" />
         <action
-            android:id="@+id/action_settingFragment_to_policyFragment"
-            app:destination="@id/policyFragment" />
-        <action
             android:id="@+id/action_settingFragment_to_premiumFragment"
             app:destination="@id/premiumFragment" />
     </fragment>
@@ -35,11 +32,6 @@
         android:name="com.prox.docxreader.ui.fragment.LanguageFragment"
         android:label="fragment_language"
         tools:layout="@layout/fragment_language" />
-    <fragment
-        android:id="@+id/policyFragment"
-        android:name="com.prox.docxreader.ui.fragment.PolicyFragment"
-        android:label="fragment_policy"
-        tools:layout="@layout/fragment_policy" />
     <fragment
         android:id="@+id/premiumFragment"
         android:name="com.prox.docxreader.ui.fragment.PremiumFragment"

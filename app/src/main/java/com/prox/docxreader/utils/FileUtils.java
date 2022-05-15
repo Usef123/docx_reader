@@ -1,8 +1,13 @@
 package com.prox.docxreader.utils;
 
+import static com.prox.docxreader.DocxReaderApp.TAG;
+
 import android.annotation.SuppressLint;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -12,13 +17,137 @@ import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.text.TextUtils;
 import android.util.Log;
+import android.webkit.MimeTypeMap;
+import android.widget.Toast;
+
+import androidx.core.content.FileProvider;
+
+import com.prox.docxreader.R;
+import com.prox.docxreader.modul.Document;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FileUtils {
     private static Uri contentUri = null;
+
+    public static ArrayList<Document> getDocuments(File file) {
+        ArrayList<Document> documents = new ArrayList<>();
+        File[] files = file.listFiles();
+        if (files != null){
+            for (File f : files){
+                if (f.isDirectory()){
+                    documents.addAll(getDocuments(f));
+                }else {
+                    if (f.getName().endsWith("doc")
+                            || f.getName().endsWith("docx")){
+                        Document document = new Document();
+                        document.setPath(f.getPath());
+                        document.setTitle(f.getName());
+                        document.setTimeCreate(f.lastModified());
+                        document.setTimeAccess(f.lastModified());
+                        document.setFavorite(false);
+                        document.setExist(true);
+                        documents.add(document);
+                    }
+                }
+            }
+        }
+        return documents;
+    }
+
+    public static String renameFile(Context context, String path, String name) {
+        String type = getType(path);
+        String oldName = getName(path);
+        File oldFile = new File(path);
+
+        String newName = name.trim();
+        String newPath = getRoot(path) + newName + "." +type;
+        File newFile = new File(newPath);
+
+        //Tên để trống
+        if (newName.isEmpty()) {
+            Log.d(TAG, "renameFile: false");
+            Toast.makeText(context, R.string.notification_rename_empty, Toast.LENGTH_SHORT).show();
+            return null;
+        } else if (newName.equals(oldName)) {
+            Log.d(TAG, "renameFile: false");
+            Toast.makeText(context, R.string.notification_not_rename, Toast.LENGTH_SHORT).show();
+            return null;
+        }
+
+        if (new File(path).exists()) {
+            if (new File(newPath).exists()) {
+                Log.d(TAG, "renameFile: false");
+                Toast.makeText(context, R.string.notification_file_duplicate, Toast.LENGTH_SHORT).show();
+                return null;
+            }
+
+            if (oldFile.renameTo(newFile)) {
+                broadcastScanFile(context, oldFile.getPath());
+                broadcastScanFile(context, newFile.getPath());
+                Toast.makeText(context, R.string.notification_rename_success, Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "renameFile: "+oldFile.getPath()+" --> "+newFile.getPath());
+                return newFile.getPath();
+            }
+        }
+        Log.d(TAG, "renameFile: false");
+        Toast.makeText(context, R.string.notification_file_not_found, Toast.LENGTH_SHORT).show();
+        return null;
+    }
+
+    public static boolean deleteFile(Context context, String path) {
+        File file = new File(path);
+        if (file.exists()) {
+            if (file.delete()) {
+                broadcastScanFile(context, path);
+                Log.d(TAG, "deleteFile: true");
+                return true;
+            }
+        }
+        Log.d(TAG, "deleteFile: false");
+        Toast.makeText(context, R.string.notification_file_not_found, Toast.LENGTH_SHORT).show();
+        return false;
+    }
+
+    public static void shareFile(Context context, String path) {
+        File file = new File(path);
+        Uri uri = FileProvider.getUriForFile(context, "com.prox.docxreader.fileprovider", file);
+
+        Intent intentShareFile = new Intent(Intent.ACTION_SEND);
+
+        String titleFull = getName(path)+"."+getType(path);
+
+        intentShareFile.setType(MimeTypeMap.getSingleton().getMimeTypeFromExtension(getType(path)));
+        intentShareFile.putExtra(Intent.EXTRA_STREAM, uri);
+        intentShareFile.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+        Intent chooser = Intent.createChooser(intentShareFile, titleFull);
+
+        @SuppressLint("QueryPermissionsNeeded") List<ResolveInfo> resInfoList = context.getPackageManager().queryIntentActivities(chooser, PackageManager.MATCH_DEFAULT_ONLY);
+
+        for (ResolveInfo resolveInfo : resInfoList) {
+            String packageName = resolveInfo.activityInfo.packageName;
+            context.grantUriPermission(packageName, uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        }
+
+        context.startActivity(chooser);
+    }
+
+    public static String getRoot(String path){
+        return path.substring(0, path.lastIndexOf("/") + 1);
+    }
+
+    public static String getName(String path){
+        return path.substring(path.lastIndexOf("/") + 1, path.lastIndexOf("."));
+    }
+
+    public static String getType(String path){
+        return path.substring(path.lastIndexOf('.')+1);
+    }
 
     @SuppressLint("NewApi")
     public static String getPath( final Uri uri, Context context) {
@@ -387,15 +516,13 @@ public class FileUtils {
         return "com.google.android.apps.docs.storage".equals(uri.getAuthority()) || "com.google.android.apps.docs.storage.legacy".equals(uri.getAuthority());
     }
 
-    public static String getRoot(String path){
-        return path.substring(0, path.lastIndexOf("/") + 1);
-    }
-
-    public static String getName(String path){
-        return path.substring(path.lastIndexOf("/") + 1, path.lastIndexOf("."));
-    }
-
-    public static String getType(String path){
-        return path.substring(path.lastIndexOf('.')+1);
+    @SuppressLint("IntentReset")
+    private static void broadcastScanFile(Context context, String path) {
+        Intent intentNotify = new Intent();
+        String type = getType(path);
+        intentNotify.setType(MimeTypeMap.getSingleton().getMimeTypeFromExtension(type));
+        intentNotify.setAction(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        intentNotify.setData(Uri.fromFile(new File(path)));
+        context.sendBroadcast(intentNotify);
     }
 }

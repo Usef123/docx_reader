@@ -8,11 +8,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.chauthai.swipereveallayout.ViewBinderHelper;
-import com.prox.docxreader.OnClickFavoriteListener;
-import com.prox.docxreader.OnClickItemDocumentListener;
-import com.prox.docxreader.OnClickDeleteListener;
-import com.prox.docxreader.OnClickRenameListener;
-import com.prox.docxreader.OnClickShareListener;
+import com.prox.docxreader.interfaces.OnClickFavoriteListener;
+import com.prox.docxreader.interfaces.OnClickItemDocumentListener;
+import com.prox.docxreader.interfaces.OnClickDeleteListener;
+import com.prox.docxreader.interfaces.OnClickRenameListener;
+import com.prox.docxreader.interfaces.OnClickShareListener;
 import com.prox.docxreader.R;
 import com.prox.docxreader.databinding.ItemDocxHomeBinding;
 import com.prox.docxreader.modul.Document;

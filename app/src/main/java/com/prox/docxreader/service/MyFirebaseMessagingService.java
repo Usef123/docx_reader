@@ -1,5 +1,7 @@
 package com.prox.docxreader.service;
 
+import static com.prox.docxreader.utils.NotificationUtils.CHANNEL_FIREBASE;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -14,7 +16,6 @@ import androidx.core.app.NotificationCompat;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.prox.docxreader.R;
-import com.prox.docxreader.ui.activity.MainActivity;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
@@ -37,10 +38,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private void sendNotification(String title, String message, Uri image) {
         Intent intent = new Intent();
-//        intent.setAction(Intent.ACTION_MAIN);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Notification notification = new NotificationCompat.Builder(this, MainActivity.CHANNEL_ID)
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_FIREBASE)
                 .setContentTitle(title)
                 .setContentText(message)
                 .setSmallIcon(R.drawable.ic_notification)

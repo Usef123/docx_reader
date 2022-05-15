@@ -1,5 +1,7 @@
 package com.prox.docxreader.viewmodel;
 
+import static com.prox.docxreader.DocxReaderApp.TAG;
+
 import android.app.Application;
 import android.util.Log;
 
@@ -13,10 +15,6 @@ import com.prox.docxreader.repository.DocumentRepository;
 import java.util.List;
 
 public class DocumentViewModel extends AndroidViewModel {
-    public static final int SORT_NAME = 1;
-    public static final int SORT_TIME_CREATE = 2;
-    public static final int SORT_TIME_ACCESS = 3;
-
     private final DocumentRepository repository;
     private LiveData<List<Document>> documents;
 
@@ -25,29 +23,33 @@ public class DocumentViewModel extends AndroidViewModel {
         repository = new DocumentRepository(application);
     }
 
+    public Document check(String path){
+        return repository.check(path);
+    }
+
     public void insert(Document document){
-        Log.d("viewmodel", "insert: "+document.getPath());
+        Log.d(TAG, "DocumentViewModel insert "+document.getPath());
         repository.insert(document);
     }
 
     public void updateIsExist(){
+        Log.d(TAG, "DocumentViewModel updateIsExist");
         repository.updateIsExist();
-        Log.d("viewmodel", "updateIsExist");
     }
 
     public void update(Document document){
+        Log.d(TAG, "DocumentViewModel update "+document.getPath());
         repository.update(document);
-        Log.d("viewmodel", "update: "+document.getPath());
     }
 
     public void delete(Document document){
+        Log.d(TAG, "DocumentViewModel delete "+document.getPath());
         repository.delete(document);
-        Log.d("viewmodel", "delete: "+document.getPath());
     }
 
     public void deleteNotExist(){
+        Log.d(TAG, "DocumentViewModel deleteNotExist");
         repository.deleteNotExist();
-        Log.d("viewmodel", "deleteNotExist");
     }
 
     public LiveData<List<Document>> getDocuments(boolean isFavorite, int typeSort, String search) {
