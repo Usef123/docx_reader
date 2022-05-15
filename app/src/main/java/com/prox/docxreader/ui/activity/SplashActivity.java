@@ -123,7 +123,7 @@ public class SplashActivity extends AppCompatActivity {
     private void goToReaderActivity() {
         Log.d(TAG, "SplashActivity goToReaderActivity");
         Uri data = getIntent().getData();
-        String path = FileUtils.getPath(data, this);
+        String path = FileUtils.getRealPath(this, data);
 
         FirebaseUtils.sendEventOpenFile(this, data, path);
 

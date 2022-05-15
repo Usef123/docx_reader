@@ -13,8 +13,8 @@ public class FirebaseUtils {
         Bundle bundle = new Bundle();
         bundle.putString("event_type", "open_file");
         bundle.putString("source_app", data.toString());
-        bundle.putString("file_name", FileUtils.getName(path));
-        bundle.putString("source_app", FileUtils.getType(path));
+        bundle.putString("file_name", path==null?"null":FileUtils.getName(path));
+        bundle.putString("source_app", path==null?"null":FileUtils.getType(path));
         FirebaseAnalytics.getInstance(context).logEvent("prox_office_reader", bundle);
     }
 
