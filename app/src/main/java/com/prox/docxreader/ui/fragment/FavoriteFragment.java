@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.prox.docxreader.DocxReaderApp;
 import com.prox.docxreader.R;
 import com.prox.docxreader.adapter.DocumentFavoriteAdapter;
 import com.prox.docxreader.databinding.DialogSortBinding;
@@ -30,7 +31,6 @@ import com.prox.docxreader.ui.activity.ReaderActivity;
 import com.prox.docxreader.ui.dialog.SortDialog;
 import com.prox.docxreader.utils.FileUtils;
 import com.prox.docxreader.viewmodel.DocumentViewModel;
-import com.proxglobal.proxads.adsv2.ads.ProxAds;
 import com.proxglobal.proxads.adsv2.callback.AdsCallback;
 
 import java.io.File;
@@ -115,7 +115,7 @@ public class FavoriteFragment extends Fragment {
         document.setTimeAccess(new Date().getTime());
         model.update(document);
 
-        ProxAds.getInstance().showInterstitial(requireActivity(), "insite", new AdsCallback() {
+        DocxReaderApp.instance.showInterstitial(requireActivity(), "insite", new AdsCallback() {
             @Override
             public void onClosed() {
                 super.onClosed();

@@ -15,12 +15,12 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.prox.docxreader.BuildConfig;
+import com.prox.docxreader.DocxReaderApp;
 import com.prox.docxreader.R;
 import com.prox.docxreader.databinding.ActivitySplashBinding;
 import com.prox.docxreader.utils.FileUtils;
 import com.prox.docxreader.utils.FirebaseUtils;
 import com.prox.docxreader.utils.LanguageUtils;
-import com.proxglobal.proxads.adsv2.ads.ProxAds;
 import com.proxglobal.proxads.adsv2.callback.AdsCallback;
 import com.proxglobal.purchase.ProxPurchase;
 
@@ -52,6 +52,8 @@ public class SplashActivity extends AppCompatActivity {
             return;
         }
 
+        DocxReaderApp.instance.initInterstitial(this, BuildConfig.interstitial_global, null, "insite");
+
         String action = getIntent().getAction();
         new Handler().postDelayed(() -> {
             if (action == null) {
@@ -70,7 +72,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void showInterSplash() {
-        ProxAds.getInstance().showSplash(this, new AdsCallback() {
+        DocxReaderApp.instance.showSplash(this, new AdsCallback() {
             @Override
             public void onShow() {
                 Log.d(TAG, "SplashActivity Ads onShow");
@@ -91,7 +93,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void showInterOutside() {
-        ProxAds.getInstance().showSplash(this, new AdsCallback() {
+        DocxReaderApp.instance.showSplash(this, new AdsCallback() {
             @Override
             public void onShow() {
                 Log.d(TAG, "SplashActivity Ads onShow");

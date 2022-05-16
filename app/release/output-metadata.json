@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "artifactType": {
     "type": "APK",
     "kind": "Directory"
@@ -10,9 +10,11 @@
     {
       "type": "SINGLE",
       "filters": [],
-      "versionCode": 7,
-      "versionName": "1.0.6",
-      "outputFile": "v1.0.6(7)-DocxReader-release.apk"
+      "attributes": [],
+      "versionCode": 9,
+      "versionName": "1.0.8",
+      "outputFile": "v1.0.8(9)-DocxReader-release.apk"
     }
-  ]
+  ],
+  "elementType": "File"
 }

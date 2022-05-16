@@ -23,6 +23,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.prox.docxreader.BuildConfig;
+import com.prox.docxreader.DocxReaderApp;
 import com.prox.docxreader.R;
 import com.prox.docxreader.databinding.ActivityMainBinding;
 import com.prox.docxreader.modul.Document;
@@ -33,7 +34,6 @@ import com.prox.docxreader.utils.NetworkUtils;
 import com.prox.docxreader.utils.NotificationUtils;
 import com.prox.docxreader.utils.PermissionUtils;
 import com.prox.docxreader.viewmodel.DocumentViewModel;
-import com.proxglobal.proxads.adsv2.ads.ProxAds;
 import com.proxglobal.proxads.adsv2.callback.AdsCallback;
 import com.proxglobal.purchase.ProxPurchase;
 
@@ -66,8 +66,6 @@ public class MainActivity extends AppCompatActivity {
         model = new ViewModelProvider(this).get(DocumentViewModel.class);
 
         init();
-
-        ProxAds.getInstance().initInterstitial(this, BuildConfig.interstitial_global, null, "insite");
 
         observer = getObserver();
     }
@@ -183,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
             binding.bannerAds.setVisibility(View.GONE);
         }
 
-        ProxAds.getInstance().showBanner(
+        DocxReaderApp.instance.showBanner(
                 this,
                 binding.bannerAds,
                 BuildConfig.banner,

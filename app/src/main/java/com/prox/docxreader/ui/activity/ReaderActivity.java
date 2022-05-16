@@ -41,13 +41,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.prox.docxreader.BuildConfig;
+import com.prox.docxreader.DocxReaderApp;
 import com.prox.docxreader.R;
 import com.prox.docxreader.databinding.ActivityOfficeDetailBinding;
 import com.prox.docxreader.utils.FirebaseUtils;
 import com.prox.docxreader.utils.LanguageUtils;
 import com.prox.docxreader.utils.NetworkUtils;
 import com.prox.docxreader.utils.PermissionUtils;
-import com.proxglobal.proxads.adsv2.ads.ProxAds;
 import com.proxglobal.proxads.adsv2.callback.AdsCallback;
 import com.proxglobal.purchase.ProxPurchase;
 import com.proxglobal.rate.ProxRateDialog;
@@ -107,8 +107,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
         if (filePath != null) {
             fileName = filePath.substring(filePath.lastIndexOf('/') + 1);
         }
-        ProxAds.getInstance().initInterstitial(this, BuildConfig.interstitial_global, null, "close");
-        ProxAds.getInstance().showBanner(this, binding.bannerAds, BuildConfig.banner, new AdsCallback() {
+        DocxReaderApp.instance.showBanner(this, binding.bannerAds, BuildConfig.banner, new AdsCallback() {
                     @Override
                     public void onShow() {
                         super.onShow();
@@ -334,7 +333,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
         Log.d("close_reader", String.valueOf(closeReader));
         if (closeReader % 2 == 0 && closeReader % 3 == 0) {
             preferences.edit().putInt("close_reader", closeReader + 1).apply();
-            ProxAds.getInstance().showInterstitial(this, "close", new AdsCallback() {
+            DocxReaderApp.instance.showInterstitial(this, "insite", new AdsCallback() {
                 @Override
                 public void onClosed() {
                     super.onClosed();
@@ -379,7 +378,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
             }
         } else if (closeReader % 3 == 0) {
             preferences.edit().putInt("close_reader", closeReader + 1).apply();
-            ProxAds.getInstance().showInterstitial(this, "close", new AdsCallback() {
+            DocxReaderApp.instance.showInterstitial(this, "insite", new AdsCallback() {
                 @Override
                 public void onClosed() {
                     super.onClosed();
