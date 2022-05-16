@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class FileUtils {
-    private static Uri contentUri = null;
+//    private static Uri contentUri = null;
 
     public static ArrayList<Document> getDocuments(File file) {
         ArrayList<Document> documents = new ArrayList<>();
