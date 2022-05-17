@@ -8,17 +8,16 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.chauthai.swipereveallayout.ViewBinderHelper;
-import com.prox.docxreader.interfaces.OnClickFavoriteListener;
-import com.prox.docxreader.interfaces.OnClickItemDocumentListener;
-import com.prox.docxreader.interfaces.OnClickDeleteListener;
-import com.prox.docxreader.interfaces.OnClickRenameListener;
-import com.prox.docxreader.interfaces.OnClickShareListener;
 import com.prox.docxreader.R;
 import com.prox.docxreader.databinding.ItemDocxHomeBinding;
+import com.prox.docxreader.interfaces.OnClickDeleteListener;
+import com.prox.docxreader.interfaces.OnClickFavoriteListener;
+import com.prox.docxreader.interfaces.OnClickItemDocumentListener;
+import com.prox.docxreader.interfaces.OnClickRenameListener;
+import com.prox.docxreader.interfaces.OnClickShareListener;
 import com.prox.docxreader.modul.Document;
+import com.prox.docxreader.utils.NumberUtils;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 public class DocumentHomeAdapter extends RecyclerView.Adapter<DocumentHomeAdapter.DocumentViewHolder> {
@@ -61,7 +60,7 @@ public class DocumentHomeAdapter extends RecyclerView.Adapter<DocumentHomeAdapte
     public void onBindViewHolder(@NonNull DocumentViewHolder holder, int position) {
         Document document = documents.get(position);
         holder.binding.itemDocx.txtTitle.setText(document.getTitle());
-        holder.binding.itemDocx.txtTime.setText(getDate(document.getTimeCreate()));
+        holder.binding.itemDocx.txtTime.setText(NumberUtils.formatAsDate(document.getTimeCreate()));
         if (document.isFavorite()){
             holder.binding.btnFavorite.setImageResource(R.drawable.ic_favorite);
         }else{
@@ -116,10 +115,5 @@ public class DocumentHomeAdapter extends RecyclerView.Adapter<DocumentHomeAdapte
             super(binding.getRoot());
             this.binding = binding;
         }
-    }
-
-    @SuppressLint("SimpleDateFormat")
-    private String getDate(long val){
-        return new SimpleDateFormat("HH:mm, dd/MM/yyyy").format(new Date(val*1000));
     }
 }
