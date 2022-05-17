@@ -39,6 +39,8 @@
         <entry key="..\:/docx-reader/app/src/main/res/drawable/img_button_while_blue_selector.xml" value="0.1105" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/img_button_while_enabled.xml" value="0.118" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/img_button_while_selector.xml" value="0.118" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/img_button_xls_enabled.xml" value="0.1295" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/img_button_xls_selector.xml" value="0.1295" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/img_close_enabled.xml" value="0.118" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/img_close_pressed.xml" value="0.118" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/setting_selector.xml" value="0.1295" />
@@ -52,10 +54,14 @@
         <entry key="..\:/docx-reader/app/src/main/res/layout/dialog_delete.xml" value="0.25" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/dialog_option.xml" value="0.24895833333333334" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/dialog_rename.xml" value="0.25" />
+        <entry key="..\:/docx-reader/app/src/main/res/layout/fragment_excel.xml" value="0.12760416666666666" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/fragment_favorite.xml" value="0.2" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/fragment_home.xml" value="0.25" />
+        <entry key="..\:/docx-reader/app/src/main/res/layout/fragment_pdf.xml" value="0.12760416666666666" />
+        <entry key="..\:/docx-reader/app/src/main/res/layout/fragment_ppt.xml" value="0.12760416666666666" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/fragment_premium.xml" value="0.264" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/fragment_setting.xml" value="0.2" />
+        <entry key="..\:/docx-reader/app/src/main/res/layout/fragment_xls.xml" value="0.12760416666666666" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/item_docx.xml" value="0.25" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/item_docx_favorite.xml" value="0.21927083333333333" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/item_docx_home.xml" value="0.21927083333333333" />

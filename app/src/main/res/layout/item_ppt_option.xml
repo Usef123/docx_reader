@@ -9,7 +9,7 @@
     app:cardCornerRadius="10dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:background="#FF671B"
+        android:background="@color/ppt_color"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 

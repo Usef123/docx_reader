@@ -162,6 +162,17 @@ public class MainActivity extends AppCompatActivity {
                 binding.bottomNav.setVisibility(View.GONE);
                 binding.toolbar.setVisibility(View.GONE);
                 binding.toolbar.setTitle("");
+            } else if (navDestination.getId() == R.id.xlsFragment
+                    || navDestination.getId() == R.id.pdfFragment
+                    || navDestination.getId() == R.id.pptFragment ) {
+                if (ProxPurchase.getInstance().checkPurchased() || !NetworkUtils.isNetworkAvailable(this)) {
+                    binding.bannerAds.setVisibility(View.GONE);
+                } else {
+                    binding.bannerAds.setVisibility(View.VISIBLE);
+                }
+                binding.bottomNav.setVisibility(View.GONE);
+                binding.toolbar.setVisibility(View.GONE);
+                binding.toolbar.setTitle("");
             } else {
                 if (ProxPurchase.getInstance().checkPurchased() || !NetworkUtils.isNetworkAvailable(this)) {
                     binding.bannerAds.setVisibility(View.GONE);

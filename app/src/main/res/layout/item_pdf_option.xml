@@ -9,7 +9,7 @@
     app:cardCornerRadius="10dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:background="#E03303"
+        android:background="@color/pdf_color"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 

@@ -56,7 +56,9 @@
     <string name="btn_continue">Continue</string>
     <string name="docx_reader_view_all_file">Docx Reader - View All File</string>
     <string name="version">Version</string>
-    <string name="excel_manager">Excel Manager</string>
+    <string name="xls_manager">XLS Manager</string>
     <string name="pdf_manager">PDF Manager</string>
     <string name="ppt_manager">PPT Manager</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.prox.docxreader.ui.dialog;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
@@ -9,12 +10,15 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
+import androidx.navigation.Navigation;
 
+import com.prox.docxreader.R;
 import com.prox.docxreader.databinding.DialogOptionBinding;
 
 public class OptionDialog extends Dialog {
 
     public OptionDialog(@NonNull Context context,
+                        Activity activity,
                         DialogOptionBinding binding) {
         super(context);
 
@@ -31,5 +35,20 @@ public class OptionDialog extends Dialog {
         getWindow().setAttributes(layoutParams);
 
         binding.getRoot().setBackgroundResource(0);
+
+        binding.itemExcelOption.excelOption.setOnClickListener(view -> {
+            Navigation.findNavController(activity, R.id.nav_host_fragment).navigate(R.id.action_global_xlsFragment);
+            cancel();
+        });
+
+        binding.itemPdfOption.pdfOption.setOnClickListener(view -> {
+            Navigation.findNavController(activity, R.id.nav_host_fragment).navigate(R.id.action_global_pdfFragment);
+            cancel();
+        });
+
+        binding.itemPptOption.pptOption.setOnClickListener(view -> {
+            Navigation.findNavController(activity, R.id.nav_host_fragment).navigate(R.id.action_global_pptFragment);
+            cancel();
+        });
     }
 }

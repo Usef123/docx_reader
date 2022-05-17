@@ -62,6 +62,7 @@ public class FavoriteFragment extends Fragment {
         binding.include.btnOption.setOnClickListener(view -> {
             OptionDialog dialog = new OptionDialog(
                     requireContext(),
+                    requireActivity(),
                     DialogOptionBinding.inflate(getLayoutInflater()));
             dialog.show();
         });
