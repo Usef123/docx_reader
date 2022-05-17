@@ -21,16 +21,19 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.prox.docxreader.DocxReaderApp;
 import com.prox.docxreader.R;
 import com.prox.docxreader.adapter.DocumentHomeAdapter;
 import com.prox.docxreader.databinding.DialogDeleteBinding;
+import com.prox.docxreader.databinding.DialogOptionBinding;
 import com.prox.docxreader.databinding.DialogRenameBinding;
 import com.prox.docxreader.databinding.DialogSortBinding;
 import com.prox.docxreader.databinding.FragmentHomeBinding;
 import com.prox.docxreader.modul.Document;
 import com.prox.docxreader.ui.activity.ReaderActivity;
 import com.prox.docxreader.ui.dialog.DeleteDialog;
+import com.prox.docxreader.ui.dialog.OptionDialog;
 import com.prox.docxreader.ui.dialog.RenameDialog;
 import com.prox.docxreader.ui.dialog.SortDialog;
 import com.prox.docxreader.utils.FileUtils;
@@ -58,6 +61,13 @@ public class HomeFragment extends Fragment {
         model = new ViewModelProvider(requireActivity()).get(DocumentViewModel.class);
 
         addSearchDocument();
+
+        binding.include.btnOption.setOnClickListener(view -> {
+            OptionDialog dialog = new OptionDialog(
+                    requireContext(),
+                    DialogOptionBinding.inflate(getLayoutInflater()));
+            dialog.show();
+        });
 
         binding.include.btnSort.setOnClickListener(view -> {
             SortDialog dialog = new SortDialog(
@@ -211,9 +221,9 @@ public class HomeFragment extends Fragment {
         document.setFavorite(!document.isFavorite());
         model.update(document);
         if (document.isFavorite()){
-            Toast.makeText(getContext(), R.string.notification_add_favorite, Toast.LENGTH_SHORT).show();
+            Snackbar.make(binding.getRoot(), R.string.notification_add_favorite, Snackbar.LENGTH_SHORT).show();
         }else {
-            Toast.makeText(getContext(), R.string.notification_remove_favorite, Toast.LENGTH_SHORT).show();
+            Snackbar.make(binding.getRoot(), R.string.notification_remove_favorite, Snackbar.LENGTH_SHORT).show();
         }
     }
 

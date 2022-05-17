@@ -30,8 +30,8 @@
     <string name="notification_rename_error">Rename error</string>
     <string name="notification_not_rename">Name unchanged</string>
     <string name="notification_share_error">Share error</string>
-    <string name="notification_add_favorite">Bookmark</string>
-    <string name="notification_remove_favorite">Remove bookmark</string>
+    <string name="notification_add_favorite">Bookmark Added Successfully</string>
+    <string name="notification_remove_favorite">Bookmark Removed Successfully</string>
     <string name="btn_privacy_policy">Privacy Policy</string>
     <string name="btn_more_app">More App</string>
     <string name="btn_feedback">Feedback</string>
@@ -56,4 +56,7 @@
     <string name="btn_continue">Continue</string>
     <string name="docx_reader_view_all_file">Docx Reader - View All File</string>
     <string name="version">Version</string>
+    <string name="excel_manager">Excel Manager</string>
+    <string name="pdf_manager">PDF Manager</string>
+    <string name="ppt_manager">PPT Manager</string>
 </resources>
