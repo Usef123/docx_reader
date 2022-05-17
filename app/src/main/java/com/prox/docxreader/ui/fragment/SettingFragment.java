@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import com.prox.docxreader.BuildConfig;
 import com.prox.docxreader.R;
 import com.prox.docxreader.databinding.FragmentSettingBinding;
 import com.proxglobal.purchase.ProxPurchase;
@@ -24,6 +25,8 @@ public class SettingFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         FragmentSettingBinding binding = FragmentSettingBinding.inflate(inflater, container, false);
+
+        binding.txtVersionApp.setText(binding.txtVersionApp.getText() +" "+ BuildConfig.VERSION_NAME);
 
         binding.btnLanguage.setOnClickListener(v ->
                 Navigation.findNavController(binding.getRoot()).navigate(R.id.action_settingFragment_to_languageFragment)

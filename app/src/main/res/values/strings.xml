@@ -54,4 +54,6 @@
     <string name="old_price"> <strike>Old Price: 46.000 đ</strike> </string>
     <string name="best_price">Best Price: </string>
     <string name="btn_continue">Continue</string>
+    <string name="docx_reader_view_all_file">Docx Reader - View All File</string>
+    <string name="version">Version</string>
 </resources>

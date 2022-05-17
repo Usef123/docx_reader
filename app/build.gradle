@@ -14,8 +14,8 @@ android {
         applicationId "com.prox.docxreader"
         minSdkVersion 21
         targetSdkVersion 32
-        versionCode 9
-        versionName "1.0.8"
+        versionCode 10
+        versionName "1.1.0"
         setProperty("archivesBaseName", "v$versionName($versionCode)-DocxReader")
     }
     buildTypes {
@@ -53,7 +53,6 @@ android {
     buildFeatures {
         viewBinding true
     }
-    namespace 'com.prox.docxreader'
 }
 
 dependencies {
