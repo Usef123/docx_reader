@@ -472,12 +472,14 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
      */
 
     private void init() {
-        dbService = new DBService(getApplicationContext());
+        if (dbService != null){
+            dbService = new DBService(getApplicationContext());
+        }
         setTitle(fileName);
 
         boolean isSupport = FileKit.instance().isSupport(filePath);
         //写入本地数据库
-        if (isSupport) {
+        if (isSupport && dbService != null) {
             dbService.insertRecentFiles(MainConstant.TABLE_RECENT, filePath);
         }
         // create view
@@ -505,7 +507,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
      * @return
      */
     public boolean isPopUpErrorDlg() {
-        return true;
+        return false;
     }
 
     @Override
@@ -681,11 +683,13 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
      * @return
      */
     public void initMarked() {
-        marked = dbService.queryItem(MainConstant.TABLE_STAR, filePath);
-        if (marked) {
-            toolsbar.setCheckState(EventConstant.FILE_MARK_STAR_ID, AImageCheckButton.CHECK);
-        } else {
-            toolsbar.setCheckState(EventConstant.FILE_MARK_STAR_ID, AImageCheckButton.UNCHECK);
+        if(dbService != null) {
+            marked = dbService.queryItem(MainConstant.TABLE_STAR, filePath);
+            if (marked) {
+                toolsbar.setCheckState(EventConstant.FILE_MARK_STAR_ID, AImageCheckButton.CHECK);
+            } else {
+                toolsbar.setCheckState(EventConstant.FILE_MARK_STAR_ID, AImageCheckButton.UNCHECK);
+            }
         }
     }
 
