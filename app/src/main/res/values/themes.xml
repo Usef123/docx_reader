@@ -28,4 +28,17 @@
     <style name="ThemeImgButtonBlueWhite" parent="android:style/Theme.NoTitleBar">
         <item name="android:buttonStyle">@style/img_button_blue_white</item>
     </style>
+
+    <style name="SortDialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/anim_right_left_1</item>
+        <item name="android:windowExitAnimation">@anim/anim_left_right_2</item>
+    </style>
+    <style name="CustomDialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/anim_bottom_top_1</item>
+        <item name="android:windowExitAnimation">@anim/anim_top_bottom_2</item>
+    </style>
+    <style name="OptionDialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/anim_left_right_1</item>
+        <item name="android:windowExitAnimation">@anim/anim_right_left_2</item>
+    </style>
 </resources>

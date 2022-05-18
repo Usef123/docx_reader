@@ -18,6 +18,9 @@
         <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_baseline_close_24.xml" value="0.1105" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_button_more.xml" value="0.118" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_checked.xml" value="0.1105" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_checked_pdf.xml" value="0.135" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_checked_pptx.xml" value="0.135" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_checked_xlsx.xml" value="0.135" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_close_premium.xml" value="0.1105" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_diamond.xml" value="0.118" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_infor_app.xml" value="0.118" />
@@ -26,6 +29,10 @@
         <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_notification.xml" value="0.1495" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_premium.xml" value="0.118" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_sort.xml" value="0.1295" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_sort_name.xml" value="0.135" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_sort_name_pdf.xml" value="0.135" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_sort_name_pptx.xml" value="0.135" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_sort_name_xlsx.xml" value="0.135" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_user_fill.xml" value="0.118" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/image_premium.xml" value="0.118" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/img_button_blue_enabled.xml" value="0.118" />
@@ -62,9 +69,11 @@
         <entry key="..\:/docx-reader/app/src/main/res/layout/dialog_delete.xml" value="0.25" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/dialog_option.xml" value="0.24895833333333334" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/dialog_rename.xml" value="0.25" />
+        <entry key="..\:/docx-reader/app/src/main/res/layout/dialog_sort.xml" value="0.536" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/fragment_excel.xml" value="0.12760416666666666" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/fragment_favorite.xml" value="0.2" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/fragment_home.xml" value="0.25" />
+        <entry key="..\:/docx-reader/app/src/main/res/layout/fragment_language.xml" value="0.25" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/fragment_pdf.xml" value="0.12760416666666666" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/fragment_ppt.xml" value="0.12760416666666666" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/fragment_premium.xml" value="0.264" />

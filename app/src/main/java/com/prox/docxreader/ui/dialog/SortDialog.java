@@ -11,6 +11,7 @@ import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 
+import com.prox.docxreader.R;
 import com.prox.docxreader.databinding.DialogSortBinding;
 import com.prox.docxreader.ui.fragment.FavoriteFragment;
 import com.prox.docxreader.ui.fragment.HomeFragment;
@@ -47,7 +48,30 @@ public class SortDialog extends Dialog {
         layoutParams.gravity = Gravity.TOP|Gravity.END;
         layoutParams.y = 128;
         layoutParams.x = 16;
+        layoutParams.windowAnimations = R.style.SortDialogAnimation;
         getWindow().setAttributes(layoutParams);
+
+        switch (typeFragment){
+            case FRAGMENT_XLSX:
+                binding.imgName.setImageResource(R.drawable.ic_sort_name_xlsx);
+                binding.nameChecked.setImageResource(R.drawable.ic_checked_xlsx);
+                binding.timeCreateChecked.setImageResource(R.drawable.ic_checked_xlsx);
+                binding.timeAccessChecked.setImageResource(R.drawable.ic_checked_xlsx);
+                break;
+            case FRAGMENT_PDF:
+                binding.imgName.setImageResource(R.drawable.ic_sort_name_pdf);
+                binding.nameChecked.setImageResource(R.drawable.ic_checked_pdf);
+                binding.timeCreateChecked.setImageResource(R.drawable.ic_checked_pdf);
+                binding.timeAccessChecked.setImageResource(R.drawable.ic_checked_pdf);
+                break;
+            case FRAGMENT_PPTX:
+                binding.imgName.setImageResource(R.drawable.ic_sort_name_pptx);
+                binding.nameChecked.setImageResource(R.drawable.ic_checked_pptx);
+                binding.timeCreateChecked.setImageResource(R.drawable.ic_checked_pptx);
+                binding.timeAccessChecked.setImageResource(R.drawable.ic_checked_pptx);
+                break;
+        }
+
 
         switch (typeSort){
             case SORT_NAME:

@@ -188,6 +188,7 @@ public class FavoriteFragment extends Fragment {
         intent.putExtra(FILE_PATH, document.getPath());
         intent.putExtra(OPEN_OUTSIDE, false);
         startActivity(intent);
+        requireActivity().overridePendingTransition(R.anim.anim_right_left_1, R.anim.anim_right_left_2);
     }
 
     private void clickShare(Document document) {

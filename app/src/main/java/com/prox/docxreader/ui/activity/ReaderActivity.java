@@ -149,6 +149,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                     startActivity(intent);
                 }
                 finish();
+                overridePendingTransition(R.anim.anim_left_right_1, R.anim.anim_left_right_2);
             }
 
             @Override
@@ -163,6 +164,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                         startActivity(intent);
                     }
                     finish();
+                    overridePendingTransition(R.anim.anim_left_right_1, R.anim.anim_left_right_2);
                 }
             }
 
@@ -176,6 +178,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                     startActivity(intent);
                 }
                 finish();
+                overridePendingTransition(R.anim.anim_left_right_1, R.anim.anim_left_right_2);
             }
         });
         ProxRateDialog.init(config);
@@ -354,6 +357,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                             startActivity(intent);
                         }
                         finish();
+                        overridePendingTransition(R.anim.anim_left_right_1, R.anim.anim_left_right_2);
                     }else {
                         ProxRateDialog.showIfNeed(ReaderActivity.this, getSupportFragmentManager());
                     }
@@ -371,6 +375,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                             startActivity(intent);
                         }
                         finish();
+                        overridePendingTransition(R.anim.anim_left_right_1, R.anim.anim_left_right_2);
                     }else {
                         ProxRateDialog.showIfNeed(ReaderActivity.this, getSupportFragmentManager());
                     }
@@ -387,6 +392,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                     startActivity(intent);
                 }
                 finish();
+                overridePendingTransition(R.anim.anim_left_right_1, R.anim.anim_left_right_2);
             }else {
                 ProxRateDialog.showIfNeed(ReaderActivity.this, getSupportFragmentManager());
             }
@@ -403,6 +409,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                         startActivity(intent);
                     }
                     finish();
+                    overridePendingTransition(R.anim.anim_left_right_1, R.anim.anim_left_right_2);
                 }
 
                 @Override
@@ -415,6 +422,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                         startActivity(intent);
                     }
                     finish();
+                    overridePendingTransition(R.anim.anim_left_right_1, R.anim.anim_left_right_2);
                 }
             });
         }else {
@@ -425,6 +433,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                 startActivity(intent);
             }
             finish();
+            overridePendingTransition(R.anim.anim_left_right_1, R.anim.anim_left_right_2);
         }
     }
 

@@ -35,6 +35,7 @@ public class LanguageFragment extends Fragment {
                     intent.setAction(CHANGE_LANGUAGE);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
+                    requireActivity().overridePendingTransition(R.anim.anim_right_left_1, R.anim.anim_right_left_2);
                 });
 
         LinearLayoutManager manager = new LinearLayoutManager(getContext());

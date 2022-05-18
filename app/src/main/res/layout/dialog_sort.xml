@@ -14,11 +14,13 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:background="@drawable/img_button_while_selector">
+
         <ImageView
+            android:id="@+id/img_name"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:src="@drawable/ic_sort_name"
-            android:paddingEnd="16dp"/>
+            android:paddingEnd="16dp"
+            android:src="@drawable/ic_sort_name_docx" />
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"

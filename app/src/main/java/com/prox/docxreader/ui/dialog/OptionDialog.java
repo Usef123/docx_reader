@@ -32,6 +32,7 @@ public class OptionDialog extends Dialog {
         layoutParams.gravity = Gravity.TOP|Gravity.START;
         layoutParams.y = 128;
         layoutParams.x = 16;
+        layoutParams.windowAnimations = R.style.OptionDialogAnimation;
         getWindow().setAttributes(layoutParams);
 
         binding.getRoot().setBackgroundResource(0);

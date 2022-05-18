@@ -18,6 +18,7 @@
         android:id="@+id/recycler_view_home"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layoutAnimation="@anim/recycler_animation"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -25,13 +26,11 @@
         app:layout_constraintTop_toBottomOf="@+id/include"
         app:layout_constraintVertical_bias="0.0" />
 
-    <TextView
+    <ImageView
         android:id="@+id/noti_list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/list_empty"
-        android:textSize="16sp"
-        android:textStyle="bold"
+        android:src="@drawable/ic_file_empty_xlsx"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

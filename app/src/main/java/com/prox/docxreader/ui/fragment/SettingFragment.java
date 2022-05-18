@@ -38,9 +38,10 @@ public class SettingFragment extends Fragment {
 
         binding.btnMoreApp.setOnClickListener(v -> openCHPlay());
 
-        binding.btnPrivacyPolicy.setOnClickListener(v ->
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(URI_POLICY)))
-        );
+        binding.btnPrivacyPolicy.setOnClickListener(v -> {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(URI_POLICY)));
+            requireActivity().overridePendingTransition(R.anim.anim_right_left_1, R.anim.anim_right_left_2);
+        });
 
         if (ProxPurchase.getInstance().checkPurchased()){
             binding.btnPremium.setVisibility(View.GONE);
@@ -53,6 +54,7 @@ public class SettingFragment extends Fragment {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(URI_PACKAGE));
         startActivity(intent);
+        requireActivity().overridePendingTransition(R.anim.anim_right_left_1, R.anim.anim_right_left_2);
     }
 
     private void shareApp() {
