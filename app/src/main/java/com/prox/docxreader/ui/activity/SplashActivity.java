@@ -54,6 +54,7 @@ public class SplashActivity extends AppCompatActivity {
         }
 
         DocxReaderApp.instance.initInterstitial(this, BuildConfig.interstitial_global, null, "insite");
+        DocxReaderApp.instance.initInterstitial(this, BuildConfig.interstitial_menu, null, "menu");
 
         String action = getIntent().getAction();
         new Handler().postDelayed(() -> {

@@ -10,8 +10,10 @@ import static com.prox.docxreader.ui.dialog.SortDialog.SORT_TIME_CREATE;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -106,7 +108,31 @@ public class HomeFragment extends Fragment {
                     requireContext(),
                     requireActivity(),
                     DialogOptionBinding.inflate(getLayoutInflater()));
-            dialog.show();
+
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
+            int choose_menu = preferences.getInt("choose_menu", 1);
+            Log.d("choose_menu", String.valueOf(choose_menu));
+            if (choose_menu % 2 == 0) {
+                preferences.edit().putInt("choose_menu", choose_menu + 1).apply();
+                DocxReaderApp.instance.showInterstitial(requireActivity(), "menu", new AdsCallback() {
+                    @Override
+                    public void onClosed() {
+                        super.onClosed();
+                        Log.d(TAG, "HomeFragment Ads onClosed");
+                        dialog.show();
+                    }
+
+                    @Override
+                    public void onError() {
+                        super.onError();
+                        Log.d(TAG, "HomeFragment Ads onError");
+                        dialog.show();
+                    }
+                });
+            }else {
+                preferences.edit().putInt("choose_menu", choose_menu + 1).apply();
+                dialog.show();
+            }
         });
 
         binding.include.btnSort.setOnClickListener(view -> {

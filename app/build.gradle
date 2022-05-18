@@ -25,6 +25,7 @@ android {
             buildConfigField "String", "interstitial_splash", "\"ca-app-pub-3940256099942544/1033173712\""
             buildConfigField "String", "interstitial_global", "\"ca-app-pub-3940256099942544/1033173712\""
             buildConfigField "String", "interstitial_open_outside", "\"ca-app-pub-3940256099942544/1033173712\""
+            buildConfigField "String", "interstitial_menu", "\"ca-app-pub-3940256099942544/1033173712\""
             buildConfigField "String", "banner", "\"ca-app-pub-3940256099942544/6300978111\""
 
             buildConfigField "String", "id_subs", "\"remove_ads_monthly\""
@@ -39,6 +40,7 @@ android {
             buildConfigField "String", "interstitial_splash", "\"ca-app-pub-3617606523175567/8230378030\""
             buildConfigField "String", "interstitial_global", "\"ca-app-pub-3617606523175567/8202457877\""
             buildConfigField "String", "interstitial_open_outside", "\"ca-app-pub-3617606523175567/5440563163\""
+            buildConfigField "String", "interstitial_menu", "\"ca-app-pub-3617606523175567/4934008113\""
             buildConfigField "String", "banner", "\"ca-app-pub-3617606523175567/1253906148\""
 
             buildConfigField "String", "id_subs", "\"remove_ads_monthly\""
