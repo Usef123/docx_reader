@@ -136,13 +136,13 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
             @Override
             public void onSubmitButtonClicked(int rate, String comment) {
                 Log.d("rate_app", "onSubmitButtonClicked " + rate + comment);
-                FirebaseUtils.sendEventSubmitRatePermission(ReaderActivity.this, comment, rate);
+                FirebaseUtils.sendEventSubmitRate(ReaderActivity.this, comment, rate);
             }
 
             @Override
             public void onLaterButtonClicked() {
                 Log.d("rate_app", "onLaterButtonClicked");
-                FirebaseUtils.sendEventLaterRatePermission(ReaderActivity.this);
+                FirebaseUtils.sendEventLaterRate(ReaderActivity.this);
                 if (isOpenOutside){
                     Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -156,7 +156,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
             public void onChangeStar(int rate) {
                 Log.d("rate_app", "onChangeStar " + rate);
                 if (rate >= 4) {
-                    FirebaseUtils.sendEventChangeRatePermission(ReaderActivity.this, rate);
+                    FirebaseUtils.sendEventChangeRate(ReaderActivity.this, rate);
 
                     if (isOpenOutside){
                         Intent intent = new Intent(ReaderActivity.this, MainActivity.class);

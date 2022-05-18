@@ -14,6 +14,7 @@ import androidx.navigation.Navigation;
 
 import com.prox.docxreader.R;
 import com.prox.docxreader.databinding.DialogOptionBinding;
+import com.prox.docxreader.utils.FirebaseUtils;
 
 public class OptionDialog extends Dialog {
 
@@ -38,16 +39,19 @@ public class OptionDialog extends Dialog {
         binding.getRoot().setBackgroundResource(0);
 
         binding.itemExcelOption.excelOption.setOnClickListener(view -> {
+            FirebaseUtils.sendEventMenu(context, FirebaseUtils.MENU_XLSX);
             Navigation.findNavController(activity, R.id.nav_host_fragment).navigate(R.id.action_global_xlsFragment);
             cancel();
         });
 
         binding.itemPdfOption.pdfOption.setOnClickListener(view -> {
+            FirebaseUtils.sendEventMenu(context, FirebaseUtils.MENU_PDF);
             Navigation.findNavController(activity, R.id.nav_host_fragment).navigate(R.id.action_global_pdfFragment);
             cancel();
         });
 
         binding.itemPptOption.pptOption.setOnClickListener(view -> {
+            FirebaseUtils.sendEventMenu(context, FirebaseUtils.MENU_PPTX);
             Navigation.findNavController(activity, R.id.nav_host_fragment).navigate(R.id.action_global_pptFragment);
             cancel();
         });

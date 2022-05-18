@@ -8,6 +8,9 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.prox.docxreader.ui.activity.ReaderActivity;
 
 public class FirebaseUtils {
+    public static final int MENU_XLSX = 1;
+    public static final int MENU_PPTX = 2;
+    public static final int MENU_PDF = 3;
 
     public static void sendEventOpenFile(Context context, Uri data, String path){
         Bundle bundle = new Bundle();
@@ -28,7 +31,7 @@ public class FirebaseUtils {
         FirebaseAnalytics.getInstance(context).logEvent("prox_permission", bundle);
     }
 
-    public static void sendEventSubmitRatePermission(Context context, String comment, int rate){
+    public static void sendEventSubmitRate(Context context, String comment, int rate){
         Bundle bundle = new Bundle();
         bundle.putString("event_type", "rated");
         bundle.putString("comment", comment);
@@ -36,16 +39,28 @@ public class FirebaseUtils {
         FirebaseAnalytics.getInstance(context).logEvent("prox_rating_layout", bundle);
     }
 
-    public static void sendEventLaterRatePermission(Context context){
+    public static void sendEventLaterRate(Context context){
         Bundle bundle = new Bundle();
         bundle.putString("event_type", "cancel");
         FirebaseAnalytics.getInstance(context).logEvent("prox_rating_layout", bundle);
     }
 
-    public static void sendEventChangeRatePermission(Context context, int rate){
+    public static void sendEventChangeRate(Context context, int rate){
         Bundle bundle = new Bundle();
         bundle.putString("event_type", "rated");
         bundle.putString("star", rate + " star");
         FirebaseAnalytics.getInstance(context).logEvent("prox_rating_layout", bundle);
+    }
+
+    public static void sendEventMenu(Context context, int menu){
+        Bundle bundle = new Bundle();
+        if (menu == MENU_XLSX){
+            bundle.putString("event_type", "click_xlsx_manager");
+        }else if (menu == MENU_PPTX){
+            bundle.putString("event_type", "click_pptx_manager");
+        }else if (menu == MENU_PDF){
+            bundle.putString("event_type", "click_pdf_manager");
+        }
+        FirebaseAnalytics.getInstance(context).logEvent("prox_menu_layout", bundle);
     }
 }
