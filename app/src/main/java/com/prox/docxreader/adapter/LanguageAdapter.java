@@ -14,7 +14,7 @@ import com.prox.docxreader.interfaces.OnClickLanguageListener;
 import com.prox.docxreader.databinding.ItemLanguageBinding;
 
 public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.LanguageViewHolder> {
-    private Context context;
+    private final Context context;
     private final String[] languages;
     private final String[] typeLanguages;
     private ImageView imgChecked;

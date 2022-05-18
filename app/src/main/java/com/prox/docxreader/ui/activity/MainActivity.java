@@ -27,7 +27,6 @@ import com.prox.docxreader.DocxReaderApp;
 import com.prox.docxreader.R;
 import com.prox.docxreader.databinding.ActivityMainBinding;
 import com.prox.docxreader.modul.Document;
-import com.prox.docxreader.utils.FileUtils;
 import com.prox.docxreader.utils.FirebaseUtils;
 import com.prox.docxreader.utils.LanguageUtils;
 import com.prox.docxreader.utils.NetworkUtils;
@@ -37,7 +36,8 @@ import com.prox.docxreader.viewmodel.DocumentViewModel;
 import com.proxglobal.proxads.adsv2.callback.AdsCallback;
 import com.proxglobal.purchase.ProxPurchase;
 
-import java.util.List;
+import java.io.File;
+import java.util.Stack;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
@@ -63,7 +63,13 @@ public class MainActivity extends AppCompatActivity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
         model = new ViewModelProvider(this).get(DocumentViewModel.class);
+        model.getInsertDB().observe(this, insertDB -> {
+            if (insertDB){
+                model.setValue();
+            }
+        });
 
         init();
 
@@ -225,13 +231,45 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private Observable<Document> getObservable() {
-        List<Document> documents = FileUtils.getDocuments(Environment.getExternalStorageDirectory());
-        Log.d(TAG, "MainActivity documents.size(): "+documents.size());
+        Stack<File> folderStack = new Stack<>();
+        folderStack.add(Environment.getExternalStorageDirectory());
 
         return Observable.create(emitter -> {
-            for (Document document : documents) {
-                if (!emitter.isDisposed()){
-                    emitter.onNext(document);
+            while (!folderStack.empty()){
+                File[] files = folderStack.pop().listFiles();
+                if (files != null){
+                    for (File f : files){
+                        if (f.isDirectory()){
+                            folderStack.add(f);
+                        }else {
+                            if (f.getName().endsWith("doc")
+                                    || f.getName().endsWith("dot")
+                                    || f.getName().endsWith("docx")
+                                    || f.getName().endsWith("dotx")
+
+                                    || f.getName().endsWith("xls")
+                                    || f.getName().endsWith("xlsx")
+                                    || f.getName().endsWith("xltm")
+                                    || f.getName().endsWith("xltx")
+                                    || f.getName().endsWith("csv")
+
+                                    || f.getName().endsWith("ppt")
+                                    || f.getName().endsWith("pptx")
+
+                                    || f.getName().endsWith("pdf")){
+                                Document document = new Document();
+                                document.setPath(f.getPath());
+                                document.setTitle(f.getName());
+                                document.setTimeCreate(f.lastModified());
+                                document.setTimeAccess(f.lastModified());
+                                document.setFavorite(false);
+                                document.setExist(true);
+                                if (!emitter.isDisposed()){
+                                    emitter.onNext(document);
+                                }
+                            }
+                        }
+                    }
                 }
             }
             if (!emitter.isDisposed()){
@@ -253,9 +291,9 @@ public class MainActivity extends AppCompatActivity {
                 Document documentCheck = model.check(document.getPath());
                 if (documentCheck != null) {
                     documentCheck.setExist(true);
-                    model.update(documentCheck);
+                    model.updateBG(documentCheck);
                 }else {
-                    model.insert(document);
+                    model.insertBG(document);
                 }
             }
 
@@ -267,8 +305,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onComplete() {
                 Log.d(TAG, "MainActivity onComplete");
-                model.deleteNotExist();
-                model.updateIsExist();
+                model.deleteNotExistBG();
+                model.updateIsExistBG();
+                model.setInsertDB(true);
             }
         };
     }

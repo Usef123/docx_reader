@@ -2,7 +2,7 @@ package com.prox.docxreader.repository;
 
 import android.app.Application;
 
-import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.prox.docxreader.database.DocumentDAO;
 import com.prox.docxreader.database.DocumentDatabase;
@@ -11,38 +11,44 @@ import com.prox.docxreader.modul.Document;
 import java.util.List;
 
 public class DocumentRepository {
-    public static final int SORT_NAME = 1;
-    public static final int SORT_TIME_CREATE = 2;
-    public static final int SORT_TIME_ACCESS = 3;
-
     private final DocumentDAO documentDAO;
-    private LiveData<List<Document>> documents;
 
     public DocumentRepository(Application application) {
         DocumentDatabase database = DocumentDatabase.getInstance(application);
         documentDAO = database.documentDAO();
     }
 
-    public LiveData<List<Document>> getDocuments(boolean isFavorite, int typeSort, String search) {
-        setDocuments(isFavorite, typeSort, search);
-        return documents;
+    public MutableLiveData<List<Document>> getDOCX() {
+        MutableLiveData<List<Document>> data = new MutableLiveData<>();
+        data.setValue(documentDAO.getDOCX());
+        return data;
     }
 
-    public void setDocuments(boolean isFavorite, int typeSort, String search) {
-        switch (typeSort){
-            case SORT_NAME:
-                documents = documentDAO.getDocumentByName(isFavorite, search);
-                break;
-            case SORT_TIME_CREATE:
-                documents = documentDAO.getDocumentByTimeCreate(isFavorite, search);
-                break;
-            case SORT_TIME_ACCESS:
-                documents = documentDAO.getDocumentByTimeAccess(isFavorite, search);
-                break;
-        }
+    public MutableLiveData<List<Document>> getDOCXFavorite() {
+        MutableLiveData<List<Document>> data = new MutableLiveData<>();
+        data.setValue(documentDAO.getDOCXFavorite());
+        return data;
     }
 
-    public Document check(String path){
+    public MutableLiveData<List<Document>> getXLSX() {
+        MutableLiveData<List<Document>> data = new MutableLiveData<>();
+        data.setValue(documentDAO.getXLSX());
+        return data;
+    }
+
+    public MutableLiveData<List<Document>> getPDF() {
+        MutableLiveData<List<Document>> data = new MutableLiveData<>();
+        data.setValue(documentDAO.getPDF());
+        return data;
+    }
+
+    public MutableLiveData<List<Document>> getPPTX() {
+        MutableLiveData<List<Document>> data = new MutableLiveData<>();
+        data.setValue(documentDAO.getPPTX());
+        return data;
+    }
+
+    public Document check(String path) {
         return documentDAO.check(path);
     }
 

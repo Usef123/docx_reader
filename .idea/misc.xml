@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/docx-reader/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.1105" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable-v24/img_button_pptx_selector.xml" value="0.1295" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable-v24/img_button_while2_selector.xml" value="0.1295" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/bg_corner_bottom.xml" value="0.118" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/bg_corner_left.xml" value="0.118" />
@@ -33,6 +34,11 @@
         <entry key="..\:/docx-reader/app/src/main/res/drawable/img_button_blue_while_pressed.xml" value="0.1105" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/img_button_blue_while_selector.xml" value="0.118" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/img_button_close_selector.xml" value="0.118" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/img_button_docx_enabled.xml" value="0.1295" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/img_button_docx_selector.xml" value="0.1295" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/img_button_pdf_enabled.xml" value="0.1295" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/img_button_pdf_selector.xml" value="0.1295" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/img_button_pptx_enabled.xml" value="0.1295" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/img_button_pressed.xml" value="0.118" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/img_button_while2_enabled.xml" value="0.1295" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/img_button_while_blue_enabled.xml" value="0.1105" />
@@ -41,6 +47,8 @@
         <entry key="..\:/docx-reader/app/src/main/res/drawable/img_button_while_selector.xml" value="0.118" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/img_button_xls_enabled.xml" value="0.1295" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/img_button_xls_selector.xml" value="0.1295" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/img_button_xlsx_enabled.xml" value="0.1295" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/img_button_xlsx_selector.xml" value="0.1295" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/img_close_enabled.xml" value="0.118" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/img_close_pressed.xml" value="0.118" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/setting_selector.xml" value="0.1295" />
@@ -67,6 +75,7 @@
         <entry key="..\:/docx-reader/app/src/main/res/layout/item_docx_home.xml" value="0.21927083333333333" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/item_excel_option.xml" value="0.4" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/item_option.xml" value="0.25" />
+        <entry key="..\:/docx-reader/app/src/main/res/layout/item_other.xml" value="0.152" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/item_pdf_option.xml" value="0.264" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/item_ppt_option.xml" value="0.25" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/screen_while.xml" value="0.21965579710144928" />

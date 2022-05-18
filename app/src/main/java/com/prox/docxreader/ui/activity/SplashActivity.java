@@ -29,6 +29,7 @@ import java.io.File;
 @SuppressLint("CustomSplashScreen")
 public class SplashActivity extends AppCompatActivity {
     public static final String SPLASH_TO_MAIN = "SPLASH_TO_MAIN";
+    public static final String OPEN_OUTSIDE = "OPEN_OUTSIDE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,6 +138,7 @@ public class SplashActivity extends AppCompatActivity {
             Log.d(TAG, "SplashActivity path "+path);
             Intent intent = new Intent(this, ReaderActivity.class);
             intent.putExtra(FILE_PATH, path);
+            intent.putExtra(OPEN_OUTSIDE, true);
             startActivity(intent);
             finish();
         } else {

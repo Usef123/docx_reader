@@ -1,11 +1,16 @@
 package com.prox.docxreader.ui.fragment;
 
 import static com.prox.docxreader.DocxReaderApp.TAG;
-import static com.prox.docxreader.repository.DocumentRepository.SORT_NAME;
 import static com.prox.docxreader.ui.activity.ReaderActivity.FILE_PATH;
+import static com.prox.docxreader.ui.activity.SplashActivity.OPEN_OUTSIDE;
+import static com.prox.docxreader.ui.dialog.SortDialog.FRAGMENT_HOME;
+import static com.prox.docxreader.ui.dialog.SortDialog.SORT_NAME;
+import static com.prox.docxreader.ui.dialog.SortDialog.SORT_TIME_ACCESS;
+import static com.prox.docxreader.ui.dialog.SortDialog.SORT_TIME_CREATE;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -16,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -41,7 +47,10 @@ import com.prox.docxreader.viewmodel.DocumentViewModel;
 import com.proxglobal.proxads.adsv2.callback.AdsCallback;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 
 public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
@@ -50,6 +59,7 @@ public class HomeFragment extends Fragment {
 
     public static int typeSort = SORT_NAME; //Kiểu sắp xếp
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -59,6 +69,35 @@ public class HomeFragment extends Fragment {
         setupRecyclerView();
 
         model = new ViewModelProvider(requireActivity()).get(DocumentViewModel.class);
+        model.getDOCX().observe(getViewLifecycleOwner(), documents -> {
+            if (documents == null){
+                documents = new ArrayList<>();
+            }
+            if (typeSort == SORT_NAME){
+                documents.sort(Comparator.comparing(Document::getTitle));
+            }else if (typeSort == SORT_TIME_CREATE){
+                documents.sort((document1, document2) ->
+                        (int) (document2.getTimeCreate() - document1.getTimeCreate()));
+            }else if (typeSort == SORT_TIME_ACCESS){
+                documents.sort((document1, document2) ->
+                        (int) (document2.getTimeAccess() - document1.getTimeAccess()));
+            }
+
+            List<Document> documentsSearch = new ArrayList<>();
+            for (Document document : documents){
+                if (document.getTitle().contains(binding.include.edtSearch.getText().toString().trim())){
+                    documentsSearch.add(document);
+                }
+            }
+
+            adapter.setDocuments(documentsSearch);
+            Log.d(TAG, "HomeFragment document.size()="+documentsSearch.size());
+            if (documentsSearch.size()==0){
+                binding.notiList.setVisibility(View.VISIBLE);
+            }else{
+                binding.notiList.setVisibility(View.GONE);
+            }
+        });
 
         addSearchDocument();
 
@@ -74,9 +113,9 @@ public class HomeFragment extends Fragment {
             SortDialog dialog = new SortDialog(
                     requireContext(),
                     DialogSortBinding.inflate(getLayoutInflater()),
-                    false,
-                    HomeFragment.typeSort,
-                    this::showDocuments);
+                    model,
+                    FRAGMENT_HOME,
+                    HomeFragment.typeSort);
             dialog.show();
         });
 
@@ -152,6 +191,7 @@ public class HomeFragment extends Fragment {
         Log.d(TAG, "HomeFragment startReaderActivity part: "+document.getPath());
         Intent intent = new Intent(requireActivity(), ReaderActivity.class);
         intent.putExtra(FILE_PATH, document.getPath());
+        intent.putExtra(OPEN_OUTSIDE, false);
         startActivity(intent);
     }
 
@@ -208,14 +248,8 @@ public class HomeFragment extends Fragment {
         }else{
             binding.include.btnClear.setVisibility(View.VISIBLE);
         }
-        model.getDocuments(false, typeSort, search).observe(getViewLifecycleOwner(), documents -> {adapter.setDocuments(documents);
-            Log.d(TAG, "HomeFragment document.size()="+documents.size());
-            if (documents.size()==0){
-                binding.notiList.setVisibility(View.VISIBLE);
-            }else{
-                binding.notiList.setVisibility(View.GONE);
-            }
-        });
+
+        model.setValue();
     }
 
     private void setFavorite(Document document) {

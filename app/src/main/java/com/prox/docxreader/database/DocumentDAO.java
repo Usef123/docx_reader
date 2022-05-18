@@ -1,6 +1,5 @@
 package com.prox.docxreader.database;
 
-import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -32,12 +31,18 @@ public interface DocumentDAO {
     @Query("DELETE FROM document WHERE isExist = 0")
     void deleteNotExist();
 
-    @Query("SELECT * FROM document WHERE title LIKE '%' || :title || '%' AND (isFavorite = :isFavorite OR isFavorite = 1) ORDER BY title ASC")
-    LiveData<List<Document>> getDocumentByName(boolean isFavorite, String title);
+    @Query("SELECT * FROM document WHERE title LIKE '%doc' OR title LIKE '%dot' OR title LIKE '%docx' OR title LIKE '%dotx'")
+    List<Document> getDOCX();
 
-    @Query("SELECT * FROM document WHERE title LIKE '%' || :title || '%' AND (isFavorite = :isFavorite OR isFavorite = 1) ORDER BY timeCreate DESC")
-    LiveData<List<Document>> getDocumentByTimeCreate(boolean isFavorite, String title);
+    @Query("SELECT * FROM document WHERE (title LIKE '%doc' OR title LIKE '%dot' OR title LIKE '%docx' OR title LIKE '%dotx') AND isFavorite = 1")
+    List<Document> getDOCXFavorite();
 
-    @Query("SELECT * FROM document WHERE title LIKE '%' || :title || '%' AND (isFavorite = :isFavorite OR isFavorite = 1) ORDER BY timeAccess DESC")
-    LiveData<List<Document>> getDocumentByTimeAccess(boolean isFavorite, String title);
+    @Query("SELECT * FROM document WHERE title LIKE '%xls' OR title LIKE '%xlsx' OR title LIKE '%xltm' OR title LIKE '%xltx' OR title LIKE '%csv'")
+    List<Document> getXLSX();
+
+    @Query("SELECT * FROM document WHERE title LIKE '%pdf'")
+    List<Document> getPDF();
+
+    @Query("SELECT * FROM document WHERE title LIKE '%ppt' OR title LIKE '%pttx'")
+    List<Document> getPPTX();
 }

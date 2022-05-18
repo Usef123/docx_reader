@@ -1,9 +1,5 @@
 package com.prox.docxreader.ui.dialog;
 
-import static com.prox.docxreader.repository.DocumentRepository.SORT_NAME;
-import static com.prox.docxreader.repository.DocumentRepository.SORT_TIME_ACCESS;
-import static com.prox.docxreader.repository.DocumentRepository.SORT_TIME_CREATE;
-
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
@@ -16,17 +12,29 @@ import android.view.WindowManager;
 import androidx.annotation.NonNull;
 
 import com.prox.docxreader.databinding.DialogSortBinding;
-import com.prox.docxreader.interfaces.OnSelectSortListener;
 import com.prox.docxreader.ui.fragment.FavoriteFragment;
 import com.prox.docxreader.ui.fragment.HomeFragment;
+import com.prox.docxreader.ui.fragment.PDFFragment;
+import com.prox.docxreader.ui.fragment.PPTFragment;
+import com.prox.docxreader.ui.fragment.XLSFragment;
+import com.prox.docxreader.viewmodel.DocumentViewModel;
 
 public class SortDialog extends Dialog {
+    public static final int FRAGMENT_HOME = 1;
+    public static final int FRAGMENT_FAVORITE = 2;
+    public static final int FRAGMENT_XLSX = 3;
+    public static final int FRAGMENT_PDF = 4;
+    public static final int FRAGMENT_PPTX = 5;
+
+    public static final int SORT_NAME = 1;
+    public static final int SORT_TIME_CREATE = 2;
+    public static final int SORT_TIME_ACCESS = 3;
 
     public SortDialog(@NonNull Context context,
                       DialogSortBinding binding,
-                      boolean isFavorite,
-                      int typeSort,
-                      OnSelectSortListener onSelectSortListener) {
+                      DocumentViewModel model,
+                      int typeFragment,
+                      int typeSort) {
         super(context);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -60,30 +68,68 @@ public class SortDialog extends Dialog {
         }
 
         binding.sortName.setOnClickListener(v -> {
-            if (!isFavorite){
-                HomeFragment.typeSort = SORT_NAME;
-            }else {
-                FavoriteFragment.typeSort = SORT_NAME;
+            switch (typeFragment) {
+                case FRAGMENT_HOME:
+                    HomeFragment.typeSort = SORT_NAME;
+                    break;
+                case FRAGMENT_FAVORITE:
+                    FavoriteFragment.typeSort = SORT_NAME;
+                    break;
+                case FRAGMENT_XLSX:
+                    XLSFragment.typeSort = SORT_NAME;
+                    break;
+                case FRAGMENT_PDF:
+                    PDFFragment.typeSort = SORT_NAME;
+                    break;
+                case FRAGMENT_PPTX:
+                    PPTFragment.typeSort = SORT_NAME;
+                    break;
             }
-            onSelectSortListener.onSelectSort();
+            model.setValue();
             cancel();
         });
+
         binding.sortTimeCreate.setOnClickListener(v -> {
-            if (!isFavorite){
-                HomeFragment.typeSort = SORT_TIME_CREATE;
-            }else {
-                FavoriteFragment.typeSort = SORT_TIME_CREATE;
+            switch (typeFragment) {
+                case FRAGMENT_HOME:
+                    HomeFragment.typeSort = SORT_TIME_CREATE;
+                    break;
+                case FRAGMENT_FAVORITE:
+                    FavoriteFragment.typeSort = SORT_TIME_CREATE;
+                    break;
+                case FRAGMENT_XLSX:
+                    XLSFragment.typeSort = SORT_TIME_CREATE;
+                    break;
+                case FRAGMENT_PDF:
+                    PDFFragment.typeSort = SORT_TIME_CREATE;
+                    break;
+                case FRAGMENT_PPTX:
+                    PPTFragment.typeSort = SORT_TIME_CREATE;
+                    break;
             }
-            onSelectSortListener.onSelectSort();
+            model.setValue();
             cancel();
         });
+
         binding.sortTimeAccess.setOnClickListener(v -> {
-            if (!isFavorite){
-                HomeFragment.typeSort = SORT_TIME_ACCESS;
-            }else {
-                FavoriteFragment.typeSort = SORT_TIME_ACCESS;
+            switch (typeFragment) {
+                case FRAGMENT_HOME:
+                    HomeFragment.typeSort = SORT_TIME_ACCESS;
+                    break;
+                case FRAGMENT_FAVORITE:
+                    FavoriteFragment.typeSort = SORT_TIME_ACCESS;
+                    break;
+                case FRAGMENT_XLSX:
+                    XLSFragment.typeSort = SORT_TIME_ACCESS;
+                    break;
+                case FRAGMENT_PDF:
+                    PDFFragment.typeSort = SORT_TIME_ACCESS;
+                    break;
+                case FRAGMENT_PPTX:
+                    PPTFragment.typeSort = SORT_TIME_ACCESS;
+                    break;
             }
-            onSelectSortListener.onSelectSort();
+            model.setValue();
             cancel();
         });
     }

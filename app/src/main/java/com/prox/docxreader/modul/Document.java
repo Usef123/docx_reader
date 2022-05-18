@@ -17,14 +17,6 @@ public class Document{
     public Document() {
     }
 
-    public Document(String path, String title, long timeCreate, long timeAccess, boolean isFavorite) {
-        this.path = path;
-        this.title = title;
-        this.timeCreate = timeCreate;
-        this.timeAccess = timeAccess;
-        this.isFavorite = isFavorite;
-    }
-
     public int getId() {
         return id;
     }

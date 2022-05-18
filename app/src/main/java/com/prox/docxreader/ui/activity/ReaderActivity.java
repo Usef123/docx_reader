@@ -1,5 +1,6 @@
 package com.prox.docxreader.ui.activity;
 
+import static com.prox.docxreader.ui.activity.SplashActivity.OPEN_OUTSIDE;
 import static com.prox.docxreader.utils.PermissionUtils.REQUEST_PERMISSION_MANAGE;
 import static com.prox.docxreader.utils.PermissionUtils.REQUEST_PERMISSION_READ_WRITE;
 
@@ -83,6 +84,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
     public static final String FILE_PATH = "FILE_PATH";
 
     private ActivityOfficeDetailBinding binding;
+    private boolean isOpenOutside;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,6 +105,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
         }
 
         filePath = getIntent().getStringExtra(FILE_PATH);
+        isOpenOutside = getIntent().getBooleanExtra(OPEN_OUTSIDE, true);
 
         if (filePath != null) {
             fileName = filePath.substring(filePath.lastIndexOf('/') + 1);
@@ -140,10 +143,11 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
             public void onLaterButtonClicked() {
                 Log.d("rate_app", "onLaterButtonClicked");
                 FirebaseUtils.sendEventLaterRatePermission(ReaderActivity.this);
-
-                Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+                if (isOpenOutside){
+                    Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                }
                 finish();
             }
 
@@ -153,9 +157,11 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                 if (rate >= 4) {
                     FirebaseUtils.sendEventChangeRatePermission(ReaderActivity.this, rate);
 
-                    Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
+                    if (isOpenOutside){
+                        Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                    }
                     finish();
                 }
             }
@@ -164,9 +170,11 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
             public void onDone() {
                 Log.d("rate_app", "onDone");
 
-                Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+                if (isOpenOutside){
+                    Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                }
                 finish();
             }
         });
@@ -340,9 +348,11 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                     Log.d("interstitial_global", "onClosed");
                     SharedPreferences sp = getSharedPreferences("prox", Context.MODE_PRIVATE);
                     if (sp.getBoolean("isRated", false)){
-                        Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
+                        if (isOpenOutside){
+                            Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+                        }
                         finish();
                     }else {
                         ProxRateDialog.showIfNeed(ReaderActivity.this, getSupportFragmentManager());
@@ -355,9 +365,11 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                     Log.d("interstitial_global", "onError");
                     SharedPreferences sp = getSharedPreferences("prox", Context.MODE_PRIVATE);
                     if (sp.getBoolean("isRated", false)){
-                        Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
+                        if (isOpenOutside){
+                            Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+                        }
                         finish();
                     }else {
                         ProxRateDialog.showIfNeed(ReaderActivity.this, getSupportFragmentManager());
@@ -369,9 +381,11 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
             preferences.edit().putInt("close_reader", closeReader + 1).apply();
             SharedPreferences sp = getSharedPreferences("prox", Context.MODE_PRIVATE);
             if (sp.getBoolean("isRated", false)){
-                Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+                if (isOpenOutside){
+                    Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                }
                 finish();
             }else {
                 ProxRateDialog.showIfNeed(ReaderActivity.this, getSupportFragmentManager());
@@ -383,9 +397,11 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                 public void onClosed() {
                     super.onClosed();
                     Log.d("interstitial_global", "onClosed");
-                    Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
+                    if (isOpenOutside){
+                        Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                    }
                     finish();
                 }
 
@@ -393,17 +409,21 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                 public void onError() {
                     super.onError();
                     Log.d("interstitial_global", "onError");
-                    Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
+                    if (isOpenOutside){
+                        Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                    }
                     finish();
                 }
             });
         }else {
             preferences.edit().putInt("close_reader", closeReader + 1).apply();
-            Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            if (isOpenOutside){
+                Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
             finish();
         }
     }
