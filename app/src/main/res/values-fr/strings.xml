@@ -31,8 +31,8 @@
     <string name="notification_rename_error">Erreur de renommage</string>
     <string name="notification_not_rename">Nom inchangé</string>
     <string name="notification_share_error">Erreur de partage</string>
-    <string name="notification_add_favorite">Signet</string>
-    <string name="notification_remove_favorite">Supprimer le signet</string>
+    <string name="notification_add_favorite">Signet ajouté avec succès</string>
+    <string name="notification_remove_favorite">Signet supprimé avec succès</string>
     <string name="btn_privacy_policy">Politique de confidentialité</string>
     <string name="btn_more_app">Plus d\'application</string>
     <string name="btn_feedback">Retour</string>
@@ -55,4 +55,9 @@
     <string name="old_price"><strike> Ancien prix : 46.000 đ</strike></string>
     <string name="best_price">Meilleur prix:</string>
     <string name="btn_continue">Continuez</string>
+    <string name="docx_reader_view_all_file">Docx Reader - Afficher tous les fichiers</string>
+    <string name="version">Version</string>
+    <string name="xls_manager">Gestionnaire XLS</string>
+    <string name="pdf_manager">Gestionnaire PDF</string>
+    <string name="ppt_manager">Gestionnaire PPT</string>
 </resources>

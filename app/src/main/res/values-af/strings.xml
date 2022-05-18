@@ -31,8 +31,8 @@
     <string name="notification_rename_error">Hernoem fout</string>
     <string name="notification_not_rename">Naam onveranderd</string>
     <string name="notification_share_error">Deel fout</string>
-    <string name="notification_add_favorite">Boekmerk</string>
-    <string name="notification_remove_favorite">Verwyder boekmerk</string>
+    <string name="notification_add_favorite">Boekmerk is suksesvol bygevoeg</string>
+    <string name="notification_remove_favorite">Boekmerk is suksesvol verwyder</string>
     <string name="btn_privacy_policy">Privaatheidsbeleid</string>
     <string name="btn_more_app">Meer App</string>
     <string name="btn_feedback">Terugvoer</string>
@@ -55,4 +55,9 @@
     <string name="old_price"><strike> Ou prys: 46 000 đ</strike></string>
     <string name="best_price">Beste prys:</string>
     <string name="btn_continue">Aanhou</string>
+    <string name="docx_reader_view_all_file">Docx Reader - Bekyk alle lêers</string>
+    <string name="version">Weergawe</string>
+    <string name="xls_manager">XLS Bestuurder</string>
+    <string name="pdf_manager">PDF Bestuurder</string>
+    <string name="ppt_manager">PPT Bestuurder</string>
 </resources>

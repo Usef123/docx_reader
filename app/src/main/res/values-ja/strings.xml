@@ -31,8 +31,8 @@
     <string name="notification_rename_error">名前の変更エラー</string>
     <string name="notification_not_rename">名前は変更されていません</string>
     <string name="notification_share_error">共有エラー</string>
-    <string name="notification_add_favorite">ブックマーク</string>
-    <string name="notification_remove_favorite">ブックマークを削除する</string>
+    <string name="notification_add_favorite">ブックマークが正常に追加されました</string>
+    <string name="notification_remove_favorite">ブックマークが正常に削除されました</string>
     <string name="btn_privacy_policy">プライバシーポリシー</string>
     <string name="btn_more_app">より多くのアプリ</string>
     <string name="btn_feedback">フィードバック</string>
@@ -55,4 +55,9 @@
     <string name="old_price"><strike> 旧価格：46.000 đ</strike></string>
     <string name="best_price">ベストプライス：</string>
     <string name="btn_continue">継続する</string>
+    <string name="docx_reader_view_all_file">DocxReader-すべてのファイルを表示</string>
+    <string name="version">バージョン</string>
+    <string name="xls_manager">XLSマネージャー</string>
+    <string name="pdf_manager">PDFマネージャー</string>
+    <string name="ppt_manager">PPTマネージャー</string>
 </resources>

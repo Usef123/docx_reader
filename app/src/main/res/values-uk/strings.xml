@@ -31,8 +31,8 @@
     <string name="notification_rename_error">Помилка перейменування</string>
     <string name="notification_not_rename">Назва без змін</string>
     <string name="notification_share_error">Помилка обміну</string>
-    <string name="notification_add_favorite">Закладка</string>
-    <string name="notification_remove_favorite">Видалити закладку</string>
+    <string name="notification_add_favorite">Закладка додана успішно</string>
+    <string name="notification_remove_favorite">Закладку успішно видалено</string>
     <string name="btn_privacy_policy">Політика конфіденційності</string>
     <string name="btn_more_app">Більше додатка</string>
     <string name="btn_feedback">Зворотній зв\'язок</string>
@@ -55,4 +55,9 @@
     <string name="old_price"><strike> Стара ціна: 46 000 đ</strike></string>
     <string name="best_price">Найкраща ціна:</string>
     <string name="btn_continue">Продовжуйте</string>
+    <string name="docx_reader_view_all_file">Docx Reader - Переглянути всі файли</string>
+    <string name="version">Версія</string>
+    <string name="xls_manager">Менеджер XLS</string>
+    <string name="pdf_manager">Менеджер PDF</string>
+    <string name="ppt_manager">Менеджер PPT</string>
 </resources>

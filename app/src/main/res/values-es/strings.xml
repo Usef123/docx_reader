@@ -31,8 +31,8 @@
     <string name="notification_rename_error">Cambiar nombre de error</string>
     <string name="notification_not_rename">Nombre sin cambios</string>
     <string name="notification_share_error">Compartir error</string>
-    <string name="notification_add_favorite">Marcador</string>
-    <string name="notification_remove_favorite">Quitar marcador</string>
+    <string name="notification_add_favorite">Marcador añadido con éxito</string>
+    <string name="notification_remove_favorite">Marcador eliminado con éxito</string>
     <string name="btn_privacy_policy">Política de privacidad</string>
     <string name="btn_more_app">Más aplicaciones</string>
     <string name="btn_feedback">Comentario</string>
@@ -55,4 +55,9 @@
     <string name="old_price"><strike> Precio antiguo: 46.000 đ</strike></string>
     <string name="best_price">Mejor precio:</string>
     <string name="btn_continue">Continuar</string>
+    <string name="docx_reader_view_all_file">Docx Reader - Ver todos los archivos</string>
+    <string name="version">Versión</string>
+    <string name="xls_manager">Administrador XLS</string>
+    <string name="pdf_manager">Administrador PDF</string>
+    <string name="ppt_manager">Administrador PPT</string>
 </resources>

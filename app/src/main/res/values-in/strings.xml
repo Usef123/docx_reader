@@ -31,8 +31,8 @@
     <string name="notification_rename_error">Ganti nama kesalahan</string>
     <string name="notification_not_rename">Nama tidak berubah</string>
     <string name="notification_share_error">Bagikan kesalahan</string>
-    <string name="notification_add_favorite">Penanda buku</string>
-    <string name="notification_remove_favorite">Hapus bookmark</string>
+    <string name="notification_add_favorite">Bookmark Berhasil Ditambah</string>
+    <string name="notification_remove_favorite">Bookmark Berhasil Dihapus</string>
     <string name="btn_privacy_policy">Kebijakan pribadi</string>
     <string name="btn_more_app">Lebih Banyak Aplikasi</string>
     <string name="btn_feedback">Masukan</string>
@@ -55,4 +55,9 @@
     <string name="old_price"><strike> Harga Lama: 46.000 đ</strike></string>
     <string name="best_price">Harga terbaik:</string>
     <string name="btn_continue">Melanjutkan</string>
+    <string name="docx_reader_view_all_file">Pembaca Docx - Lihat Semua File</string>
+    <string name="version">Version</string>
+    <string name="xls_manager">Manajer XLS</string>
+    <string name="pdf_manager">Manajer PDF</string>
+    <string name="ppt_manager">Manajer PPT</string>
 </resources>

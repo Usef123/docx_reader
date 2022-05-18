@@ -31,8 +31,8 @@
     <string name="notification_rename_error">Đổi tên tệp thất bại</string>
     <string name="notification_not_rename">Tên tệp không thay đổi</string>
     <string name="notification_share_error">Chia sẻ thất bại</string>
-    <string name="notification_add_favorite">Đã thêm vào dấu trang</string>
-    <string name="notification_remove_favorite">Đã xoá khỏi dấu trang</string>
+    <string name="notification_add_favorite">Đã thêm dấu trang thành công</string>
+    <string name="notification_remove_favorite">Đã xóa dấu trang thành công</string>
     <string name="btn_privacy_policy">Chính sách bảo mật</string>
     <string name="btn_more_app">Nhiều ứng dụng hơn</string>
     <string name="btn_feedback">Phản hồi</string>
@@ -55,4 +55,9 @@
     <string name="old_price"> <strike>Giá cũ: 46.000 đ</strike> </string>
     <string name="best_price">Giá tốt nhất: </string>
     <string name="btn_continue">Tiếp tục</string>
+    <string name="docx_reader_view_all_file">Trình đọc Docx - Xem tất cả tệp</string>
+    <string name="version">Phiên bản</string>
+    <string name="xls_manager">Quản lý XLS</string>
+    <string name="pdf_manager">Quản lý PDF</string>
+    <string name="ppt_manager">Quản lý PPT</string>
 </resources>

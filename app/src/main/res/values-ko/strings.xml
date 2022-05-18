@@ -31,8 +31,8 @@
     <string name="notification_rename_error">이름 바꾸기 오류</string>
     <string name="notification_not_rename">이름 변경되지 않음</string>
     <string name="notification_share_error">공유 오류</string>
-    <string name="notification_add_favorite">서표</string>
-    <string name="notification_remove_favorite">북마크 제거</string>
+    <string name="notification_add_favorite">북마크가 성공적으로 추가되었습니다</string>
+    <string name="notification_remove_favorite">북마크가 성공적으로 제거되었습니다</string>
     <string name="btn_privacy_policy">개인 정보 정책</string>
     <string name="btn_more_app">더 많은 앱</string>
     <string name="btn_feedback">피드백</string>
@@ -55,4 +55,9 @@
     <string name="old_price"><strike> 이전 가격: 46.000 đ</strike></string>
     <string name="best_price">최고의 가격:</string>
     <string name="btn_continue">계속하다</string>
+    <string name="docx_reader_view_all_file">Docx Reader - 모든 파일 보기</string>
+    <string name="version">버전</string>
+    <string name="xls_manager">XLS 관리자</string>
+    <string name="pdf_manager">PDF 관리자</string>
+    <string name="ppt_manager">PPT 관리자</string>
 </resources>

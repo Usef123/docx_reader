@@ -31,8 +31,8 @@
     <string name="notification_rename_error">Ошибка переименования</string>
     <string name="notification_not_rename">Имя без изменений</string>
     <string name="notification_share_error">Поделиться ошибкой</string>
-    <string name="notification_add_favorite">Закладка</string>
-    <string name="notification_remove_favorite">Удалить закладку</string>
+    <string name="notification_add_favorite">Закладка успешно добавлена</string>
+    <string name="notification_remove_favorite">Закладка успешно удалена</string>
     <string name="btn_privacy_policy">Политика конфиденциальности</string>
     <string name="btn_more_app">Больше приложений</string>
     <string name="btn_feedback">Обратная связь</string>
@@ -55,4 +55,9 @@
     <string name="old_price"><strike> Старая цена: 46.000 đ</strike></string>
     <string name="best_price">Лучшая цена:</string>
     <string name="btn_continue">Продолжать</string>
+    <string name="docx_reader_view_all_file">Docx Reader - Просмотреть все файлы</string>
+    <string name="version">Версия</string>
+    <string name="xls_manager">XLS-менеджер</string>
+    <string name="pdf_manager">PDF-менеджер</string>
+    <string name="ppt_manager">PPT-менеджер</string>
 </resources>

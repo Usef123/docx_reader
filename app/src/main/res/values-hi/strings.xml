@@ -31,8 +31,8 @@
     <string name="notification_rename_error">नाम बदलें त्रुटि</string>
     <string name="notification_not_rename">नाम अपरिवर्तित</string>
     <string name="notification_share_error">शेयर त्रुटि</string>
-    <string name="notification_add_favorite">बुकमार्क</string>
-    <string name="notification_remove_favorite">बुकमार्क हटाएं</string>
+    <string name="notification_add_favorite">बुकमार्क सफलतापूर्वक जोड़ा गया</string>
+    <string name="notification_remove_favorite">बुकमार्क सफलतापूर्वक हटाया गया</string>
     <string name="btn_privacy_policy">गोपनीयता नीति</string>
     <string name="btn_more_app">और ज्यादा एप्लीकेशन</string>
     <string name="btn_feedback">प्रतिपुष्टि</string>
@@ -55,4 +55,9 @@
     <string name="old_price"><strike> पुरानी कीमत: 46.000 đ</strike></string>
     <string name="best_price">सबसे अच्छी कीमत:</string>
     <string name="btn_continue">जारी रखें</string>
+    <string name="docx_reader_view_all_file">Docx Reader - सभी फ़ाइल देखें</string>
+    <string name="version">संस्करण</string>
+    <string name="xls_manager">एक्सएलएस प्रबंधक</string>
+    <string name="pdf_manager">पीडीएफ मैनेजर</string>
+    <string name="ppt_manager">पीपीटी प्रबंधक</string>
 </resources>
