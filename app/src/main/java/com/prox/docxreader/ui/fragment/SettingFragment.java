@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -14,6 +15,7 @@ import androidx.navigation.Navigation;
 import com.prox.docxreader.BuildConfig;
 import com.prox.docxreader.R;
 import com.prox.docxreader.databinding.FragmentSettingBinding;
+import com.prox.docxreader.utils.LanguageUtils;
 import com.proxglobal.purchase.ProxPurchase;
 
 public class SettingFragment extends Fragment {
@@ -25,6 +27,11 @@ public class SettingFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         FragmentSettingBinding binding = FragmentSettingBinding.inflate(inflater, container, false);
+
+        LanguageUtils.loadLanguage(requireContext());
+
+        requireActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        requireActivity().getWindow().setStatusBarColor(this.getResources().getColor(R.color.doc_color));
 
         binding.txtVersionApp.setText(binding.txtVersionApp.getText() +" "+ BuildConfig.VERSION_NAME);
 
@@ -40,7 +47,6 @@ public class SettingFragment extends Fragment {
 
         binding.btnPrivacyPolicy.setOnClickListener(v -> {
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(URI_POLICY)));
-            requireActivity().overridePendingTransition(R.anim.anim_right_left_1, R.anim.anim_right_left_2);
         });
 
         if (ProxPurchase.getInstance().checkPurchased()){
@@ -54,7 +60,6 @@ public class SettingFragment extends Fragment {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(URI_PACKAGE));
         startActivity(intent);
-        requireActivity().overridePendingTransition(R.anim.anim_right_left_1, R.anim.anim_right_left_2);
     }
 
     private void shareApp() {

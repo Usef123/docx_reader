@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,6 +39,9 @@ public class SplashActivity extends AppCompatActivity {
 
         //Load ngôn ngữ
         LanguageUtils.loadLanguage(this);
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        getWindow().setStatusBarColor(this.getResources().getColor(R.color.white));
 
         ActivitySplashBinding binding = ActivitySplashBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -91,7 +95,7 @@ public class SplashActivity extends AppCompatActivity {
                 Log.d(TAG, "SplashActivity Ads onError");
                 goToMainActivity();
             }
-        }, BuildConfig.interstitial_splash, null, 10000);
+        }, BuildConfig.interstitial_splash, null, 12000);
     }
 
     private void showInterOutside() {

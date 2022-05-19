@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -14,6 +15,7 @@ import com.prox.docxreader.BuildConfig;
 import com.prox.docxreader.R;
 import com.prox.docxreader.databinding.FragmentPremiumBinding;
 import com.prox.docxreader.ui.activity.MainActivity;
+import com.prox.docxreader.utils.LanguageUtils;
 import com.proxglobal.purchase.ProxPurchase;
 import com.proxglobal.purchase.function.PurchaseListioner;
 
@@ -24,6 +26,11 @@ public class PremiumFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         FragmentPremiumBinding binding = FragmentPremiumBinding.inflate(inflater, container, false);
+
+        LanguageUtils.loadLanguage(requireContext());
+
+        requireActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        requireActivity().getWindow().setStatusBarColor(this.getResources().getColor(R.color.doc_color));
 
         binding.btnClose.setOnClickListener(v -> requireActivity().onBackPressed());
         String bestPrice = getResources().getString(R.string.best_price) + " " + ProxPurchase.getInstance().getPriceSub(BuildConfig.id_subs);
@@ -38,7 +45,6 @@ public class PremiumFragment extends Fragment {
                     intent.setAction(PURCHASE);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
-                    requireActivity().overridePendingTransition(R.anim.anim_right_left_1, R.anim.anim_right_left_2);
                 }
 
                 @Override

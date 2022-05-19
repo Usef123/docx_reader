@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -41,6 +42,7 @@ import com.prox.docxreader.ui.activity.ReaderActivity;
 import com.prox.docxreader.ui.dialog.OptionDialog;
 import com.prox.docxreader.ui.dialog.SortDialog;
 import com.prox.docxreader.utils.FileUtils;
+import com.prox.docxreader.utils.LanguageUtils;
 import com.prox.docxreader.viewmodel.DocumentViewModel;
 import com.proxglobal.proxads.adsv2.callback.AdsCallback;
 
@@ -63,6 +65,12 @@ public class FavoriteFragment extends Fragment {
                              Bundle savedInstanceState) {
         Log.d(TAG, "FavoriteFragment onCreateView");
         binding = FragmentFavoriteBinding.inflate(inflater, container, false);
+
+        LanguageUtils.loadLanguage(requireContext());
+
+        requireActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        requireActivity().getWindow().setStatusBarColor(this.getResources().getColor(R.color.doc_color));
+
         binding.include.txtTitleFragment.setText(getResources().getString(R.string.title_favorite));
 
         setupRecyclerView();
@@ -214,7 +222,6 @@ public class FavoriteFragment extends Fragment {
         intent.putExtra(FILE_PATH, document.getPath());
         intent.putExtra(OPEN_OUTSIDE, false);
         startActivity(intent);
-        requireActivity().overridePendingTransition(R.anim.anim_right_left_1, R.anim.anim_right_left_2);
     }
 
     private void clickShare(Document document) {

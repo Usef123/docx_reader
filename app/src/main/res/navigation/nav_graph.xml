@@ -22,18 +22,10 @@
         tools:layout="@layout/fragment_setting" >
         <action
             android:id="@+id/action_settingFragment_to_languageFragment"
-            app:destination="@id/languageFragment"
-            app:popEnterAnim="@anim/anim_left_right_1"
-            app:popExitAnim="@anim/anim_left_right_2"
-            app:enterAnim="@anim/anim_right_left_1"
-            app:exitAnim="@anim/anim_right_left_2"/>
+            app:destination="@id/languageFragment" />
         <action
             android:id="@+id/action_settingFragment_to_premiumFragment"
-            app:destination="@id/premiumFragment"
-            app:popEnterAnim="@anim/anim_left_right_1"
-            app:popExitAnim="@anim/anim_left_right_2"
-            app:enterAnim="@anim/anim_right_left_1"
-            app:exitAnim="@anim/anim_right_left_2"/>
+            app:destination="@id/premiumFragment" />
     </fragment>
     <fragment
         android:id="@+id/languageFragment"
@@ -52,11 +44,7 @@
         tools:layout="@layout/fragment_xls" />
     <action
         android:id="@+id/action_global_xlsFragment"
-        app:destination="@id/xlsFragment"
-        app:popEnterAnim="@anim/anim_left_right_1"
-        app:popExitAnim="@anim/anim_left_right_2"
-        app:enterAnim="@anim/anim_right_left_1"
-        app:exitAnim="@anim/anim_right_left_2"/>
+        app:destination="@id/xlsFragment" />
     <fragment
         android:id="@+id/pdfFragment"
         android:name="com.prox.docxreader.ui.fragment.PDFFragment"
@@ -64,11 +52,7 @@
         tools:layout="@layout/fragment_pdf" />
     <action
         android:id="@+id/action_global_pdfFragment"
-        app:destination="@id/pdfFragment"
-        app:popEnterAnim="@anim/anim_left_right_1"
-        app:popExitAnim="@anim/anim_left_right_2"
-        app:enterAnim="@anim/anim_right_left_1"
-        app:exitAnim="@anim/anim_right_left_2"/>
+        app:destination="@id/pdfFragment" />
     <fragment
         android:id="@+id/pptFragment"
         android:name="com.prox.docxreader.ui.fragment.PPTFragment"
@@ -76,9 +60,5 @@
         tools:layout="@layout/fragment_ppt" />
     <action
         android:id="@+id/action_global_pptFragment"
-        app:destination="@id/pptFragment"
-        app:popEnterAnim="@anim/anim_left_right_1"
-        app:popExitAnim="@anim/anim_left_right_2"
-        app:enterAnim="@anim/anim_right_left_1"
-        app:exitAnim="@anim/anim_right_left_2" />
+        app:destination="@id/pptFragment" />
 </navigation>

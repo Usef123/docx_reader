@@ -11,8 +11,6 @@ import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 
-import com.prox.docxreader.R;
-
 public class CustomDialog extends Dialog {
     public CustomDialog(@NonNull Context context, View layout) {
         super(context);
@@ -24,7 +22,6 @@ public class CustomDialog extends Dialog {
         getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
         layoutParams.gravity = Gravity.CENTER;
-        layoutParams.windowAnimations = R.style.CustomDialogAnimation;
         getWindow().setAttributes(layoutParams);
     }
 }

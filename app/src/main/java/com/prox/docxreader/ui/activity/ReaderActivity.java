@@ -92,6 +92,9 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
         //Load ngôn ngữ
         LanguageUtils.loadLanguage(this);
 
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        getWindow().setStatusBarColor(this.getResources().getColor(R.color.doc_color));
+
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
         control = new MainControl(this);
@@ -149,7 +152,6 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                     startActivity(intent);
                 }
                 finish();
-                overridePendingTransition(R.anim.anim_left_right_1, R.anim.anim_left_right_2);
             }
 
             @Override
@@ -164,7 +166,6 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                         startActivity(intent);
                     }
                     finish();
-                    overridePendingTransition(R.anim.anim_left_right_1, R.anim.anim_left_right_2);
                 }
             }
 
@@ -178,7 +179,6 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                     startActivity(intent);
                 }
                 finish();
-                overridePendingTransition(R.anim.anim_left_right_1, R.anim.anim_left_right_2);
             }
         });
         ProxRateDialog.init(config);
@@ -357,7 +357,6 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                             startActivity(intent);
                         }
                         finish();
-                        overridePendingTransition(R.anim.anim_left_right_1, R.anim.anim_left_right_2);
                     }else {
                         ProxRateDialog.showIfNeed(ReaderActivity.this, getSupportFragmentManager());
                     }
@@ -375,7 +374,6 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                             startActivity(intent);
                         }
                         finish();
-                        overridePendingTransition(R.anim.anim_left_right_1, R.anim.anim_left_right_2);
                     }else {
                         ProxRateDialog.showIfNeed(ReaderActivity.this, getSupportFragmentManager());
                     }
@@ -392,7 +390,6 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                     startActivity(intent);
                 }
                 finish();
-                overridePendingTransition(R.anim.anim_left_right_1, R.anim.anim_left_right_2);
             }else {
                 ProxRateDialog.showIfNeed(ReaderActivity.this, getSupportFragmentManager());
             }
@@ -409,7 +406,6 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                         startActivity(intent);
                     }
                     finish();
-                    overridePendingTransition(R.anim.anim_left_right_1, R.anim.anim_left_right_2);
                 }
 
                 @Override
@@ -422,7 +418,6 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                         startActivity(intent);
                     }
                     finish();
-                    overridePendingTransition(R.anim.anim_left_right_1, R.anim.anim_left_right_2);
                 }
             });
         }else {
@@ -433,7 +428,6 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                 startActivity(intent);
             }
             finish();
-            overridePendingTransition(R.anim.anim_left_right_1, R.anim.anim_left_right_2);
         }
     }
 
@@ -526,7 +520,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
      * @return
      */
     public boolean isShowZoomingMsg() {
-        return true;
+        return false;
     }
 
     /**
@@ -1029,7 +1023,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
      * 是否绘制页码
      */
     public boolean isDrawPageNumber() {
-        return true;
+        return false;
     }
 
     /**

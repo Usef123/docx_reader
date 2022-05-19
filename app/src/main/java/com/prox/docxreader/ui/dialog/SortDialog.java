@@ -48,7 +48,6 @@ public class SortDialog extends Dialog {
         layoutParams.gravity = Gravity.TOP|Gravity.END;
         layoutParams.y = 128;
         layoutParams.x = 16;
-        layoutParams.windowAnimations = R.style.SortDialogAnimation;
         getWindow().setAttributes(layoutParams);
 
         switch (typeFragment){

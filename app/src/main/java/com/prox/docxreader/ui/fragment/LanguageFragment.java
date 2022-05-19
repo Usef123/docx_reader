@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -25,6 +26,11 @@ public class LanguageFragment extends Fragment {
                              Bundle savedInstanceState) {
         FragmentLanguageBinding binding = FragmentLanguageBinding.inflate(inflater, container, false);
 
+        LanguageUtils.loadLanguage(requireContext());
+
+        requireActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        requireActivity().getWindow().setStatusBarColor(this.getResources().getColor(R.color.doc_color));
+
         LanguageAdapter languageAdapter = new LanguageAdapter(
                 requireContext(),
                 getResources().getStringArray(R.array.language),
@@ -35,7 +41,6 @@ public class LanguageFragment extends Fragment {
                     intent.setAction(CHANGE_LANGUAGE);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
-                    requireActivity().overridePendingTransition(R.anim.anim_right_left_1, R.anim.anim_right_left_2);
                 });
 
         LinearLayoutManager manager = new LinearLayoutManager(getContext());

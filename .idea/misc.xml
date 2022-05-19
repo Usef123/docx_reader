@@ -14,6 +14,7 @@
         <entry key="..\:/docx-reader/app/src/main/res/drawable/favorite_selector.xml" value="0.1295" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/home_selector.xml" value="0.1105" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_app.xml" value="0.1105" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_back.xml" value="0.148" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_back_24.xml" value="0.1105" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_baseline_close_24.xml" value="0.1105" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_button_more.xml" value="0.118" />
@@ -24,9 +25,11 @@
         <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_close_premium.xml" value="0.1105" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_diamond.xml" value="0.118" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_infor_app.xml" value="0.118" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_item_pptx.xml" value="0.148" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1105" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_more_app.xml" value="0.118" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_notification.xml" value="0.1495" />
+        <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_option_ppt.xml" value="0.148" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_premium.xml" value="0.118" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_sort.xml" value="0.1295" />
         <entry key="..\:/docx-reader/app/src/main/res/drawable/ic_sort_name.xml" value="0.135" />
@@ -84,13 +87,15 @@
         <entry key="..\:/docx-reader/app/src/main/res/layout/item_docx_home.xml" value="0.21927083333333333" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/item_excel_option.xml" value="0.4" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/item_option.xml" value="0.25" />
-        <entry key="..\:/docx-reader/app/src/main/res/layout/item_other.xml" value="0.152" />
+        <entry key="..\:/docx-reader/app/src/main/res/layout/item_other.xml" value="0.2" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/item_pdf_option.xml" value="0.264" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/item_ppt_option.xml" value="0.25" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/screen_while.xml" value="0.21965579710144928" />
         <entry key="..\:/docx-reader/app/src/main/res/layout/title_home.xml" value="0.264" />
         <entry key="..\:/docx-reader/app/src/main/res/menu/bottom_menu.xml" value="0.25" />
         <entry key="..\:/docx-reader/app/src/main/res/menu/menu_app_act.xml" value="0.25" />
+        <entry key="..\:/docx-reader/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1" />
+        <entry key="..\:/docx-reader/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1" />
         <entry key="..\:/docx-reader/office/src/main/res/layout/activity_office_detail.xml" value="0.10729166666666666" />
         <entry key="..\:/docx-reader/proxads/src/main/res/layout/dialog_rating.xml" value="0.1" />
       </map>
