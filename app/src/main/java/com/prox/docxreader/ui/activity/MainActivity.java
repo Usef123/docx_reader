@@ -9,7 +9,6 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 
@@ -54,12 +53,6 @@ public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration appBarConfiguration;
     private final CompositeDisposable disposable = new CompositeDisposable();
     private Observer<Document> observer;
-    private final Handler handler = new Handler();
-    private final Runnable insertDB = () -> {
-        getObservable().observeOn(Schedulers.io())
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer);
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +81,9 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         Log.d(TAG, "MainActivity onStart");
         if (PermissionUtils.permission(this)) {
-            handler.post(insertDB);
+            getObservable().observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(observer);
         } else {
             PermissionUtils.requestPermissions(this, this);
         }
@@ -99,7 +94,6 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
         Log.d(TAG, "MainActivity onStop");
         PermissionUtils.cancelDialogAccessAllFile();
-        handler.removeCallbacks(insertDB);
     }
 
     @Override
@@ -123,7 +117,9 @@ public class MainActivity extends AppCompatActivity {
             if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED
                     && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                handler.post(insertDB);
+                getObservable().observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(Schedulers.io())
+                        .subscribe(observer);
             } else {
                 PermissionUtils.openDialogAccessAllFile(this, this);
             }
