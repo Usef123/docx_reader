@@ -28,8 +28,8 @@ android {
             buildConfigField "String", "interstitial_menu", "\"ca-app-pub-3940256099942544/1033173712\""
             buildConfigField "String", "banner", "\"ca-app-pub-3940256099942544/6300978111\""
 
-            buildConfigField "String", "id_subs", "\"remove_ads_monthly\""
-            buildConfigField "String", "id_test3_subs", "\"id_test3_subs\""
+            buildConfigField "String", "id_subs_month", "\"remove_ads_monthly\""
+            buildConfigField "String", "id_subs_year", "\"remove_ads_yearly\""
         }
         release {
             minifyEnabled false
@@ -43,8 +43,8 @@ android {
             buildConfigField "String", "interstitial_menu", "\"ca-app-pub-3617606523175567/4934008113\""
             buildConfigField "String", "banner", "\"ca-app-pub-3617606523175567/1253906148\""
 
-            buildConfigField "String", "id_subs", "\"remove_ads_monthly\""
-            buildConfigField "String", "id_test3_subs", "\"id_test3_subs\""
+            buildConfigField "String", "id_subs_month", "\"remove_ads_monthly\""
+            buildConfigField "String", "id_subs_year", "\"remove_ads_yearly\""
         }
     }
     compileOptions {

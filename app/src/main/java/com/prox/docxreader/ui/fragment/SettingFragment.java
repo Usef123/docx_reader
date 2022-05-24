@@ -15,13 +15,14 @@ import androidx.navigation.Navigation;
 import com.prox.docxreader.BuildConfig;
 import com.prox.docxreader.R;
 import com.prox.docxreader.databinding.FragmentSettingBinding;
+import com.prox.docxreader.ui.activity.IAPActivity;
 import com.prox.docxreader.utils.LanguageUtils;
 import com.proxglobal.purchase.ProxPurchase;
 
 public class SettingFragment extends Fragment {
     public static final String EMAIL_FEEDBACK = "elaineeyui@gmail.com";
-    private static final String URI_PACKAGE = "https://play.google.com/store/apps/developer?id=Andromeda+App";
-    private static final String URI_POLICY = "https://hellowordapp.github.io/policy/privacy.html";
+    public static final String URI_PACKAGE = "https://play.google.com/store/apps/developer?id=Andromeda+App";
+    public static final String URI_POLICY = "https://hellowordapp.github.io/policy/privacy.html";
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -52,7 +53,9 @@ public class SettingFragment extends Fragment {
         if (ProxPurchase.getInstance().checkPurchased()){
             binding.btnPremium.setVisibility(View.GONE);
         }
-        binding.btnPremium.setOnClickListener(v -> Navigation.findNavController(binding.getRoot()).navigate(R.id.action_settingFragment_to_premiumFragment));
+        binding.btnPremium.setOnClickListener(v -> {
+            startActivity(new Intent(requireActivity(), IAPActivity.class));
+        });
         return binding.getRoot();
     }
 

@@ -163,11 +163,6 @@ public class MainActivity extends AppCompatActivity {
                 binding.bottomNav.setVisibility(View.GONE);
                 binding.toolbar.setVisibility(View.VISIBLE);
                 binding.toolbar.setTitle(getResources().getString(R.string.language));
-            } else if (navDestination.getId() == R.id.premiumFragment) {
-                binding.bannerAds.setVisibility(View.GONE);
-                binding.bottomNav.setVisibility(View.GONE);
-                binding.toolbar.setVisibility(View.GONE);
-                binding.toolbar.setTitle("");
             } else if (navDestination.getId() == R.id.xlsFragment
                     || navDestination.getId() == R.id.pdfFragment
                     || navDestination.getId() == R.id.pptFragment ) {

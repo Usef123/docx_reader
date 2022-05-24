@@ -7,6 +7,9 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="white20">#33FFFFFF</color>
+    <color name="white50">#80FFFFFF</color>
+    <color name="white80">#CCFFFFFF</color>
     <color name="blue">#3086F6</color>
     <color name="doc_color">#2166B7</color>
     <color name="xls_color">#0F8537</color>
