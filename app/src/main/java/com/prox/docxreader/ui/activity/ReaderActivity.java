@@ -342,45 +342,46 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         int closeReader = preferences.getInt("close_reader", 1);
         Log.d("close_reader", String.valueOf(closeReader));
-        if (closeReader % 2 == 0 && closeReader % 3 == 0) {
-            preferences.edit().putInt("close_reader", closeReader + 1).apply();
-            DocxReaderApp.instance.showInterstitial(this, "insite", new AdsCallback() {
-                @Override
-                public void onClosed() {
-                    super.onClosed();
-                    Log.d("interstitial_global", "onClosed");
-                    SharedPreferences sp = getSharedPreferences("prox", Context.MODE_PRIVATE);
-                    if (sp.getBoolean("isRated", false)){
-                        if (isOpenOutside){
-                            Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            startActivity(intent);
-                        }
-                        finish();
-                    }else {
-                        ProxRateDialog.showIfNeed(ReaderActivity.this, getSupportFragmentManager());
-                    }
-                }
-
-                @Override
-                public void onError() {
-                    super.onError();
-                    Log.d("interstitial_global", "onError");
-                    SharedPreferences sp = getSharedPreferences("prox", Context.MODE_PRIVATE);
-                    if (sp.getBoolean("isRated", false)){
-                        if (isOpenOutside){
-                            Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            startActivity(intent);
-                        }
-                        finish();
-                    }else {
-                        ProxRateDialog.showIfNeed(ReaderActivity.this, getSupportFragmentManager());
-                    }
-
-                }
-            });
-        } else if (closeReader % 2 == 0) {
+//        if (closeReader % 2 == 0 && closeReader % 3 == 0) {
+//            preferences.edit().putInt("close_reader", closeReader + 1).apply();
+//            DocxReaderApp.instance.showInterstitial(this, "insite", new AdsCallback() {
+//                @Override
+//                public void onClosed() {
+//                    super.onClosed();
+//                    Log.d("interstitial_global", "onClosed");
+//                    SharedPreferences sp = getSharedPreferences("prox", Context.MODE_PRIVATE);
+//                    if (sp.getBoolean("isRated", false)){
+//                        if (isOpenOutside){
+//                            Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
+//                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                            startActivity(intent);
+//                        }
+//                        finish();
+//                    }else {
+//                        ProxRateDialog.showIfNeed(ReaderActivity.this, getSupportFragmentManager());
+//                    }
+//                }
+//
+//                @Override
+//                public void onError() {
+//                    super.onError();
+//                    Log.d("interstitial_global", "onError");
+//                    SharedPreferences sp = getSharedPreferences("prox", Context.MODE_PRIVATE);
+//                    if (sp.getBoolean("isRated", false)){
+//                        if (isOpenOutside){
+//                            Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
+//                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                            startActivity(intent);
+//                        }
+//                        finish();
+//                    }else {
+//                        ProxRateDialog.showIfNeed(ReaderActivity.this, getSupportFragmentManager());
+//                    }
+//
+//                }
+//            });
+//        } else
+        if (closeReader % 2 == 0) {
             preferences.edit().putInt("close_reader", closeReader + 1).apply();
             SharedPreferences sp = getSharedPreferences("prox", Context.MODE_PRIVATE);
             if (sp.getBoolean("isRated", false)){
@@ -393,33 +394,33 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
             }else {
                 ProxRateDialog.showIfNeed(ReaderActivity.this, getSupportFragmentManager());
             }
-        } else if (closeReader % 3 == 0) {
-            preferences.edit().putInt("close_reader", closeReader + 1).apply();
-            DocxReaderApp.instance.showInterstitial(this, "insite", new AdsCallback() {
-                @Override
-                public void onClosed() {
-                    super.onClosed();
-                    Log.d("interstitial_global", "onClosed");
-                    if (isOpenOutside){
-                        Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
-                    }
-                    finish();
-                }
-
-                @Override
-                public void onError() {
-                    super.onError();
-                    Log.d("interstitial_global", "onError");
-                    if (isOpenOutside){
-                        Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
-                    }
-                    finish();
-                }
-            });
+//        } else if (closeReader % 3 == 0) {
+//            preferences.edit().putInt("close_reader", closeReader + 1).apply();
+//            DocxReaderApp.instance.showInterstitial(this, "insite", new AdsCallback() {
+//                @Override
+//                public void onClosed() {
+//                    super.onClosed();
+//                    Log.d("interstitial_global", "onClosed");
+//                    if (isOpenOutside){
+//                        Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
+//                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                        startActivity(intent);
+//                    }
+//                    finish();
+//                }
+//
+//                @Override
+//                public void onError() {
+//                    super.onError();
+//                    Log.d("interstitial_global", "onError");
+//                    if (isOpenOutside){
+//                        Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
+//                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                        startActivity(intent);
+//                    }
+//                    finish();
+//                }
+//            });
         }else {
             preferences.edit().putInt("close_reader", closeReader + 1).apply();
             if (isOpenOutside){
