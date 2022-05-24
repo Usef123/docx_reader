@@ -60,4 +60,12 @@
     <string name="xls_manager">XLS Bestuurder</string>
     <string name="pdf_manager">PDF Bestuurder</string>
     <string name="ppt_manager">PPT Bestuurder</string>
+    <string name="title1">Upgrade to Premium</string>
+    <string name="title2">Geniet al die funksies van die toepassing sonder om deur advertensies geïrriteerd te word</string>
+    <string name="best_offer">Beste aanbod</string>
+    <string name="title3">Jaarliks gefaktureer - Kanselleer enige tyd</string>
+    <string name="per_month">per maand</string>
+    <string name="per_year">per jaar</string>
+    <string name="month">/maand</string>
+    <string name="year">/jaar</string>
 </resources>

@@ -60,4 +60,12 @@
     <string name="xls_manager">Менеджер XLS</string>
     <string name="pdf_manager">Менеджер PDF</string>
     <string name="ppt_manager">Менеджер PPT</string>
+    <string name="title1">Перейти до Premium</string>
+    <string name="title2">Насолоджуйтесь усіма функціями програми, не дратуючи рекламу</string>
+    <string name="best_offer">Найкраща пропозиція</string>
+    <string name="title3">Оплачується щорічно. Скасуйте будь-коли</string>
+    <string name="per_month">на місяць</string>
+    <string name="per_year">в рік</string>
+    <string name="month">/місяць</string>
+    <string name="year">/рік</string>
 </resources>

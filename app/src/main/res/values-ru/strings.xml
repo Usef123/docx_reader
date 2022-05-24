@@ -60,4 +60,12 @@
     <string name="xls_manager">XLS-менеджер</string>
     <string name="pdf_manager">PDF-менеджер</string>
     <string name="ppt_manager">PPT-менеджер</string>
+    <string name="title1">Перейти на Премиум</string>
+    <string name="title2">Наслаждайтесь всеми функциями приложения, не раздражаясь на рекламу</string>
+    <string name="best_offer">Лучшее предложение</string>
+    <string name="title3">Выставляется ежегодно. Отменить в любое время.</string>
+    <string name="per_month">в месяц</string>
+    <string name="per_year">в год</string>
+    <string name="month">/месяц</string>
+    <string name="year">/год</string>
 </resources>

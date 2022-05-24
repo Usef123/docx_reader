@@ -60,4 +60,12 @@
     <string name="xls_manager">Manajer XLS</string>
     <string name="pdf_manager">Manajer PDF</string>
     <string name="ppt_manager">Manajer PPT</string>
+    <string name="title1">Tingkatkan ke Premium</string>
+    <string name="title2">Nikmati semua fungsi aplikasi tanpa terganggu oleh iklan</string>
+    <string name="best_offer">Penawaran terbaik</string>
+    <string name="title3">Ditagih setiap tahun-Batalkan kapan saja</string>
+    <string name="per_month">per bulan</string>
+    <string name="per_year">per tahun</string>
+    <string name="month">/bulan</string>
+    <string name="year">/tahun</string>
 </resources>

@@ -60,4 +60,12 @@
     <string name="xls_manager">XLSマネージャー</string>
     <string name="pdf_manager">PDFマネージャー</string>
     <string name="ppt_manager">PPTマネージャー</string>
+    <string name="title1">プレミアムにアップグレード</string>
+    <string name="title2">広告に煩わされることなく、アプリのすべての機能をお楽しみください</string>
+    <string name="best_offer">最高の提案</string>
+    <string name="title3">毎年請求-いつでもキャンセル</string>
+    <string name="per_month">月額</string>
+    <string name="per_year">1年当たり</string>
+    <string name="month">/月</string>
+    <string name="year">/年</string>
 </resources>

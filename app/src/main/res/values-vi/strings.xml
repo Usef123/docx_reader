@@ -60,4 +60,12 @@
     <string name="xls_manager">Quản lý XLS</string>
     <string name="pdf_manager">Quản lý PDF</string>
     <string name="ppt_manager">Quản lý PPT</string>
+    <string name="title1">Nâng cấp lên Premium</string>
+    <string name="title2">Tận hưởng tất cả các chức năng của ứng dụng mà không bị quảng cáo làm phiền</string>
+    <string name="best_offer">Giá tốt nhất</string>
+    <string name="title3">Thanh toán hàng năm-Hủy bất kỳ lúc nào</string>
+    <string name="per_month">mỗi tháng</string>
+    <string name="per_year">mỗi năm</string>
+    <string name="month">/tháng</string>
+    <string name="year">/năm</string>
 </resources>

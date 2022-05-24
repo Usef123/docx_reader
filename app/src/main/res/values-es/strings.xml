@@ -60,4 +60,12 @@
     <string name="xls_manager">Administrador XLS</string>
     <string name="pdf_manager">Administrador PDF</string>
     <string name="ppt_manager">Administrador PPT</string>
+    <string name="title1">Mejorado a Premium</string>
+    <string name="title2">Disfruta de todas las funciones de la aplicación sin que te molesten los anuncios.</string>
+    <string name="best_offer">Mejor oferta</string>
+    <string name="title3">Facturado anualmente-Cancelar en cualquier momento</string>
+    <string name="per_month">por mes</string>
+    <string name="per_year">por año</string>
+    <string name="month">/mes</string>
+    <string name="year">/año</string>
 </resources>

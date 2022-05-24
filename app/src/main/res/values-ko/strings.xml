@@ -60,4 +60,12 @@
     <string name="xls_manager">XLS 관리자</string>
     <string name="pdf_manager">PDF 관리자</string>
     <string name="ppt_manager">PPT 관리자</string>
+    <string name="title1">프리미엄으로 업그레이드</string>
+    <string name="title2">광고에 신경쓰지 않고 앱의 모든 기능을 즐기세요</string>
+    <string name="best_offer">최고의 제안</string>
+    <string name="title3">매년 청구됨-언제든지 취소</string>
+    <string name="per_month">달마다</string>
+    <string name="per_year">연간</string>
+    <string name="month">/월</string>
+    <string name="year">/년도</string>
 </resources>

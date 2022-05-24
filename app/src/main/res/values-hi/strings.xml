@@ -60,4 +60,12 @@
     <string name="xls_manager">एक्सएलएस प्रबंधक</string>
     <string name="pdf_manager">पीडीएफ मैनेजर</string>
     <string name="ppt_manager">पीपीटी प्रबंधक</string>
+    <string name="title1">प्रीमियम में अपग्रेड करें</string>
+    <string name="title2">विज्ञापनों से परेशान हुए बिना ऐप के सभी कार्यों का आनंद लें</string>
+    <string name="best_offer">सबसे अच्छा प्रस्ताव</string>
+    <string name="title3">सालाना बिल किया जाता है-कभी भी रद्द करें</string>
+    <string name="per_month">प्रति माह</string>
+    <string name="per_year">प्रति वर्ष</string>
+    <string name="month">/महीना</string>
+    <string name="year">/साल</string>
 </resources>

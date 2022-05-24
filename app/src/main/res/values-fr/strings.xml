@@ -60,4 +60,12 @@
     <string name="xls_manager">Gestionnaire XLS</string>
     <string name="pdf_manager">Gestionnaire PDF</string>
     <string name="ppt_manager">Gestionnaire PPT</string>
+    <string name="title1">Passer à la version premium</string>
+    <string name="title2">Profitez de toutes les fonctions de l\'application sans être gêné par les publicités</string>
+    <string name="best_offer">Meilleure offre</string>
+    <string name="title3">Facturé annuellement - Annulez à tout moment</string>
+    <string name="per_month">par mois</string>
+    <string name="per_year">par an</string>
+    <string name="month">/mois</string>
+    <string name="year">/an</string>
 </resources>
