@@ -23,7 +23,6 @@ import com.proxglobal.purchase.function.PurchaseListioner;
 
 import java.text.NumberFormat;
 import java.util.Currency;
-import java.util.Locale;
 
 public class IAPActivity extends AppCompatActivity {
     public static final String PURCHASE = "PURCHASE";
@@ -102,7 +101,7 @@ public class IAPActivity extends AppCompatActivity {
 
         NumberFormat format = NumberFormat.getCurrencyInstance();
         format.setMaximumFractionDigits(0);
-        format.setCurrency(Currency.getInstance(Locale.getDefault()));
+        format.setCurrency(Currency.getInstance("VND"));
 
         binding.btnPriceMonth.txtPrice1.setText(format.format(priceNewMonth));
         binding.btnPriceMonth.txtPrice2.setText(R.string.per_month);
