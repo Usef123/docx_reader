@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 
@@ -54,6 +55,20 @@ public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration appBarConfiguration;
     private final CompositeDisposable disposable = new CompositeDisposable();
     private Observer<Document> observer;
+    private final Handler handler = new Handler();
+    private final Runnable checkPermission = new Runnable() {
+        @Override
+        public void run() {
+            if (PermissionUtils.permission(MainActivity.this)){
+                handler.removeCallbacks(this);
+                Intent intent = new Intent(MainActivity.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }else {
+                handler.postDelayed(this, 1000);
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
                     .subscribeOn(Schedulers.io())
                     .subscribe(observer);
         } else {
+            handler.post(checkPermission);
             PermissionUtils.requestPermissions(this, this);
         }
     }
@@ -100,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         Log.d(TAG, "MainActivity onDestroy");
+        handler.removeCallbacks(checkPermission);
         appBarConfiguration = null;
         navController = null;
         binding = null;
