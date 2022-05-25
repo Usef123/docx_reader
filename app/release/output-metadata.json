@@ -11,9 +11,9 @@
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 10,
-      "versionName": "1.1.0",
-      "outputFile": "v1.1.0(10)-DocxReader-release.apk"
+      "versionCode": 12,
+      "versionName": "1.1.2",
+      "outputFile": "v1.1.2(12)-DocxReader-release.apk"
     }
   ],
   "elementType": "File"
