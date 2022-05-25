@@ -1,6 +1,8 @@
 package com.prox.docxreader.ui.activity;
 
 import static com.prox.docxreader.ui.activity.SplashActivity.OPEN_OUTSIDE;
+import static com.prox.docxreader.utils.PermissionUtils.PERMISSION_DENIED;
+import static com.prox.docxreader.utils.PermissionUtils.PERMISSION_DENIED_NOT_SHOW;
 import static com.prox.docxreader.utils.PermissionUtils.REQUEST_PERMISSION_MANAGE;
 import static com.prox.docxreader.utils.PermissionUtils.REQUEST_PERMISSION_READ_WRITE;
 
@@ -37,7 +39,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -199,10 +200,13 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
 
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return;
+        }
+
         if (requestCode == REQUEST_PERMISSION_READ_WRITE) {
             FirebaseUtils.sendEventRequestPermission(this);
 
@@ -210,8 +214,13 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED
                     && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                 binding.viewerOffice.post(this::init);
-            } else {
-                PermissionUtils.openDialogAccessAllFile(this, this);
+            }else {
+                if (shouldShowRequestPermissionRationale(permissions[0])
+                        && shouldShowRequestPermissionRationale(permissions[1])){
+                    PermissionUtils.openDialogAccessAllFile(this, this, PERMISSION_DENIED);
+                }else {
+                    PermissionUtils.openDialogAccessAllFile(this, this, PERMISSION_DENIED_NOT_SHOW);
+                }
             }
         }
     }

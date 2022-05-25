@@ -1,6 +1,8 @@
 package com.prox.docxreader.ui.activity;
 
 import static com.prox.docxreader.DocxReaderApp.TAG;
+import static com.prox.docxreader.utils.PermissionUtils.PERMISSION_DENIED;
+import static com.prox.docxreader.utils.PermissionUtils.PERMISSION_DENIED_NOT_SHOW;
 import static com.prox.docxreader.utils.PermissionUtils.REQUEST_PERMISSION_MANAGE;
 import static com.prox.docxreader.utils.PermissionUtils.REQUEST_PERMISSION_READ_WRITE;
 
@@ -14,7 +16,6 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -107,10 +108,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return;
+        }
+
         if (requestCode == REQUEST_PERMISSION_READ_WRITE) {
             FirebaseUtils.sendEventRequestPermission(this);
 
@@ -120,8 +124,13 @@ public class MainActivity extends AppCompatActivity {
                 getObservable().observeOn(AndroidSchedulers.mainThread())
                         .subscribeOn(Schedulers.io())
                         .subscribe(observer);
-            } else {
-                PermissionUtils.openDialogAccessAllFile(this, this);
+            }else {
+                if (shouldShowRequestPermissionRationale(permissions[0])
+                        && shouldShowRequestPermissionRationale(permissions[1])){
+                    PermissionUtils.openDialogAccessAllFile(this, this, PERMISSION_DENIED);
+                }else {
+                    PermissionUtils.openDialogAccessAllFile(this, this, PERMISSION_DENIED_NOT_SHOW);
+                }
             }
         }
     }

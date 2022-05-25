@@ -19,6 +19,8 @@ import com.prox.docxreader.R;
 public class PermissionUtils {
     public static final int REQUEST_PERMISSION_MANAGE = 10;
     public static final int REQUEST_PERMISSION_READ_WRITE = 11;
+    public static final int PERMISSION_DENIED = 12;
+    public static final int PERMISSION_DENIED_NOT_SHOW = 13;
 
     private static AlertDialog dialogRequest;
 
@@ -37,19 +39,19 @@ public class PermissionUtils {
             return;
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            openDialogAccessAllFile(context, activity);
+            openDialogAccessAllFile(context, activity, PERMISSION_DENIED);
         } else {
             String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
             activity.requestPermissions(permissions, REQUEST_PERMISSION_READ_WRITE);
         }
     }
 
-    public static void openDialogAccessAllFile(Context context, Activity activity) {
+    public static void openDialogAccessAllFile(Context context, Activity activity, int typeDenied) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(R.string.dialog_message)
                 .setTitle(R.string.dialog_title);
 
-        builder.setPositiveButton(R.string.txt_ok, (dialog, id) -> requestAccessAllFile(activity));
+        builder.setPositiveButton(R.string.txt_ok, (dialog, id) -> requestAccessAllFile(activity, typeDenied));
         builder.setNegativeButton(R.string.txt_cancel, (dialog, id) -> {
             FirebaseUtils.sendEventRequestPermission(context);
             activity.finish();
@@ -59,7 +61,11 @@ public class PermissionUtils {
         dialogRequest.show();
     }
 
-    public static void requestAccessAllFile(Activity activity) {
+    public static void requestAccessAllFile(Activity activity, int typeDenied) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return;
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             try {
                 Uri uri = Uri.parse("package:" + BuildConfig.APPLICATION_ID);
@@ -70,12 +76,17 @@ public class PermissionUtils {
                 activity.startActivityForResult(intent, REQUEST_PERMISSION_MANAGE);
             }
         } else {
-            try {
-                Uri uri = Uri.parse("package:" + BuildConfig.APPLICATION_ID);
-                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, uri);
-                activity.startActivityForResult(intent, REQUEST_PERMISSION_READ_WRITE);
-            } catch (Exception e) {
+            if (typeDenied == PERMISSION_DENIED){
+                String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                activity.requestPermissions(permissions, REQUEST_PERMISSION_READ_WRITE);
+            }else if (typeDenied == PERMISSION_DENIED_NOT_SHOW){
+                try {
+                    Uri uri = Uri.parse("package:" + BuildConfig.APPLICATION_ID);
+                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, uri);
+                    activity.startActivityForResult(intent, REQUEST_PERMISSION_READ_WRITE);
+                } catch (Exception e) {
 
+                }
             }
         }
     }
