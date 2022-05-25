@@ -87,11 +87,9 @@ public class PDFFragment extends Fragment {
             if (typeSort == SORT_NAME){
                 documents.sort(Comparator.comparing(Document::getTitle));
             }else if (typeSort == SORT_TIME_CREATE){
-                documents.sort((document1, document2) ->
-                        (int) (document2.getTimeCreate() - document1.getTimeCreate()));
+                documents.sort((document1, document2) -> Long.compare(document2.getTimeCreate(), document1.getTimeCreate()));
             }else if (typeSort == SORT_TIME_ACCESS){
-                documents.sort((document1, document2) ->
-                        (int) (document2.getTimeAccess() - document1.getTimeAccess()));
+                documents.sort((document1, document2) -> Long.compare(document2.getTimeAccess(), document1.getTimeAccess()));
             }
 
             List<Document> documentsSearch = new ArrayList<>();
