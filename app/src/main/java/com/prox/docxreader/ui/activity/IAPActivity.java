@@ -23,6 +23,7 @@ import com.proxglobal.purchase.function.PurchaseListioner;
 
 import java.text.NumberFormat;
 import java.util.Currency;
+import java.util.Locale;
 
 public class IAPActivity extends AppCompatActivity {
     public static final String PURCHASE = "PURCHASE";
@@ -99,18 +100,31 @@ public class IAPActivity extends AppCompatActivity {
         long priceNewYear = (long) (ProxPurchase.getInstance().getPriceWithoutCurrency(BuildConfig.id_subs_year, ProxPurchase.TYPE_IAP.SUBSCRIPTION) / 1000000);
         long priceOldYear = priceNewYear*3;
 
-        NumberFormat format = NumberFormat.getCurrencyInstance();
-        format.setMaximumFractionDigits(0);
-        format.setCurrency(Currency.getInstance("VND"));
+        if (Locale.getDefault().getLanguage().equals("vi")){
+            NumberFormat format = NumberFormat.getCurrencyInstance();
+            format.setMaximumFractionDigits(0);
+            format.setCurrency(Currency.getInstance("VND"));
 
-        binding.btnPriceMonth.txtPrice1.setText(format.format(priceNewMonth));
-        binding.btnPriceMonth.txtPrice2.setText(R.string.per_month);
-        binding.btnPriceMonth.txtPrice3.setText(format.format(priceOldMonth) + getResources().getString(R.string.month));
-        binding.btnPriceMonth.txtPrice3.setPaintFlags(binding.btnPriceMonth.txtPrice3.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            binding.btnPriceMonth.txtPrice1.setText(format.format(priceNewMonth));
+            binding.btnPriceMonth.txtPrice2.setText(R.string.per_month);
+            binding.btnPriceMonth.txtPrice3.setText(format.format(priceOldMonth) + getResources().getString(R.string.month));
+            binding.btnPriceMonth.txtPrice3.setPaintFlags(binding.btnPriceMonth.txtPrice3.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
-        binding.btnPriceYear.txtPrice1.setText(format.format(priceNewYear));
-        binding.btnPriceYear.txtPrice2.setText(R.string.per_year);
-        binding.btnPriceYear.txtPrice3.setText(format.format(priceOldYear) + getResources().getString(R.string.year));
-        binding.btnPriceYear.txtPrice3.setPaintFlags(binding.btnPriceYear.txtPrice3.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            binding.btnPriceYear.txtPrice1.setText(format.format(priceNewYear));
+            binding.btnPriceYear.txtPrice2.setText(R.string.per_year);
+            binding.btnPriceYear.txtPrice3.setText(format.format(priceOldYear) + getResources().getString(R.string.year));
+            binding.btnPriceYear.txtPrice3.setPaintFlags(binding.btnPriceYear.txtPrice3.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        }else {
+            String currencyMonth = DocxReaderApp.purchase.getCurrency(BuildConfig.id_subs_month, ProxPurchase.TYPE_IAP.SUBSCRIPTION);
+            String currencyYear = DocxReaderApp.purchase.getCurrency(BuildConfig.id_subs_month, ProxPurchase.TYPE_IAP.SUBSCRIPTION);
+
+            binding.btnPriceMonth.txtPrice1.setText(priceNewMonth + " " + currencyMonth);
+            binding.btnPriceMonth.txtPrice2.setText(R.string.per_month);
+            binding.btnPriceMonth.txtPrice3.setText(priceOldMonth + " " +  currencyMonth + getResources().getString(R.string.month));
+
+            binding.btnPriceYear.txtPrice1.setText(priceNewYear + " " +  currencyYear);
+            binding.btnPriceYear.txtPrice2.setText(R.string.per_year);
+            binding.btnPriceYear.txtPrice3.setText(priceOldYear + " " +  currencyYear + getResources().getString(R.string.year));
+        }
     }
 }
