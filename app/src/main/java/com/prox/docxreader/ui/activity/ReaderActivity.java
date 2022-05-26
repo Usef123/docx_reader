@@ -1,12 +1,12 @@
 package com.prox.docxreader.ui.activity;
 
 import static com.prox.docxreader.ui.activity.SplashActivity.OPEN_OUTSIDE;
+import static com.prox.docxreader.utils.PermissionUtils.CHECK_READER;
 import static com.prox.docxreader.utils.PermissionUtils.PERMISSION_DENIED;
 import static com.prox.docxreader.utils.PermissionUtils.PERMISSION_DENIED_NOT_SHOW;
 import static com.prox.docxreader.utils.PermissionUtils.REQUEST_PERMISSION_MANAGE;
 import static com.prox.docxreader.utils.PermissionUtils.REQUEST_PERMISSION_READ_WRITE;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -24,7 +24,7 @@ import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Gravity;
@@ -40,7 +40,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import com.prox.docxreader.BuildConfig;
 import com.prox.docxreader.DocxReaderApp;
@@ -86,6 +85,28 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
 
     private ActivityOfficeDetailBinding binding;
     private boolean isOpenOutside;
+
+    private final Handler handler = new Handler();
+    private final Runnable checkPermission = new Runnable() {
+        @Override
+        public void run() {
+            if (PermissionUtils.typeCheck == CHECK_READER){
+                if (PermissionUtils.permission(ReaderActivity.this)){
+                    handler.removeCallbacks(this);
+                    Intent intent = new Intent(ReaderActivity.this, ReaderActivity.class);
+                    intent.putExtra(FILE_PATH, filePath);
+                    intent.putExtra(OPEN_OUTSIDE, true);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                }else {
+                    handler.postDelayed(this, 1000);
+                }
+            }else {
+                handler.removeCallbacks(this);
+            }
+
+        }
+    };
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -195,6 +216,8 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
         if(PermissionUtils.permission(this)){
             binding.viewerOffice.post(this::init);
         }else {
+            PermissionUtils.typeCheck = CHECK_READER;
+            handler.post(checkPermission);
             PermissionUtils.requestPermissions(this, this);
         }
 
@@ -230,20 +253,13 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_PERMISSION_MANAGE) {
             FirebaseUtils.sendEventRequestPermission(this);
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                if (Environment.isExternalStorageManager()) {
-                    binding.viewerOffice.post(this::init);
-                }
+            if (!PermissionUtils.permission(this)){
+                PermissionUtils.openDialogAccessAllFile(this, this, PERMISSION_DENIED_NOT_SHOW);
             }
         } else if (requestCode == REQUEST_PERMISSION_READ_WRITE) {
             FirebaseUtils.sendEventRequestPermission(this);
-
-            int write = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
-            int read = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
-            if (write == PackageManager.PERMISSION_GRANTED
-                    && read == PackageManager.PERMISSION_GRANTED) {
-                binding.viewerOffice.post(this::init);
+            if (!PermissionUtils.permission(this)){
+                PermissionUtils.openDialogAccessAllFile(this, this, PERMISSION_DENIED_NOT_SHOW);
             }
         }
     }
@@ -488,6 +504,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
      */
     protected void onDestroy() {
         dispose();
+        handler.removeCallbacks(checkPermission);
         super.onDestroy();
     }
 

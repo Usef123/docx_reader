@@ -1,6 +1,7 @@
 package com.prox.docxreader.ui.activity;
 
 import static com.prox.docxreader.DocxReaderApp.TAG;
+import static com.prox.docxreader.utils.PermissionUtils.CHECK_MAIN;
 import static com.prox.docxreader.utils.PermissionUtils.PERMISSION_DENIED;
 import static com.prox.docxreader.utils.PermissionUtils.PERMISSION_DENIED_NOT_SHOW;
 import static com.prox.docxreader.utils.PermissionUtils.REQUEST_PERMISSION_MANAGE;
@@ -59,13 +60,17 @@ public class MainActivity extends AppCompatActivity {
     private final Runnable checkPermission = new Runnable() {
         @Override
         public void run() {
-            if (PermissionUtils.permission(MainActivity.this)){
+            if (PermissionUtils.typeCheck == CHECK_MAIN){
+                if (PermissionUtils.permission(MainActivity.this)){
+                    handler.removeCallbacks(this);
+                    Intent intent = new Intent(MainActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                }else {
+                    handler.postDelayed(this, 1000);
+                }
+            }else{
                 handler.removeCallbacks(this);
-                Intent intent = new Intent(MainActivity.this, MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-            }else {
-                handler.postDelayed(this, 1000);
             }
         }
     };
@@ -101,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
                     .subscribeOn(Schedulers.io())
                     .subscribe(observer);
         } else {
+            PermissionUtils.typeCheck = CHECK_MAIN;
             handler.post(checkPermission);
             PermissionUtils.requestPermissions(this, this);
         }

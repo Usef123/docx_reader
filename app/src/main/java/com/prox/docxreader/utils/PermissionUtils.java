@@ -19,8 +19,14 @@ import com.prox.docxreader.R;
 public class PermissionUtils {
     public static final int REQUEST_PERMISSION_MANAGE = 10;
     public static final int REQUEST_PERMISSION_READ_WRITE = 11;
+
     public static final int PERMISSION_DENIED = 12;
     public static final int PERMISSION_DENIED_NOT_SHOW = 13;
+
+    public static final int CHECK_MAIN = 14;
+    public static final int CHECK_READER = 15;
+
+    public static int typeCheck=CHECK_MAIN;
 
     private static AlertDialog dialogRequest;
 
@@ -58,6 +64,7 @@ public class PermissionUtils {
         });
 
         dialogRequest = builder.create();
+        dialogRequest.setCancelable(false);
         dialogRequest.show();
     }
 
