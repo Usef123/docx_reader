@@ -85,6 +85,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
 
     private ActivityOfficeDetailBinding binding;
     private boolean isOpenOutside;
+    private boolean isOpenned = false;
 
     private final Handler handler = new Handler();
     private final Runnable checkPermission = new Runnable() {
@@ -212,15 +213,6 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         binding.viewerOffice.removeAllViews();
         binding.viewerOffice.addView(appFrame);
-
-        if(PermissionUtils.permission(this)){
-            binding.viewerOffice.post(this::init);
-        }else {
-            PermissionUtils.typeCheck = CHECK_READER;
-            handler.post(checkPermission);
-            PermissionUtils.requestPermissions(this, this);
-        }
-
     }
 
     @Override
@@ -314,6 +306,21 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
             penButton.setEnabled(enabled);
             eraserButton.setEnabled(enabled);
             settingsButton.setEnabled(enabled);
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(PermissionUtils.permission(this)){
+            if (!isOpenned){
+                isOpenned = true;
+                binding.viewerOffice.post(this::init);
+            }
+        }else {
+            PermissionUtils.typeCheck = CHECK_READER;
+            handler.post(checkPermission);
+            PermissionUtils.requestPermissions(this, this);
         }
     }
 
