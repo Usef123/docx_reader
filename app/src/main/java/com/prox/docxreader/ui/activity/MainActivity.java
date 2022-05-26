@@ -60,17 +60,15 @@ public class MainActivity extends AppCompatActivity {
     private final Runnable checkPermission = new Runnable() {
         @Override
         public void run() {
-            if (PermissionUtils.typeCheck == CHECK_MAIN){
-                if (PermissionUtils.permission(MainActivity.this)){
-                    handler.removeCallbacks(this);
+            if (PermissionUtils.permission(MainActivity.this)) {
+                handler.removeCallbacks(this);
+                if (PermissionUtils.typeCheck == CHECK_MAIN) {
                     Intent intent = new Intent(MainActivity.this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
-                }else {
-                    handler.postDelayed(this, 1000);
                 }
-            }else{
-                handler.removeCallbacks(this);
+            } else {
+                handler.postDelayed(this, 1000);
             }
         }
     };
@@ -87,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
         model = new ViewModelProvider(this).get(DocumentViewModel.class);
         model.getInsertDB().observe(this, insertDB -> {
-            if (insertDB){
+            if (insertDB) {
                 model.setValue();
             }
         });
@@ -107,7 +105,9 @@ public class MainActivity extends AppCompatActivity {
                     .subscribe(observer);
         } else {
             PermissionUtils.typeCheck = CHECK_MAIN;
-            handler.post(checkPermission);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                handler.post(checkPermission);
+            }
             PermissionUtils.requestPermissions(this, this);
         }
     }
@@ -147,11 +147,12 @@ public class MainActivity extends AppCompatActivity {
                 getObservable().observeOn(AndroidSchedulers.mainThread())
                         .subscribeOn(Schedulers.io())
                         .subscribe(observer);
-            }else {
+            } else {
                 if (shouldShowRequestPermissionRationale(permissions[0])
-                        && shouldShowRequestPermissionRationale(permissions[1])){
+                        && shouldShowRequestPermissionRationale(permissions[1])) {
                     PermissionUtils.openDialogAccessAllFile(this, this, PERMISSION_DENIED);
-                }else {
+                } else {
+                    handler.post(checkPermission);
                     PermissionUtils.openDialogAccessAllFile(this, this, PERMISSION_DENIED_NOT_SHOW);
                 }
             }
@@ -197,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
                 binding.toolbar.setTitle(getResources().getString(R.string.language));
             } else if (navDestination.getId() == R.id.xlsFragment
                     || navDestination.getId() == R.id.pdfFragment
-                    || navDestination.getId() == R.id.pptFragment ) {
+                    || navDestination.getId() == R.id.pptFragment) {
                 if (ProxPurchase.getInstance().checkPurchased() || !NetworkUtils.isNetworkAvailable(this)) {
                     binding.bannerAds.setVisibility(View.GONE);
                 } else {
@@ -262,13 +263,13 @@ public class MainActivity extends AppCompatActivity {
         folderStack.add(Environment.getExternalStorageDirectory());
 
         return Observable.create(emitter -> {
-            while (!folderStack.empty()){
+            while (!folderStack.empty()) {
                 File[] files = folderStack.pop().listFiles();
-                if (files != null){
-                    for (File f : files){
-                        if (f.isDirectory()){
+                if (files != null) {
+                    for (File f : files) {
+                        if (f.isDirectory()) {
                             folderStack.add(f);
-                        }else {
+                        } else {
                             if (f.getName().endsWith("doc")
                                     || f.getName().endsWith("dot")
                                     || f.getName().endsWith("docx")
@@ -283,7 +284,7 @@ public class MainActivity extends AppCompatActivity {
                                     || f.getName().endsWith("ppt")
                                     || f.getName().endsWith("pptx")
 
-                                    || f.getName().endsWith("pdf")){
+                                    || f.getName().endsWith("pdf")) {
                                 Document document = new Document();
                                 document.setPath(f.getPath());
                                 document.setTitle(f.getName());
@@ -291,7 +292,7 @@ public class MainActivity extends AppCompatActivity {
                                 document.setTimeAccess(f.lastModified());
                                 document.setFavorite(false);
                                 document.setExist(true);
-                                if (!emitter.isDisposed()){
+                                if (!emitter.isDisposed()) {
                                     emitter.onNext(document);
                                 }
                             }
@@ -299,7 +300,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
-            if (!emitter.isDisposed()){
+            if (!emitter.isDisposed()) {
                 emitter.onComplete();
             }
         });
@@ -319,7 +320,7 @@ public class MainActivity extends AppCompatActivity {
                 if (documentCheck != null) {
                     documentCheck.setExist(true);
                     model.updateBG(documentCheck);
-                }else {
+                } else {
                     model.insertBG(document);
                 }
             }

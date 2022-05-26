@@ -91,21 +91,18 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
     private final Runnable checkPermission = new Runnable() {
         @Override
         public void run() {
-            if (PermissionUtils.typeCheck == CHECK_READER){
-                if (PermissionUtils.permission(ReaderActivity.this)){
-                    handler.removeCallbacks(this);
+            if (PermissionUtils.permission(ReaderActivity.this)) {
+                handler.removeCallbacks(this);
+                if (PermissionUtils.typeCheck == CHECK_READER) {
                     Intent intent = new Intent(ReaderActivity.this, ReaderActivity.class);
                     intent.putExtra(FILE_PATH, filePath);
                     intent.putExtra(OPEN_OUTSIDE, true);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
-                }else {
-                    handler.postDelayed(this, 1000);
                 }
-            }else {
-                handler.removeCallbacks(this);
+            } else {
+                handler.postDelayed(this, 1000);
             }
-
         }
     };
 
@@ -169,7 +166,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
             public void onLaterButtonClicked() {
                 Log.d("rate_app", "onLaterButtonClicked");
                 FirebaseUtils.sendEventLaterRate(ReaderActivity.this);
-                if (isOpenOutside){
+                if (isOpenOutside) {
                     Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
@@ -183,7 +180,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                 if (rate >= 4) {
                     FirebaseUtils.sendEventChangeRate(ReaderActivity.this, rate);
 
-                    if (isOpenOutside){
+                    if (isOpenOutside) {
                         Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
@@ -196,7 +193,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
             public void onDone() {
                 Log.d("rate_app", "onDone");
 
-                if (isOpenOutside){
+                if (isOpenOutside) {
                     Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
@@ -229,11 +226,12 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED
                     && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                 binding.viewerOffice.post(this::init);
-            }else {
+            } else {
                 if (shouldShowRequestPermissionRationale(permissions[0])
-                        && shouldShowRequestPermissionRationale(permissions[1])){
+                        && shouldShowRequestPermissionRationale(permissions[1])) {
                     PermissionUtils.openDialogAccessAllFile(this, this, PERMISSION_DENIED);
-                }else {
+                } else {
+                    handler.post(checkPermission);
                     PermissionUtils.openDialogAccessAllFile(this, this, PERMISSION_DENIED_NOT_SHOW);
                 }
             }
@@ -245,12 +243,12 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_PERMISSION_MANAGE) {
             FirebaseUtils.sendEventRequestPermission(this);
-            if (!PermissionUtils.permission(this)){
+            if (!PermissionUtils.permission(this)) {
                 PermissionUtils.openDialogAccessAllFile(this, this, PERMISSION_DENIED_NOT_SHOW);
             }
         } else if (requestCode == REQUEST_PERMISSION_READ_WRITE) {
             FirebaseUtils.sendEventRequestPermission(this);
-            if (!PermissionUtils.permission(this)){
+            if (!PermissionUtils.permission(this)) {
                 PermissionUtils.openDialogAccessAllFile(this, this, PERMISSION_DENIED_NOT_SHOW);
             }
         }
@@ -312,14 +310,16 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
     @Override
     protected void onStart() {
         super.onStart();
-        if(PermissionUtils.permission(this)){
-            if (!isOpenned){
+        if (PermissionUtils.permission(this)) {
+            if (!isOpenned) {
                 isOpenned = true;
                 binding.viewerOffice.post(this::init);
             }
-        }else {
+        } else {
             PermissionUtils.typeCheck = CHECK_READER;
-            handler.post(checkPermission);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                handler.post(checkPermission);
+            }
             PermissionUtils.requestPermissions(this, this);
         }
     }
@@ -416,14 +416,14 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
         if (closeReader % 2 == 0) {
             preferences.edit().putInt("close_reader", closeReader + 1).apply();
             SharedPreferences sp = getSharedPreferences("prox", Context.MODE_PRIVATE);
-            if (sp.getBoolean("isRated", false)){
-                if (isOpenOutside){
+            if (sp.getBoolean("isRated", false)) {
+                if (isOpenOutside) {
                     Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                 }
                 finish();
-            }else {
+            } else {
                 ProxRateDialog.showIfNeed(ReaderActivity.this, getSupportFragmentManager());
             }
 //        } else if (closeReader % 3 == 0) {
@@ -453,9 +453,9 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
 //                    finish();
 //                }
 //            });
-        }else {
+        } else {
             preferences.edit().putInt("close_reader", closeReader + 1).apply();
-            if (isOpenOutside){
+            if (isOpenOutside) {
                 Intent intent = new Intent(ReaderActivity.this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
@@ -529,7 +529,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
      */
 
     private void init() {
-        if (dbService != null){
+        if (dbService != null) {
             dbService = new DBService(getApplicationContext());
         }
         setTitle(fileName);
@@ -740,7 +740,7 @@ public class ReaderActivity extends AppCompatActivity implements IMainFrame {
      * @return
      */
     public void initMarked() {
-        if(dbService != null) {
+        if (dbService != null) {
             marked = dbService.queryItem(MainConstant.TABLE_STAR, filePath);
             if (marked) {
                 toolsbar.setCheckState(EventConstant.FILE_MARK_STAR_ID, AImageCheckButton.CHECK);
